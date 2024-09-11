@@ -326,11 +326,12 @@ class _KontenMenu3 extends State<IsiMenu3> {
                   ),
                   child: MaterialButton(
                     onPressed: () {
-                      Navigator.push(
+                      Navigator.pushReplacement(
                         context, 
                         MaterialPageRoute(
                           builder: (context) =>  MyApp()
-                        )
+                        ),
+                        // (Route<dynamic> route) => false
                       );
                     },
                     child: Text('Logout', style: TextStyle(color: Colors.white),),

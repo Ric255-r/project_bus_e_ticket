@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'screen/content/screen2.dart';
 import 'package:dio/dio.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-// import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import './screen/function/confirmExit.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 // referensi :
 // https://stackoverflow.com/questions/51765092/how-to-scroll-page-in-flutter
 // https://www.dhiwise.com/post/how-to-flutter-navigate-to-a-new-page-with-data-passing
@@ -89,10 +90,32 @@ class _FirstScreen extends State {
   var n1 = 0;
   var n2 = 0;
   var sum = 0;
+  String? jwt;
+
+  final storage = new FlutterSecureStorage();
+
+  // inisiasikan state. kaya react
+  void initState(){
+    super.initState();
+    _loadJwt();
+  }
+
+  Future<void> _loadJwt() async {
+    String? value = await storage.read(key: 'jwt');
+
+    setState(() {
+      jwt = value;
+    });
+  }
+  // end inisiasikan state
+
 
   // Cara kerja dio kaya Axios. 
   Future<void> utkLogin() async {
     final dio = Dio();
+
+    // Buat Storage
+
     try {
       // setting php artisan kek gini
       // php artisan serve --host=192.168.150.166
@@ -107,12 +130,8 @@ class _FirstScreen extends State {
       // Parse the response data
       final Map<String, dynamic> responseData = response.data;
 
-      // // Buat Storage
-      // final storage = new FlutterSecureStorage();
-
-      // // write jwt
-      // await storage.write(key: 'jwt', value: responseData['authorization']['token']);
-
+      // write jwt
+      await storage.write(key: 'jwt', value: responseData['authorization']['token']);
 
       Navigator.push(
         context, 
@@ -169,94 +188,88 @@ class _FirstScreen extends State {
 
     final screenHeight = MediaQuery.of(context).size.height;
 
-    return ListView(children: [
-      Row(
+    return WillPopScope(
+      onWillPop: () async => await showPopUpExit(context),
+      child: ListView(
         children: [
-          Expanded(
-            child: Padding(
-              padding: EdgeInsets.only(
-                left: 10,
-                top: (screenHeight >= 1000) ? 300 : 100,
+          Row(
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.only(
+                    left: 10,
+                    top: (screenHeight >= 1000) ? 300 : 100,
+                  ),
+                  child: const Text("Username", style: TextStyle(fontSize: 18),),
+                )
               ),
-              child: const Text("Username", style: TextStyle(fontSize: 18),),
-            )
+            ],
           ),
-        ],
-      ),
-      Row(
-        children: [
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(left: 10, right: 20),
-              child: TextField(controller: tfnum1),
-            )
+          Row(
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 10, right: 20),
+                  child: TextField(controller: tfnum1),
+                )
+              ),
+            ],
           ),
-        ],
-      ),
 
-      const Row(
-        children: [
-          Expanded(
-            child: Padding(
-              padding: EdgeInsets.only(
-                top: 30,
-                left: 10
+          const Row(
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.only(
+                    top: 30,
+                    left: 10
+                  ),
+                  child: Text(
+                    "Password", 
+                    style: TextStyle(fontSize: 18),
+                  ),
+                ),
               ),
-              child: Text(
-                "Password", 
-                style: TextStyle(fontSize: 18),
+            ],
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                    top: 1,
+                    left: 10,
+                    right: 20
+                  ), 
+                  child: TextField(
+                    controller: tfnum2,
+                  ),
+                )
+              ),
+            ],
+          ),
+          // Tambah Spasi Manual
+          RichText(text: const TextSpan(text: '')),
+          // End Tambah Spasi.
+          Row(children: [
+            Expanded(
+              child: ElevatedButton(
+                onPressed: () {
+                  // AddTwoNumber();
+                  utkLogin();
+                },
+                child: const Text("Login"),
               ),
             ),
-          ),
-        ],
-      ),
-      Row(
-        children: [
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(
-                top: 1,
-                left: 10,
-                right: 20
-              ), 
-              child: TextField(
-                controller: tfnum2,
-              ),
-            )
-          ),
-        ],
-      ),
-      // Tambah Spasi Manual
-      RichText(text: const TextSpan(text: '')),
-      // End Tambah Spasi.
-      Row(children: [
-        Expanded(
-          child: ElevatedButton(
-            onPressed: () {
-              // AddTwoNumber();
-              utkLogin();
-            },
-            child: const Text("Login"),
-          ),
-        ),
-        // Text(outputnya),
-      ]),
-      // Tambah Spasi Manual
-      RichText(text: const TextSpan(text: '')),
-      // End Tambah Spasi.
-      Center(child: Text(outputnya))
-    ]);
-    // return Row(
-    //   children: [
-    //     Expanded(child: Container(
-    //       color: Colors.yellowAccent,
-    //     )),
-    //     Expanded(child: Container(
-    //       color: Colors.amberAccent,
-    //     )),
-    //     Expanded(child: TextField()),
-    //   ],
-    // );
+            // Text(outputnya),
+          ]),
+          // Tambah Spasi Manual
+          RichText(text: const TextSpan(text: '')),
+          // End Tambah Spasi.
+          Center(child: Text(outputnya))
+        ]
+      ), 
+    );
   }
 }
 
