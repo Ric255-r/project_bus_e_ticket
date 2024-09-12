@@ -111,10 +111,8 @@ class _FirstScreen extends State {
 
 
   // Cara kerja dio kaya Axios. 
-  Future<void> utkLogin() async {
+  Future<void> utkLogin(context) async {
     final dio = Dio();
-
-    // Buat Storage
 
     try {
       // setting php artisan kek gini
@@ -138,6 +136,9 @@ class _FirstScreen extends State {
         MaterialPageRoute(
           builder: (context) => SecondScreen(data: responseData ))
       );
+
+      tfnum1.text = "";
+      tfnum2.text = "";
     } catch (e) {
       if(e is DioException){
         if(e.response != null){
@@ -256,7 +257,7 @@ class _FirstScreen extends State {
               child: ElevatedButton(
                 onPressed: () {
                   // AddTwoNumber();
-                  utkLogin();
+                  utkLogin(context);
                 },
                 child: const Text("Login"),
               ),
