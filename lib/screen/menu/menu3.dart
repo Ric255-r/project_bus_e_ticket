@@ -19,6 +19,7 @@ class IsiMenu3 extends StatefulWidget {
 }
 
 class _KontenMenu3 extends State<IsiMenu3> {
+
   
   @override
   Widget build(BuildContext context) {
@@ -37,7 +38,7 @@ class _KontenMenu3 extends State<IsiMenu3> {
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.only(
-                        top: 50,
+                        top: 40,
                         bottom: 100,
                         left: 20,
                         right: 20
@@ -88,7 +89,7 @@ class _KontenMenu3 extends State<IsiMenu3> {
               ),
             ),
             Positioned(
-              top: 260,
+              top: 255,
               left: 20,
               right: 20,
               child: Container(

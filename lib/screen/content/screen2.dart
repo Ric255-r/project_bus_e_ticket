@@ -42,6 +42,10 @@ class _Kontennya extends State<IsiBody> {
   double Tinggi = 150;
   bool changes = true;
 
+  PageController _pageController = PageController();
+  int _currentPage = 0;
+  
+
   final List<String> imgList = [
     'assets/images/carousel1.jpeg',
     'assets/images/carousel2.png',
@@ -102,7 +106,7 @@ class _Kontennya extends State<IsiBody> {
                     child: Padding(
                       padding: const EdgeInsets.only(
                         top: 10,
-                        bottom: 20,
+                        bottom: 50,
                         left: 20,
                         right: 20
                       ),
@@ -197,195 +201,319 @@ class _Kontennya extends State<IsiBody> {
                       ],
                     ),
                     // End Tambah Text.
+                    SizedBox(
+                      height: 100,
+                      child: PageView(
+                        controller: _pageController,
+                        onPageChanged: (int indexny) {
+                          setState(() {
+                            _currentPage = indexny;
+                          });
+                        },
+                        children: [
+                          // children ini buat tambah pageview lagi
+                          // misalkan klo mau nambah konten ke slide selanjutnya, tambah row lg
+                          Row(
+                            children: [
+                              Expanded(                
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                    left: 20,
+                                    right: 10
+                                  ),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      Fluttertoast.showToast(
+                                        msg: "Pesan Tiket",
+                                        toastLength: Toast.LENGTH_SHORT,
+                                        gravity: ToastGravity.BOTTOM,
+                                        timeInSecForIosWeb: 1,
+                                        textColor: Colors.white,
+                                        fontSize: 16.0
+                                      );
+                                    },
+                                    child: Column(
+                                      children: [
+                                        Container(
+                                          height: 50,
+                                          decoration: BoxDecoration(
+                                            color: Colors.grey.shade50,
+                                            borderRadius: const BorderRadius.only(
+                                              topLeft: Radius.circular(10),
+                                              bottomRight: Radius.circular(10)
+                                            ),
+                                            // border: Border.all(color: Colors.red),
+                                          ),
+                                          child: const Image(
+                                            image: AssetImage('assets/images/tiket.png'),
+                                            height: 50,
+                                            width: 50,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 5), // Add some spacing between image and text
+                                        
+                                        const Text(
+                                          'Pesan Tiket',
+                                          style: TextStyle(fontSize: 12, color: Colors.black),
+                                        ),
+                                      ],
+                                    )
+                                  )
+                                )
+                              ),
+                              Expanded(                
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                    left: 20,
+                                    right: 10
+                                  ),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      Fluttertoast.showToast(
+                                        msg: "Halte Terdekat",
+                                        toastLength: Toast.LENGTH_SHORT,
+                                        gravity: ToastGravity.BOTTOM,
+                                        timeInSecForIosWeb: 1,
+                                        textColor: Colors.white,
+                                        fontSize: 16.0
+                                      );
+                                    },
+                                    child: Column(
+                                      children: [
+                                        Container(
+                                          height: 50,
+                                          decoration: BoxDecoration(
+                                            color: Colors.grey.shade50,
+                                            borderRadius: const BorderRadius.only(
+                                              topLeft: Radius.circular(10),
+                                              bottomRight: Radius.circular(10)
+                                            ),
+                                          ),
+                                          child: const Image(
+                                            image: AssetImage('assets/images/halte.png'),
+                                            height: 50,
+                                            width: 50,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 5), // Add some spacing between image and text
+                                        
+                                        const Text(
+                                          'Halte Terdekat',
+                                          style: TextStyle(fontSize: 12, color: Colors.black),
+                                        ),
+                                      ],
+                                    )
+                                  )
+                                )
+                              ),
+                              Expanded(                
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                    left: 20,
+                                    right: 10
+                                  ),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      Fluttertoast.showToast(
+                                        msg: "Paket Wisata",
+                                        toastLength: Toast.LENGTH_SHORT,
+                                        gravity: ToastGravity.BOTTOM,
+                                        timeInSecForIosWeb: 1,
+                                        textColor: Colors.white,
+                                        fontSize: 16.0
+                                      );
+                                    },
+                                    child: Column(
+                                      children: [
+                                        Container(
+                                          height: 50,
+                                          decoration: BoxDecoration(
+                                            color: Colors.grey.shade50,
+                                            borderRadius: const BorderRadius.only(
+                                              topLeft: Radius.circular(10),
+                                              bottomRight: Radius.circular(10)
+                                            ),
+                                          ),
+                                          child: const Image(
+                                            image: AssetImage('assets/images/wisata.png'),
+                                            height: 50,
+                                            width: 50,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 5), // Add some spacing between image and text
+                                        
+                                        const Text(
+                                          'Paket Wisata',
+                                          style: TextStyle(fontSize: 12, color: Colors.black),
+                                        ),
+                                      ],
+                                    )
+                                  )
+                                )
+                              ),
+                              Expanded(                
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                    left: 20,
+                                    right: 10
+                                  ),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      Fluttertoast.showToast(
+                                        msg: "Panduan Berpergian",
+                                        toastLength: Toast.LENGTH_SHORT,
+                                        gravity: ToastGravity.BOTTOM,
+                                        timeInSecForIosWeb: 1,
+                                        textColor: Colors.white,
+                                        fontSize: 16.0
+                                      );
+                                    },
+                                    child: Column(
+                                      children: [
+                                        Container(
+                                          height: 50,
+                                          decoration: BoxDecoration(
+                                            color: Colors.grey.shade50,
+                                            borderRadius: const BorderRadius.only(
+                                              topLeft: Radius.circular(10),
+                                              bottomRight: Radius.circular(10)
+                                            ),
+                                          ),
+                                          child: const Image(
+                                            image: AssetImage('assets/images/guidebook.png'),
+                                            height: 50,
+                                            width: 50,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 5), // Add some spacing between image and text
+                                        
+                                        const Text(
+                                          'Panduan Bepergian',
+                                          style: TextStyle(fontSize: 12, color: Colors.black),
+                                        ),
+                                      ],
+                                    )
+                                  )
+                                )
+                              ),
+                            ],
+                          ),
+
+                        ],
+                      ),
+                    ),
                     Row(
-                      children: [
-                        Expanded(                
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                              left: 20,
-                              right: 10
-                            ),
-                            child: GestureDetector(
-                              onTap: () {
-                                Fluttertoast.showToast(
-                                  msg: "This is a Toast Kiri",
-                                  toastLength: Toast.LENGTH_SHORT,
-                                  gravity: ToastGravity.BOTTOM,
-                                  timeInSecForIosWeb: 1,
-                                  textColor: Colors.white,
-                                  fontSize: 16.0
-                                );
-                              },
-                              child: Container(
-                                height: Tinggi,
-                                decoration: BoxDecoration(
-                                  color: Colors.grey.shade300,
-                                  borderRadius: BorderRadius.circular(10),
-                                  border: Border.all(
-                                    color: Colors.red
-                                  ),
-                                ),
-                                child: const Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Image(
-                                      image: AssetImage('assets/images/tayo.png'),
-                                      height: 100,
-                                      width: 100,
-                                    ),
-                                    Text(
-                                      'Your Text Here',
-                                      style: TextStyle(fontSize: 16, color: Colors.black),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            )
-                          )
-                        ),
-                        Expanded(                
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                              left: 10,
-                              right: 20
-                            ),
-                            child: GestureDetector(
-                              onTap: () {
-                                Fluttertoast.showToast(
-                                  msg: "This is a Toast message Gesture",
-                                  toastLength: Toast.LENGTH_SHORT,
-                                  gravity: ToastGravity.BOTTOM,
-                                  timeInSecForIosWeb: 1,
-                                  textColor: Colors.white,
-                                  fontSize: 16.0
-                                );
-                              },
-                              child: Container(
-                                height: Tinggi,
-                                decoration: BoxDecoration(
-                                  color: Colors.grey.shade300,
-                                  borderRadius: BorderRadius.circular(10),
-                                  border: Border.all(
-                                    color: Colors.red
-                                  ),
-                                ),
-                                child: const Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Image(
-                                      image: AssetImage('assets/images/tayo.png'),
-                                      height: 100,
-                                      width: 100,
-                                    ),
-                                    Text(
-                                      'Your Text Here',
-                                      style: TextStyle(fontSize: 16, color: Colors.black),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            )
-                          )
-                        ),
-                      ],
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: List.generate(
+                        1, //ubah panjang bullet
+                        (index) => Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 4.0),
+                          width: (_currentPage == index) ? 12.0 : 8.0,
+                          height: (_currentPage == index) ? 12.0 : 8.0,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: _currentPage == index ? Colors.blue : Colors.grey
+                          ),
+                        )
+                      ),
                     ),
                     // Tambah Spasi Manual
                     RichText(text: const TextSpan(text: '')),
-                    // End Tambah Spasi.
-                    Row(
-                      children: [
-                        Expanded(                
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                              left: 20,
-                              right: 10
-                            ),
-                            child: GestureDetector(
-                              onTap: () {
-                                Fluttertoast.showToast(
-                                  msg: "This is a Toast Kiri",
-                                  toastLength: Toast.LENGTH_SHORT,
-                                  gravity: ToastGravity.BOTTOM,
-                                  timeInSecForIosWeb: 1,
-                                  textColor: Colors.white,
-                                  fontSize: 16.0
-                                );
-                              },
-                              child: Container(
-                                height: Tinggi,
-                                decoration: BoxDecoration(
-                                  color: Colors.grey.shade300,
-                                  borderRadius: BorderRadius.circular(10),
-                                  border: Border.all(
-                                    color: Colors.red
-                                  ),
-                                ),
-                                child: const Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Image(
-                                      image: AssetImage('assets/images/tayo.png'),
-                                      height: 100,
-                                      width: 100,
-                                    ),
-                                    Text(
-                                      'Your Text Here',
-                                      style: TextStyle(fontSize: 16, color: Colors.black),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            )
-                          )
-                        ),
-                        Expanded(                
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                              left: 10,
-                              right: 20
-                            ),
-                            child: GestureDetector(
-                              onTap: () {
-                                Fluttertoast.showToast(
-                                  msg: "This is a Toast message Gesture",
-                                  toastLength: Toast.LENGTH_SHORT,
-                                  gravity: ToastGravity.BOTTOM,
-                                  timeInSecForIosWeb: 1,
-                                  textColor: Colors.white,
-                                  fontSize: 16.0
-                                );
-                              },
-                              child: Container(
-                                height: Tinggi,
-                                decoration: BoxDecoration(
-                                  color: Colors.grey.shade300,
-                                  borderRadius: BorderRadius.circular(10),
-                                  border: Border.all(
-                                    color: Colors.red
-                                  ),
-                                ),
-                                child: const Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Image(
-                                      image: AssetImage('assets/images/tayo.png'),
-                                      height: 100,
-                                      width: 100,
-                                    ),
-                                    Text(
-                                      'Your Text Here',
-                                      style: TextStyle(fontSize: 16, color: Colors.black),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            )
-                          )
-                        ),
-                      ],
-                    ),
-                    // Tambah Spasi Manual
-                    RichText(text: const TextSpan(text: '')),
+                    // // End Tambah Spasi.
+                    // Row(
+                    //   children: [
+                    //     Expanded(                
+                    //       child: Padding(
+                    //         padding: const EdgeInsets.only(
+                    //           left: 20,
+                    //           right: 10
+                    //         ),
+                    //         child: GestureDetector(
+                    //           onTap: () {
+                    //             Fluttertoast.showToast(
+                    //               msg: "This is a Toast Kiri",
+                    //               toastLength: Toast.LENGTH_SHORT,
+                    //               gravity: ToastGravity.BOTTOM,
+                    //               timeInSecForIosWeb: 1,
+                    //               textColor: Colors.white,
+                    //               fontSize: 16.0
+                    //             );
+                    //           },
+                    //           child: Container(
+                    //             height: Tinggi,
+                    //             decoration: BoxDecoration(
+                    //               color: Colors.grey.shade300,
+                    //               borderRadius: BorderRadius.circular(10),
+                    //               border: Border.all(
+                    //                 color: Colors.red
+                    //               ),
+                    //             ),
+                    //             child: const Column(
+                    //               mainAxisAlignment: MainAxisAlignment.center,
+                    //               children: [
+                    //                 Image(
+                    //                   image: AssetImage('assets/images/tayo.png'),
+                    //                   height: 100,
+                    //                   width: 100,
+                    //                 ),
+                    //                 Text(
+                    //                   'Your Text Here',
+                    //                   style: TextStyle(fontSize: 16, color: Colors.black),
+                    //                 ),
+                    //               ],
+                    //             ),
+                    //           ),
+                    //         )
+                    //       )
+                    //     ),
+                    //     Expanded(                
+                    //       child: Padding(
+                    //         padding: const EdgeInsets.only(
+                    //           left: 10,
+                    //           right: 20
+                    //         ),
+                    //         child: GestureDetector(
+                    //           onTap: () {
+                    //             Fluttertoast.showToast(
+                    //               msg: "This is a Toast message Gesture",
+                    //               toastLength: Toast.LENGTH_SHORT,
+                    //               gravity: ToastGravity.BOTTOM,
+                    //               timeInSecForIosWeb: 1,
+                    //               textColor: Colors.white,
+                    //               fontSize: 16.0
+                    //             );
+                    //           },
+                    //           child: Container(
+                    //             height: Tinggi,
+                    //             decoration: BoxDecoration(
+                    //               color: Colors.grey.shade300,
+                    //               borderRadius: BorderRadius.circular(10),
+                    //               border: Border.all(
+                    //                 color: Colors.red
+                    //               ),
+                    //             ),
+                    //             child: const Column(
+                    //               mainAxisAlignment: MainAxisAlignment.center,
+                    //               children: [
+                    //                 Image(
+                    //                   image: AssetImage('assets/images/tayo.png'),
+                    //                   height: 100,
+                    //                   width: 100,
+                    //                 ),
+                    //                 Text(
+                    //                   'Your Text Here',
+                    //                   style: TextStyle(fontSize: 16, color: Colors.black),
+                    //                 ),
+                    //               ],
+                    //             ),
+                    //           ),
+                    //         )
+                    //       )
+                    //     ),
+                    //   ],
+                    // ),
+                    // // Tambah Spasi Manual
+                    // RichText(text: const TextSpan(text: '')),
                     // End Tambah Spasi.
                   ],
                 ),
@@ -435,9 +563,37 @@ class _KontenNavbar extends State<IsiNavbar> {
 
   void onBarTapped(int index){
     setState(() {
+      //set index utk menu children
       _currentIndex = index;
     });
   }
+
+  // buat track scroll
+  int _scrollPosition = 0;
+
+  void _onScrollNotification(ScrollNotification notif){
+    if(notif is ScrollUpdateNotification){
+      //cek kalo dia ngescroll scr vertical
+      if(notif.metrics.axis == Axis.vertical){
+        setState(() {
+          _scrollPosition = notif.metrics.pixels.toInt();
+        });
+        // print("Sekarang di posisisi $_scrollPosition");
+      }
+      
+      // if(notif.metrics.pixels.toInt() >= 4000000){
+      //   // cara bodo ini buat exclude posisi carousel.
+      //   // posisi carousel bisa smpe 4jt an
+      //   // soalny scrollnotification ngebaca posisi carousel jg.
+      // }else{
+      //   setState(() {
+      //     _scrollPosition = notif.metrics.pixels.toInt();
+      //   });
+      //   print("Sekarang di posisisi $_scrollPosition");
+      // }
+    }
+  }
+  // End buat trackscroll
 
   @override
   Widget build(BuildContext context) {
@@ -447,7 +603,31 @@ class _KontenNavbar extends State<IsiNavbar> {
       onWillPop: () async => await showPopUpExit(context),
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Hai ${dataIsiNavbar['user']['name']}'),
+          backgroundColor: (_scrollPosition >= 10) ? Colors.grey[400] : Colors.blue[400],
+          toolbarHeight: (_currentIndex == 0) ? 80 : null,
+          title: (_currentIndex == 0) ? Column(
+            crossAxisAlignment: CrossAxisAlignment.start, //rata kiri
+            children: [
+              Text('Hai ${dataIsiNavbar['user']['name']}', style: TextStyle(fontSize: 16),),
+              const Padding(
+                padding: EdgeInsets.only(
+                  top: 3,
+                  bottom: 4
+                ),
+                child: Text('Welcome To Bus_Hub!', style: TextStyle(fontSize: 16)),
+              )
+            ],
+          ) : (_currentIndex == 2) ? const Column(
+            crossAxisAlignment: CrossAxisAlignment.start, //rata kiri
+            children: [
+              Text('Menu', style: TextStyle(fontSize: 16),),
+            ],
+          ) : const Column(
+            crossAxisAlignment: CrossAxisAlignment.start, //rata kiri
+            children: [
+              Text('History', style: TextStyle(fontSize: 16),),
+            ],
+          ),
           actions: [
             IconButton(
               onPressed: () {}, 
@@ -496,7 +676,13 @@ class _KontenNavbar extends State<IsiNavbar> {
             ],
           ),
         ),
-        body: _children[_currentIndex],
+        body: NotificationListener(
+          onNotification: (ScrollNotification notif){
+            _onScrollNotification(notif);
+            return true;
+          },
+          child: _children[_currentIndex]
+        ),
         bottomNavigationBar:  BottomNavigationBar(
           currentIndex: _currentIndex,
           onTap: onBarTapped,
