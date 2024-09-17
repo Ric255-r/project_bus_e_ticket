@@ -114,10 +114,13 @@ class _Kontennya extends State<IsiBody> {
                             color: Colors.blueGrey.shade100
                           )
                         ),
-                        height: 210,
+                        height: 215,
                         child: Padding(
                           padding: const EdgeInsets.only(
-                            left: 50
+                            left: 10,
+                            top: 5,
+                            bottom: 5,
+                            right: 10
                           ),
                           child: Column(
                             children: [
@@ -445,6 +448,53 @@ class _KontenNavbar extends State<IsiNavbar> {
       child: Scaffold(
         appBar: AppBar(
           title: Text('Hai ${dataIsiNavbar['user']['name']}'),
+          actions: [
+            IconButton(
+              onPressed: () {}, 
+              icon: Icon(Icons.search, color: Colors.black,)
+            )
+          ],
+          leading: Builder(
+            builder: (context) {
+              return IconButton(
+                onPressed: () {
+                  Scaffold.of(context).openDrawer();
+                }, 
+                icon: Icon(Icons.menu, color: Colors.black,)
+              );
+            }
+          ),
+        ),
+        drawer: Drawer(
+          child: ListView(
+            // penting, wajib remove padding di listview
+            children: [
+              const DrawerHeader(
+                decoration: BoxDecoration(
+                  color: Colors.blue
+                ),
+                child: Text("Header Drawer")
+              ),
+              ListTile(
+                title: const Text("Menu 1"),
+                onTap: () {
+                  // masukin fungsi apapun
+
+                  // tutup drawer
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                title: const Text("Menu 2"),
+                onTap: () {
+                  // masukin fungsi
+
+                  //tutup drawer
+                  Navigator.pop(context);
+                },
+              )
+            ],
+          ),
         ),
         body: _children[_currentIndex],
         bottomNavigationBar:  BottomNavigationBar(
