@@ -68,6 +68,10 @@ flutter:
     - assets/images/carousel1.jpeg
     - assets/images/carousel2.png
     - assets/images/carousel3.jpeg
+    - assets/images/tiket.png
+    - assets/images/halte.png
+    - assets/images/wisata.png
+    - assets/images/guidebook.png
     # - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
