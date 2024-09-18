@@ -42,8 +42,11 @@ class _Kontennya extends State<IsiBody> {
   double Tinggi = 150;
   bool changes = true;
 
+  // Buat cek pageview dalam menu mau ngapain hari ini
   PageController _pageController = PageController();
   int _currentPage = 0;
+  // end buat ngecek pageview
+
   
 
   final List<String> imgList = [
@@ -204,6 +207,7 @@ class _Kontennya extends State<IsiBody> {
                     SizedBox(
                       height: 100,
                       child: PageView(
+                        // untuk track page ke brp
                         controller: _pageController,
                         onPageChanged: (int indexny) {
                           setState(() {
@@ -252,9 +256,11 @@ class _Kontennya extends State<IsiBody> {
                                         ),
                                         const SizedBox(height: 5), // Add some spacing between image and text
                                         
-                                        const Text(
-                                          'Pesan Tiket',
-                                          style: TextStyle(fontSize: 12, color: Colors.black),
+                                        const Center(
+                                          child: Text(
+                                            'Pesan Tiket',
+                                            style: TextStyle(fontSize: 12, color: Colors.black),
+                                          ),
                                         ),
                                       ],
                                     )
