@@ -5,6 +5,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import '../menu/menu2.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import '../function/confirmExit.dart';
+import './halteTerdekat.dart';
+
 // referensi carousel slider
 // https://stackoverflow.com/questions/78688921/error-carouselcontroller-is-imported-from-both-package-in-flutter
 
@@ -275,13 +277,17 @@ class _Kontennya extends State<IsiBody> {
                                   ),
                                   child: GestureDetector(
                                     onTap: () {
-                                      Fluttertoast.showToast(
-                                        msg: "Halte Terdekat",
-                                        toastLength: Toast.LENGTH_SHORT,
-                                        gravity: ToastGravity.BOTTOM,
-                                        timeInSecForIosWeb: 1,
-                                        textColor: Colors.white,
-                                        fontSize: 16.0
+                                      // Fluttertoast.showToast(
+                                      //   msg: "Halte Terdekat",
+                                      //   toastLength: Toast.LENGTH_SHORT,
+                                      //   gravity: ToastGravity.BOTTOM,
+                                      //   timeInSecForIosWeb: 1,
+                                      //   textColor: Colors.white,
+                                      //   fontSize: 16.0
+                                      // );
+                                      Navigator.push(
+                                        context, 
+                                        MaterialPageRoute(builder: (context) => Halteterdekat())
                                       );
                                     },
                                     child: Column(
