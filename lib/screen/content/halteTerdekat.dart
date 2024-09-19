@@ -5,19 +5,32 @@ import 'package:geolocator/geolocator.dart';
 class Halteterdekat extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: IsiHalte(),
-    ); 
+    // return SafeArea(
+    //   child: IsiMap(),
+    // ); 
+
+    return const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        body: DraggableBottomSheet(
+          anak: Column(
+            children: [
+              Text("Hai")
+            ],
+          )
+        ),
+      ),
+    );
   }
 }
 
-class IsiHalte extends StatefulWidget {
+class IsiMap extends StatefulWidget {
   @override
-  _KontenHalte createState() => _KontenHalte();
+  _KontenMap createState() => _KontenMap();
 }
 
-class _KontenHalte extends State<IsiHalte>{
-  // fungsi buat posisi
+class _KontenMap extends State<IsiMap>{
+  // fungsi async await buat return currentposisi
   Future<Position> _determinePosition() async {
     bool serviceEnabled;
     LocationPermission permission;
@@ -55,6 +68,7 @@ class _KontenHalte extends State<IsiHalte>{
   void initState(){
     super.initState();
 
+    //fungsi async await yg d buat diatas.
     _determinePosition().then((posisi) {
       if(!_isSetLocation){ //buat boolean supaya cmn setLocation 1x aja, gk ush auto refresh
         setState(() {
@@ -74,13 +88,15 @@ class _KontenHalte extends State<IsiHalte>{
     }); 
   }
   
+  // referensi ada didokumentasi flutter_osm_plugin
+  // install di pubspec.yaml : 
+  // flutter_osm_plugin: ^1.3.2
+  // geolocator: ^9.0.2
   @override
   Widget build(BuildContext context) {
-    double _top = 1000;
-    double _height = 100;
-
     return Scaffold(
       body: SizedBox(
+        height: MediaQuery.of(context).size.height,
         child: Stack(
           children: [
             if(controller != null)
@@ -129,12 +145,6 @@ class _KontenHalte extends State<IsiHalte>{
                   ),
                 ),
               ),
-              // Positioned(
-              //   top: _top,
-              //   left: 20,
-              //   right: 20,
-              //   child: ModalBottomWidget()
-              // )
             //end if
           ],
         ),
@@ -155,29 +165,106 @@ class _KontenHalte extends State<IsiHalte>{
         },
         child: Icon(Icons.refresh),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
     );
   }
 }
 
-class ModalBottomWidget extends StatelessWidget {
+// referensi : 
+// https://www.youtube.com/watch?v=mI3QwwwZrn4
+// baru sampai ke menit 9:10. akan d lanjutkan
+class DraggableBottomSheet extends StatefulWidget {
+  final Widget anak;
+  const DraggableBottomSheet({super.key, required this.anak});
+
+  @override
+  State<DraggableBottomSheet> createState() => _DraggableBottomSheetState();
+}
+
+class _DraggableBottomSheetState extends State<DraggableBottomSheet> {
+  final sheet = GlobalKey();
+  final controller = DraggableScrollableController();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    controller.addListener(onChanged);
+  }
+
+  void onChanged(){
+    final currentSize = controller.size;
+    if(currentSize <= 0.05) collapse();
+  }
+
+  void collapse() => animateSheet(getSheet.snapSizes!.first);
+  void anchor() => animateSheet(getSheet.snapSizes!.last);
+  void expand() => animateSheet(getSheet.maxChildSize);
+  void hide() => animateSheet(getSheet.minChildSize);
+
+  void animateSheet(double size){
+    controller.animateTo(
+      size, 
+      duration: const Duration(microseconds: 50), 
+      curve: Curves.easeInOut
+    );
+  }
+
+  DraggableScrollableSheet get getSheet => (sheet.currentWidget as DraggableScrollableSheet);
+
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-    return ElevatedButton(
-      onPressed: () {
-        showModalBottomSheet(
-          context: context, 
-          builder: (BuildContext context){
-            return SizedBox(
-              height: 400,
-              child: Center(
-                child: Text("Ini Modal Bottom"),
-              ),
+    // you can use a Stack widget. This allows you to layer widgets on top of each other
+    return Stack(
+      children: [
+        // buat jadikan ini background dari scrollablesheet
+        Positioned.fill(
+          child: IsiMap()
+        ),
+        LayoutBuilder(
+          builder: (builder, constraint) {
+            return DraggableScrollableSheet(
+              key: sheet,
+              initialChildSize: 0.5,
+              maxChildSize: 0.7, //ubah jd 1 klo mw cover 1 screen
+              minChildSize: 0,
+              expand: true,
+              snap: true,
+              snapSizes: [
+                60 / constraint.maxHeight,
+                0.5 
+              ],
+              builder: (BuildContext context, ScrollController scrollController){
+                return DecoratedBox(
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black,
+                        blurRadius: 10,
+                        spreadRadius: 1,
+                        offset: Offset(0, 1)
+                      )
+                    ],
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(22),
+                      topRight: Radius.circular(22)
+                    )
+                  ),
+                  child: CustomScrollView(
+                    controller: scrollController,
+                    slivers: [
+                      SliverToBoxAdapter(
+                        child: widget.anak,
+                      )
+                    ],
+                  ),
+                );
+              }
             );
           }
-        );
-      }, 
-      child: Text("Show Modal")
+        )
+      ],
     );
   }
 }
