@@ -15,7 +15,11 @@ class Halteterdekat extends StatelessWidget {
         body: DraggableBottomSheet(
           anak: Column(
             children: [
-              Text("Hai")
+              UiBottomSheet(),
+              UiBottomSheet(),
+              UiBottomSheet(),
+              UiBottomSheet(),
+              UiBottomSheet(),
             ],
           )
         ),
@@ -181,6 +185,8 @@ class DraggableBottomSheet extends StatefulWidget {
   State<DraggableBottomSheet> createState() => _DraggableBottomSheetState();
 }
 
+// shortcut buat state : stful
+
 class _DraggableBottomSheetState extends State<DraggableBottomSheet> {
   final sheet = GlobalKey();
   final controller = DraggableScrollableController();
@@ -254,6 +260,7 @@ class _DraggableBottomSheetState extends State<DraggableBottomSheet> {
                   child: CustomScrollView(
                     controller: scrollController,
                     slivers: [
+                      topButtonIndicator(),
                       SliverToBoxAdapter(
                         child: widget.anak,
                       )
@@ -265,6 +272,98 @@ class _DraggableBottomSheetState extends State<DraggableBottomSheet> {
           }
         )
       ],
+    );
+  }
+
+  SliverToBoxAdapter topButtonIndicator(){
+    return SliverToBoxAdapter(
+      child: Container(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Container(
+              child: Center(
+                child: Wrap(
+                  children: [
+                    Container(
+                      width: 100,
+                      margin: const EdgeInsets.only(
+                        top: 10, bottom: 10
+                      ),
+                      height: 5,
+                      decoration: const BoxDecoration(
+                        color: Colors.black54,
+                        shape: BoxShape.rectangle,
+                        borderRadius: BorderRadius.all(Radius.circular(8.0))
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+
+class UiBottomSheet extends StatelessWidget {
+  const UiBottomSheet({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Container(
+        padding: EdgeInsets.only(
+          left: 30,
+          right: 30
+        ),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(15.0),
+                  child: Container(
+                    color: Colors.black12,
+                    height: 100,
+                    width: 100,
+                  ),
+                ),
+                SizedBox(width: 10,),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(15.0),
+                      child: Container(
+                        color: Colors.black12,
+                        height: 20,
+                        width: 240,
+                      ),
+                    ),
+                    SizedBox(height: 5,),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(15.0),
+                      child: Container(
+                        color: Colors.black12,
+                        height: 20,
+                        width: 180,
+                      ),
+                    ),
+                    SizedBox(height: 50)
+                  ],
+                )
+              ],
+            ),
+            SizedBox(height: 10)
+          ],
+        ),
+
+      ),
     );
   }
 }
