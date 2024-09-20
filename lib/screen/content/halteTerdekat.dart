@@ -176,7 +176,6 @@ class _KontenMap extends State<IsiMap>{
 
 // referensi : 
 // https://www.youtube.com/watch?v=mI3QwwwZrn4
-// baru sampai ke menit 9:10. akan d lanjutkan
 class DraggableBottomSheet extends StatefulWidget {
   final Widget anak;
   const DraggableBottomSheet({super.key, required this.anak});
