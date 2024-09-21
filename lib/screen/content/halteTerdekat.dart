@@ -61,36 +61,139 @@ class _KontenMap extends State<IsiMap>{
     return await Geolocator.getCurrentPosition();
   }
 
-
   double latitudenya = 0.0;
   double longitudenya = 0.0;
   MapController? controller;
   bool _isSetLocation = false;
+  bool _isLoading = true;
+  bool _isRefreshed = false;
+
+  Future<void> _drawUserCircle(double radiusnya) async {
+    if (controller != null && _isLoading == false) {
+      // Remove previous circle before drawing a new one
+      await controller?.removeCircle('circle0');
+
+      await controller?.drawCircle(
+        CircleOSM(
+          key: "circle0",
+          centerPoint: GeoPoint(latitude: latitudenya, longitude: longitudenya),
+          radius: radiusnya, //adjust disini
+          color: Colors.blue.withOpacity(0.3),
+          borderColor: Colors.blue,
+          strokeWidth: 0.1,
+        ),
+      );
+    }
+  }
+
+  var prevLatitude = [];
+  var prevLongitude = [];
+
+  Future<void> _determineAndSetPosition({String? isUpdated}) async {
+    try {
+      var posisi = await _determinePosition();
+
+      //if(!_isSetLocation){
+        setState(()  {
+          latitudenya = posisi.latitude;
+          longitudenya = posisi.longitude;
+
+          if(isUpdated == "ya"){
+            if (prevLatitude.isNotEmpty && prevLongitude.isNotEmpty) {
+                print("Latitude lama ${prevLatitude[0]}");
+
+              // controller!.changeLocationMarker(
+              //   oldLocation: GeoPoint(latitude: prevLatitude[0], longitude: prevLongitude[0]), 
+              //   newLocation: GeoPoint(latitude: latitudenya, longitude: longitudenya)
+              // );
+
+              controller!.removeMarker(
+                GeoPoint(latitude: prevLatitude[0], longitude: prevLongitude[0])
+              );
+
+              controller!.changeLocation(
+                GeoPoint(latitude: latitudenya, longitude: longitudenya)
+              );
+
+              // Update previous location
+              prevLatitude[0] = latitudenya;
+              prevLongitude[0] = longitudenya;
+            } else {
+              print("Previous location data is not available.");
+            }
+
+          
+          }else{
+            controller = MapController.withPosition(
+              initPosition: GeoPoint(
+                latitude: latitudenya, 
+                longitude: longitudenya
+              )
+            );
+
+            prevLatitude.add(latitudenya);
+            prevLongitude.add(longitudenya);
+          }
+
+          double radius = _calculateRadiusBasedOnLocation(latitudenya, longitudenya);
+
+          _drawUserCircle(radius);
+          
+          _isLoading = false; // loading kelar.
+          // _isSetLocation = true; //set true, biar if ini gk ke eksekusi lagi
+
+        });
+      //}
+    } catch (e) {
+      print("Error Determine Location $e");
+    }
+  }
+
 
   // fungsi update posisi pas onload
   @override
   void initState(){
     super.initState();
 
-    //fungsi async await yg d buat diatas.
-    _determinePosition().then((posisi) {
-      if(!_isSetLocation){ //buat boolean supaya cmn setLocation 1x aja, gk ush auto refresh
-        setState(() {
-          latitudenya = posisi.latitude;
-          longitudenya = posisi.longitude;
+    _determineAndSetPosition();
 
-          controller = MapController.withPosition(
-            initPosition: GeoPoint(
-              latitude: latitudenya, 
-              longitude: longitudenya
-            )
-          );
-        });
+    //fungsi yg d buat di _determinePosition.
+    // fungsi ini sudah diconvert jadi async await.
+    // _determinePosition().then((posisi) {
+    //   if(!_isSetLocation){ //buat boolean supaya cmn setLocation 1x aja, gk ush auto refresh
+    //     setState(() {
+    //       latitudenya = posisi.latitude;
+    //       longitudenya = posisi.longitude;
 
-        _isSetLocation = true; //set true, biar if ini gk ke eksekusi lagi
-      }
-    }); 
+    //       controller = MapController.withPosition(
+    //         initPosition: GeoPoint(
+    //           latitude: latitudenya, 
+    //           longitude: longitudenya
+    //         )
+    //       );
+
+    //       double radius = _calculateRadiusBasedOnLocation(latitudenya, longitudenya);
+
+    //       _drawUserCircle(radius);
+          
+    //       _isLoading = false; // loading kelar.
+    //       _isSetLocation = true; //set true, biar if ini gk ke eksekusi lagi
+
+    //     });
+    //   }
+    // }); 
   }
+
+  double _calculateRadiusBasedOnLocation(double latitude, double longitude){
+    if (latitude > 0){
+      return 1200.0; // set a bigger radius for positive latitudes
+    }else{
+      return 800.0; //set a smaller radius for negative latitudes
+    }
+  }
+
+  bool buatEnableTracking = true;
+  bool buatUnfollowUser = false;
   
   // referensi ada didokumentasi flutter_osm_plugin
   // install di pubspec.yaml : 
@@ -99,7 +202,7 @@ class _KontenMap extends State<IsiMap>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SizedBox(
+      body: _isLoading ? Center(child: CircularProgressIndicator()) : SizedBox(
         height: MediaQuery.of(context).size.height,
         child: Stack(
           children: [
@@ -108,45 +211,44 @@ class _KontenMap extends State<IsiMap>{
                 child: OSMFlutter(
                   controller: controller!,
                   osmOption: OSMOption(
-                    userTrackingOption: const UserTrackingOption(
-                      enableTracking: true,
-                      unFollowUser: false
+                    userTrackingOption: UserTrackingOption(
+                      enableTracking: buatEnableTracking,
+                      unFollowUser: buatUnfollowUser,
+                      
                     ),
-                    zoomOption: const ZoomOption(
+                    zoomOption:  ZoomOption(
                       initZoom: 8,
-                      minZoomLevel: 3,
+                      minZoomLevel: 12,
                       maxZoomLevel: 19,
                       stepZoom: 1.0
                     ),
-                    userLocationMarker: UserLocationMaker(
-                      personMarker: const MarkerIcon(
-                        icon: Icon(
-                          Icons.location_on,
-                          color: Colors.red,
-                          size: 120,
-                        ),
-                      ), 
-                      directionArrowMarker: const MarkerIcon(
-                        icon: Icon(
-                          Icons.location_on,
-                          size: 1,
-                        ),
-                      ),
-
-                    ),
+                    // userLocationMarker: (!_isRefreshed) ? UserLocationMaker(
+                    //   personMarker: const MarkerIcon(
+                    //     icon: Icon(
+                    //         Icons.location_history_rounded,
+                    //         color: Colors.red,
+                    //         size: 48,
+                    //     ),
+                    //   ),
+                    //   directionArrowMarker: const MarkerIcon(
+                    //     icon: Icon(
+                    //         Icons.location_on,
+                    //         size: 48,
+                    //         color: Colors.blue,
+                    //     ),
+                    //   )
+                    // ) : null,
                     roadConfiguration: RoadOption(
                       roadColor: Colors.yellowAccent,
                     ),
-                    markerOption: MarkerOption(
-                      defaultMarker: MarkerIcon(
-                          icon: Icon(
-                            Icons.person_pin_circle,
-                            color: Colors.blue,
-                            size: 56,
-                          ),
-                      )
-                    ),
+
                   ),
+                  onMapIsReady: (isReady) {
+                    if(isReady){
+                      double radius = _calculateRadiusBasedOnLocation(latitudenya, longitudenya);
+                      _drawUserCircle(radius);
+                    }
+                  },
                 ),
               ),
             //end if
@@ -156,15 +258,35 @@ class _KontenMap extends State<IsiMap>{
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Future.delayed(const Duration(milliseconds: 800), () {
-            _determinePosition().then((posisi) {
-              setState(() {
-                latitudenya = posisi.latitude;
-                longitudenya = posisi.longitude;
-                controller!.changeLocation(
-                  GeoPoint(latitude: latitudenya, longitude: longitudenya)
-                );
-              });
-            });
+            _isLoading = true;
+            
+
+
+            buatEnableTracking = false;
+            buatUnfollowUser = true;
+
+            _determineAndSetPosition(isUpdated: "ya");
+
+            // setState(() {
+            //   buatEnableTracking = false;
+            // });
+
+
+            // _determinePosition().then((posisi) {
+            //   setState(() {
+            //     latitudenya = posisi.latitude;
+            //     longitudenya = posisi.longitude;
+                // controller!.changeLocation(
+                //   GeoPoint(latitude: latitudenya, longitude: longitudenya)
+                // );
+
+            //     double radius = _calculateRadiusBasedOnLocation(latitudenya, longitudenya);
+
+            //     _isRefreshed = true;
+
+            //     _drawUserCircle(radius);
+            //   });
+            //});
           });
         },
         child: Icon(Icons.refresh),
