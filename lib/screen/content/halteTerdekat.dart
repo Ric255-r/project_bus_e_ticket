@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
 import 'package:geolocator/geolocator.dart';
+import 'pesanTiket.dart';
 
 class Halteterdekat extends StatelessWidget {
   @override
@@ -16,10 +17,7 @@ class Halteterdekat extends StatelessWidget {
           anak: Column(
             children: [
               UiBottomSheet(),
-              UiBottomSheet(),
-              UiBottomSheet(),
-              UiBottomSheet(),
-              UiBottomSheet(),
+
             ],
           )
         ),
@@ -352,7 +350,7 @@ class _DraggableBottomSheetState extends State<DraggableBottomSheet> {
           builder: (builder, constraint) {
             return DraggableScrollableSheet(
               key: sheet,
-              initialChildSize: 0.5,
+              initialChildSize: 0.35,
               maxChildSize: 0.7, //ubah jd 1 klo mw cover 1 screen
               minChildSize: 0,
               expand: true,
@@ -446,35 +444,69 @@ class UiBottomSheet extends StatelessWidget {
           children: [
             Row(
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(15.0),
-                  child: Container(
-                    color: Colors.black12,
-                    height: 100,
-                    width: 100,
+                Padding(
+                  padding: EdgeInsets.only(
+                    bottom: 35
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(15.0),
+                    child: Container(
+                      color: Colors.black12,
+                      height: 110,
+                      width: 110,
+                    ),
                   ),
                 ),
+
                 SizedBox(width: 10,),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(15.0),
-                      child: Container(
-                        color: Colors.black12,
-                        height: 20,
-                        width: 240,
+                    Text(
+                      "Damri", 
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500
                       ),
                     ),
                     SizedBox(height: 5,),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(15.0),
-                      child: Container(
-                        color: Colors.black12,
-                        height: 20,
-                        width: 180,
-                      ),
+                    Text(
+                      "Sekitar 10km"
                     ),
+                    SizedBox(height: 5,),
+                    MaterialButton(
+                      color: Colors.blue,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                          context, 
+                          MaterialPageRoute(
+                            builder: (context) => Pesantiket(existsHalte: "Damri")
+                          )
+                        );
+                      },
+                      child: Text("Pergi Ke Sini"),
+                    ),
+
+                    // ClipRRect(
+                    //   borderRadius: BorderRadius.circular(15.0),
+                    //   child: Container(
+                    //     color: Colors.black12,
+                    //     height: 20,
+                    //     width: 240,
+                    //   ),
+                    // ),
+                    // SizedBox(height: 5,),
+                    // ClipRRect(
+                    //   borderRadius: BorderRadius.circular(15.0),
+                    //   child: Container(
+                    //     color: Colors.black12,
+                    //     height: 20,
+                    //     width: 180,
+                    //   ),
+                    // ),
                     SizedBox(height: 50)
                   ],
                 )

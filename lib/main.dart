@@ -118,7 +118,7 @@ class _FirstScreen extends State {
       // setting php artisan kek gini
       // php artisan serve --host=192.168.150.166
       // wajib pake host. kalo kaga dia g jln.
-      final response = await dio.post('http://192.168.1.17:8000/api/login', 
+      final response = await dio.post('http://192.168.100.59:8000/api/login', 
         data: {
           'email': tfnum1.text,
           'password': tfnum2.text
