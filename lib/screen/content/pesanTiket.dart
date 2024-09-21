@@ -51,13 +51,13 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
-    super.dispose();
     txtbox1.dispose();
     txtbox2.dispose();
     txtbox3.dispose();
     txtbox4.dispose();
     txtbox5.dispose();
+
+    super.dispose();
   }
 
   @override
@@ -159,19 +159,27 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
 
                       const Text("Jasa Bis"),
                       Container(
-                        child: TextField(
-                          controller: busPilihan,
-                          decoration: const InputDecoration(
-                            hintText: 'Bus Pilihan',
-                            hintStyle: TextStyle(
-                              fontWeight: FontWeight.w200
-                            ),
-                            prefixIcon: Icon(
-                              Icons.location_city,
-                              size: 28.0,
+                        child: InkWell(
+                          onTap: () {
+                            _dialogBuilder(context);
+                          },
+                          child: IgnorePointer( //mencegah textfield interactive
+                            child: TextField(
+                              readOnly: true,
+                              controller: busPilihan,
+                              decoration: const InputDecoration(
+                                hintText: 'Bus Pilihan',
+                                hintStyle: TextStyle(
+                                  fontWeight: FontWeight.w200
+                                ),
+                                prefixIcon: Icon(
+                                  Icons.location_city,
+                                  size: 28.0,
+                                ),
+                              )
                             ),
                           )
-                        ),
+                        )
                       ),
                       const SizedBox(height: 20,),
 
@@ -320,6 +328,130 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
           ],
         ),
       ),
+    );
+  }
+
+  final ScrollController _scrollController = ScrollController();
+
+  Future<void> _dialogBuilder(BuildContext context) async {
+    return showDialog(
+      context: context, 
+      builder: (BuildContext context){
+        return AlertDialog(
+          scrollable: true,
+          title: Center(
+            child: const Text("Jasa Bis Tersedia"),
+          ),
+          content: Container(
+            width: MediaQuery.of(context).size.width * 0.8,
+            height: MediaQuery.of(context).size.height * 0.6,
+            child: Scrollbar( // ini buat nunjukin scrollbar
+              thumbVisibility: true,
+              controller: _scrollController,
+              child: ListView.builder( //pakai builder. awalnya pake singlechildscrollview
+                controller: _scrollController,
+                itemCount: 1, // hitung peritem = 1 biji
+                itemBuilder: (context, index){
+                  return Column(
+                    children: [
+                      IsiModalBis(),
+                      IsiModalBis(),
+                      IsiModalBis(),
+                      IsiModalBis(),
+                      IsiModalBis(),
+                    ],
+                  );
+                }
+              )
+            )
+          ),
+          actions: [
+            TextButton(
+              style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.labelLarge
+              ),
+              onPressed: (){
+                Navigator.of(context).pop();
+              }, 
+              child: const Text("Disable"),
+              
+            ),
+            TextButton(
+              style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: const Text('Enable'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      }
+    );
+  }
+}
+
+class IsiModalBis extends StatefulWidget {
+  const IsiModalBis({super.key});
+
+  @override
+  State<IsiModalBis> createState() => _IsiModalBisState();
+}
+
+class _IsiModalBisState extends State<IsiModalBis> {
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Padding(
+          padding: EdgeInsets.only(
+            bottom: 35
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(15.0),
+            child: Container(
+              color: Colors.black12,
+              height: 110,
+              width: 110,
+            ),
+          ),
+        ),
+        SizedBox(width: 10,),
+
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Damri", 
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500
+              ),
+            ),
+            SizedBox(height: 5,),
+            Text(
+              "Sekitar 10km"
+            ),
+            SizedBox(height: 5,),
+            MaterialButton(
+              color: Colors.blue,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10)
+              ),
+              onPressed: () {
+                Navigator.push(
+                  context, 
+                  MaterialPageRoute(
+                    builder: (context) => Pesantiket(existsHalte: "Damri")
+                  )
+                );
+              },
+              child: Text("Pergi Ke Sini"),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
