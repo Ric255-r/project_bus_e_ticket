@@ -1,4 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
+import 'package:intl/intl.dart'; //buat convert date
+
+// biar bisa akses variabel/fungsi dari class ini
+final GlobalKey<_BodyPesanTiketState> bodyPesanTiketKey = GlobalKey<_BodyPesanTiketState>();
 
 class Pesantiket extends StatelessWidget {
   // Buat Nullable parameter kalo dia dipanggil dari halteTerdekat.dart
@@ -32,33 +40,65 @@ class BodyPesanTiket extends StatefulWidget {
   // Buat parameter utk ambil dari statelesswidget
   final String? existsHalteStless;
 
-  BodyPesanTiket({this.existsHalteStless});
+  // assign key global ke sini. supaya bisa akses variable/fungsi dari state ini.
+  BodyPesanTiket({Key? key, this.existsHalteStless}) : super(key: bodyPesanTiketKey);
 
   @override
   State<BodyPesanTiket> createState() => _BodyPesanTiketState();
 }
 
 class _BodyPesanTiketState extends State<BodyPesanTiket> {
-  TextEditingController txtbox1 = TextEditingController();
-  TextEditingController txtbox2 = TextEditingController();
-  TextEditingController txtbox3 = TextEditingController();
-  TextEditingController txtbox4 = TextEditingController();
-  TextEditingController txtbox5 = TextEditingController();
+  TextEditingController txtKotaAsal = TextEditingController();
+  TextEditingController txtKotaTujuan = TextEditingController();
+  TextEditingController txtTglBrkt = TextEditingController();
+  TextEditingController txtTglBalik = TextEditingController();
+  TextEditingController txtJlhPenumpang = TextEditingController();
+  TextEditingController txtKlsBis = TextEditingController();
   TextEditingController busPilihan = TextEditingController();
-
-
   bool ppSwitch = false;
+  bool isCheckHarga = false;
+  String changeUbahTextBis = "";
+
+  void ubahTextBis(String value){
+    setState(() {
+      changeUbahTextBis = value;
+      busPilihan.text = value;
+    });
+  }
+
+  bool showErrorText = false;
+
+  void fnShowErrorText(){
+    setState(() {
+      showErrorText = true;
+    });
+
+    //bikin timer utk switch kondisinya lagi slama 3 detik;
+    Timer(Duration(seconds: 3), () {
+      setState(() {
+        showErrorText = false;
+      });
+    });
+  }
 
   @override
   void dispose() {
-    txtbox1.dispose();
-    txtbox2.dispose();
-    txtbox3.dispose();
-    txtbox4.dispose();
-    txtbox5.dispose();
+    // ubah value variable kalo user keluar dr page ini : 
+    changeUbahTextBis = "";
+    isCheckHarga = false;
+
+    // dispose semua value controller
+    txtKotaAsal.dispose();
+    txtKotaTujuan.dispose();
+    txtTglBrkt.dispose();
+    txtTglBalik.dispose();
+    txtJlhPenumpang.dispose();
+    txtKlsBis.dispose();
 
     super.dispose();
   }
+
+  List<String> kota = ["Pontianak", "Singkawang", "Sambas"];
 
   @override
   Widget build(BuildContext context) {
@@ -68,9 +108,16 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
       busPilihan.text = widget.existsHalteStless!;
     }
 
+    if(changeUbahTextBis != ""){
+      busPilihan.text = changeUbahTextBis;
+    }
+
+    var selectedCity;
+    var selectedCityTujuan;
+
     return SingleChildScrollView(
       child: SizedBox(
-        height: (screenHeight <= 700) ? screenHeight + 200 : screenHeight,
+        height: (screenHeight <= 700) ? screenHeight + 800 : screenHeight * 1.5,
         width: MediaQuery.of(context).size.width,
         child: Stack(
           children: [
@@ -115,53 +162,92 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                 // klo g die error
                 child: Container(
                   padding: EdgeInsets.all(16),
-                  height: screenHeight,
+                  height: (screenHeight <= 700) ? screenHeight + 50 : screenHeight - 400,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start, // buat ratakiri
                     children: [
-                      Text("Dari"),
+                      // Kode Awal
+                      // Text("Dari"),
+                      // Container(
+                      //   child: TextField(
+                      //     controller: txtKotaAsal,
+                      //     decoration: const InputDecoration(
+                      //       hintText: 'Masukkan KOta Asal',
+                      //       hintStyle: TextStyle(
+                      //         fontWeight: FontWeight.w200
+                      //       ),
+                      //       prefixIcon: Icon(
+                      //         Icons.location_city,
+                      //         size: 28.0,
+                      //       ),
+                      //     )
+                      //   ),
+                      // ),
 
-                      Container(
-                        child: TextField(
-                          controller: txtbox1,
-                          decoration: const InputDecoration(
-                            hintText: 'Masukkan KOta Asal',
-                            hintStyle: TextStyle(
-                              fontWeight: FontWeight.w200
-                            ),
-                            prefixIcon: Icon(
-                              Icons.location_city,
-                              size: 28.0,
-                            ),
-                          )
+                      // Kode Baru
+                      Text("Dari"),
+                      DropdownButtonFormField<String>(
+                        value: selectedCity,
+                        hint: Text('Masukkan Kota Asal'),
+                        decoration: InputDecoration(
+                          prefixIcon: Icon(Icons.location_city),
                         ),
+                        items: kota.map((String city) {
+                          return DropdownMenuItem<String>(
+                            value: city,
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                top: 3
+                              ),
+                              child: Text(city),
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            selectedCity = newValue;
+                            txtKotaAsal.text = (newValue == null) ? "" : newValue;
+                          });
+                        },
                       ),
+                      
                       const SizedBox(height: 20,),
 
                       const Text("Ke"),
-                      Container(
-                        child: TextField(
-                          controller: txtbox2,
-                          decoration: const InputDecoration(
-                            hintText: 'Masukkan KOta Tujuan',
-                            hintStyle: TextStyle(
-                              fontWeight: FontWeight.w200
-                            ),
-                            prefixIcon: Icon(
-                              Icons.location_city,
-                              size: 28.0,
-                            ),
-                          )
+                      DropdownButtonFormField<String>(
+                        value: selectedCityTujuan,
+                        hint: const Text("Masukkan Kota Tujuan"),
+                        decoration: const InputDecoration(
+                          prefixIcon: Icon(Icons.location_city)
                         ),
+                        items: kota.map((String isiKota) {
+                          return DropdownMenuItem(
+                            value: isiKota,
+                            child: Padding(
+                              padding: EdgeInsets.only(top: 4),
+                              child: Text(isiKota),
+                            )
+                          );
+                        }).toList(), 
+
+                        onChanged: (String? newValue){
+                          setState(() {
+                            selectedCityTujuan = newValue;
+                            txtKotaTujuan.text = (newValue == null) ? "" : newValue;
+                          });
+                        }
                       ),
                       const SizedBox(height: 20,),
-
 
                       const Text("Jasa Bis"),
                       Container(
                         child: InkWell(
                           onTap: () {
-                            _dialogBuilder(context);
+                            if(txtKotaAsal.text.isEmpty || txtKotaTujuan.text.isEmpty){
+                              fnShowErrorText();
+                            }else{
+                              _dialogBuilder(context);
+                            }
                           },
                           child: IgnorePointer( //mencegah textfield interactive
                             child: TextField(
@@ -183,6 +269,19 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                       ),
                       const SizedBox(height: 20,),
 
+                      if(showErrorText)
+                      AnimatedOpacity(
+                        opacity: showErrorText ? 1.0 : 0.0, 
+                        duration: Duration(milliseconds: 200),
+                        child: Padding(
+                          padding: EdgeInsets.only(bottom: 20),
+                          child: const Text(
+                            "Kota Asal / Kota Tujuan Tidak Boleh Kosong!",
+                            style: TextStyle(color: Colors.red),
+                          ),
+                        ),
+                      ),
+
                       const Row(
                         children: [
                           Expanded(
@@ -193,35 +292,42 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                           )
                         ],
                       ),
-
                       Container(
-                        child: TextField(
-                          controller: txtbox3,
-                          decoration: InputDecoration(
-                            hintText: 'Input Tgl Berangkat',
-                            hintStyle: TextStyle(
-                              fontWeight: FontWeight.w200
-                            ),
-                            prefixIcon: const Icon(
-                              Icons.account_box,
-                              size: 28.0,
-                            ),
-                            suffixIcon: Padding(
-                              padding: EdgeInsets.only(
-                                right: 10
+                        child: Stack(
+                          children: [
+                            TextField(
+                              controller: txtTglBrkt,
+                              onTap: () {
+                                showDatePickerDialog(context, "pergi");
+                              },
+                              readOnly: true,
+                              decoration: InputDecoration(
+                                hintText: 'Input Tgl Berangkat',
+                                hintStyle: TextStyle(
+                                  fontWeight: FontWeight.w200,
+                                ),
+                                prefixIcon: const Icon(
+                                  Icons.account_box,
+                                  size: 28.0,
+                                ),
+                                suffixIcon: Padding(
+                                  padding: EdgeInsets.only(right: 10),
+                                  child: Switch(
+                                    value: ppSwitch,
+                                    onChanged: (bool value) {
+                                      setState(() {
+                                        ppSwitch = value;
+                                      });
+                                    },
+                                  ),
+                                ),
                               ),
-                              child: Switch(
-                                value: ppSwitch, 
-                                onChanged: (bool value){
-                                  setState(() {
-                                    ppSwitch = value;
-                                  });
-                                }
-                              ),
-                            )
-                          )
+                            ),
+                          ],
                         ),
                       ),
+
+
 
                       if(!ppSwitch)
                       const SizedBox(height: 20,),
@@ -232,9 +338,13 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                           Text("Input Tanggal Balik"),
                           Container(
                             child: TextField(
-                              controller: txtbox3,
+                              controller: txtTglBalik,
+                              readOnly: true,
+                              onTap: () {
+                                showDatePickerDialog(context, "pulang");
+                              },
                               decoration: const InputDecoration(
-                                hintText: 'Input Tgl Berangkat',
+                                hintText: 'Input Tgl Balik',
                                 hintStyle: TextStyle(
                                   fontWeight: FontWeight.w200
                                 ),
@@ -256,16 +366,20 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text("Bla"),
+                                Text("Penumpang"),
                                 Padding(
                                   padding: EdgeInsets.only(
                                     right: 10
                                   ),
                                   child: Container(
                                     child: TextField(
-                                      controller: txtbox4,
+                                      keyboardType: TextInputType.numberWithOptions(decimal: false),
+                                      inputFormatters: [
+                                        FilteringTextInputFormatter.digitsOnly
+                                      ],
+                                      controller: txtJlhPenumpang,
                                       decoration: const InputDecoration(
-                                        hintText: 'Kota Asal',
+                                        hintText: '... Penumpang',
                                         hintStyle: TextStyle(
                                           fontWeight: FontWeight.w200
                                         ),
@@ -284,13 +398,13 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text("Bla"),
+                                Text("Kelas Bis"),
                                 
                                 Container(
                                   child: TextField(
-                                    controller: txtbox5,
+                                    controller: txtKlsBis,
                                     decoration: const InputDecoration(
-                                      hintText: 'Kota Asal',
+                                      hintText: 'Economy/Executive',
                                       hintStyle: TextStyle(
                                         fontWeight: FontWeight.w200
                                       ),
@@ -311,10 +425,12 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
 
                       MaterialButton(
                         onPressed: () {
-
+                          setState(() {
+                            isCheckHarga = true;
+                          });
                         },
                         minWidth: MediaQuery.of(context).size.width,
-                        child: Text("Simpan"),
+                        child: Text("Check Harga"),
                         color: Colors.blue,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10)
@@ -324,11 +440,191 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                   ),
                 ),
               )
+            ),
+          
+            SizedBox(height: 20,),
+
+            if(isCheckHarga)
+            Positioned(
+              top: (screenHeight <= 700) ? screenHeight + 350 : screenHeight - 120,
+              left: 20,
+              right: 20,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      spreadRadius: 5,
+                      blurRadius: 7,
+                      offset: Offset(0, 3)
+                    )
+                  ],
+                ),
+                
+                child: Column(
+                  children: [
+                    SizedBox(height: 20,),
+
+                    Text("Detail Pemesanan"),
+
+                    SizedBox(height: 10,),
+
+                    Container(
+                      width: double.infinity, // buat datatable ambil fullwidth dari parent
+                      child: DataTable(
+                        columnSpacing: 30,
+                        dataRowMinHeight: 50, // Minimum height for each row
+                        dataRowMaxHeight: 100, // Maximum height for each row
+                        columns: const [
+                          DataColumn(
+                            label: Expanded(
+                              child: Text(
+                                "Jasa / \nKelas Bis",
+                                style: TextStyle(fontSize: 15),
+                              ),
+                            ),
+                          ),
+                          DataColumn(
+                            label: Expanded(
+                              child: Text(
+                                "Destinasi",
+                                style: TextStyle(fontSize: 15),
+                              ),
+                            ),
+                          ),
+                          DataColumn(
+                            //sengaja pake sizebox biar widthnya kecil. g bth space byk
+                            label: SizedBox(
+                              width: 10,
+                              child: Icon(Icons.people_alt_outlined)
+
+                            )
+                          ),
+                          DataColumn(
+                            label: Expanded(
+                              child: Text(
+                                "Jlh Hari",
+                                style: TextStyle(fontSize: 15),
+                              ),
+                            ),
+                          ),
+                          DataColumn(
+                            label: Expanded(
+                              child: Text(
+                                "Biaya",
+                                style: TextStyle(fontSize: 15),
+                              ),
+                            ),
+                          ),
+                        ],
+                        rows: [
+                          DataRow(
+                            cells: <DataCell>[
+                              DataCell(
+                                Expanded(
+                                  //width: 70,
+                                  child: Text("${busPilihan.text} / ${txtKlsBis.text}"),
+                                )
+                              ),
+                              DataCell(
+                                Expanded(
+                                  //width: 100,
+                                  child: Text("${txtKotaAsal.text} -> ${txtKotaTujuan.text}"),
+                                )
+                              ),
+                              DataCell(
+                                SizedBox(
+                                  width: 20,
+                                  child: Text(txtJlhPenumpang.text),
+                                )
+                              ),
+                              DataCell(
+                                Expanded(
+                                  //width: 75,
+                                  child: Text("${txtTglBrkt.text}\n${txtTglBalik.text}"),
+                                )
+                              ),
+                              DataCell(
+                                SizedBox(
+                                  width: 120,
+                                  child: Text("Rp. 100.000", softWrap: false,),
+                                )
+                              ),
+                            ],
+                          ),
+                          DataRow(
+                            cells: <DataCell>[
+                              DataCell(Text("")),
+                              DataCell(Text("")),
+                              DataCell(Text("")),
+                              DataCell(Text("Rincian Biaya : ")),
+                              DataCell(Text("")),
+                            ],
+                          ),
+                          DataRow(
+                            cells: <DataCell>[
+                              DataCell(Text("")),
+                              DataCell(Text("")),
+                              DataCell(Text("")),
+                              DataCell(Text("Rincian Biaya : ")),
+                              DataCell(Text("")),
+                            ],
+                          ),
+                        ],
+                      ),
+                    )
+
+
+                  ],
+                ),
+              ),
             )
           ],
         ),
       ),
     );
+  }
+
+  List<DataRow> _createRows() {
+    return [
+      DataRow(
+        cells: <DataCell>[
+          DataCell(Text("Bus 1 / Class A")),
+          DataCell(Text("City A -> City B")),
+          DataCell(Text("50")),
+          DataCell(Text("2024-09-22\n2024-09-23")),
+          DataCell(Text("Rp. 100.000")),
+        ],
+      ),
+      DataRow(
+        cells: <DataCell>[
+          DataCell(Text("Bus 2 / Class B")),
+          DataCell(Text("City C -> City D")),
+          DataCell(Text("30")),
+          DataCell(Text("2024-09-24\n2024-09-25")),
+          DataCell(Text("Rp. 150.000")),
+        ],
+        color: MaterialStateProperty.resolveWith<Color?>(
+          (Set<MaterialState> states) {
+            if (states.contains(MaterialState.selected)) {
+              return Theme.of(context).colorScheme.primary.withOpacity(0.08);
+            }
+            return null; // Use the default value.
+          },
+        ),
+      ),
+      DataRow(
+        cells: <DataCell>[
+          DataCell(Text("Bus 3 / Class C")),
+          DataCell(Text("City E -> City F")),
+          DataCell(Text("40")),
+          DataCell(Text("2024-09-26\n2024-09-27")),
+          DataCell(Text("Rp. 200.000")),
+        ],
+      ),
+    ];
   }
 
   final ScrollController _scrollController = ScrollController();
@@ -354,11 +650,12 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                 itemBuilder: (context, index){
                   return Column(
                     children: [
-                      IsiModalBis(),
-                      IsiModalBis(),
-                      IsiModalBis(),
-                      IsiModalBis(),
-                      IsiModalBis(),
+                      IsiModalBis(kotaAsal: txtKotaAsal.text, kotaTujuan: txtKotaTujuan.text,),
+                      IsiModalBis(kotaAsal: txtKotaAsal.text, kotaTujuan: txtKotaTujuan.text,),
+                      IsiModalBis(kotaAsal: txtKotaAsal.text, kotaTujuan: txtKotaTujuan.text,),
+                      IsiModalBis(kotaAsal: txtKotaAsal.text, kotaTujuan: txtKotaTujuan.text,),
+                      IsiModalBis(kotaAsal: txtKotaAsal.text, kotaTujuan: txtKotaTujuan.text,),
+
                     ],
                   );
                 }
@@ -371,7 +668,7 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                 textStyle: Theme.of(context).textTheme.labelLarge
               ),
               onPressed: (){
-                Navigator.of(context).pop();
+                Navigator.of(context).pop("disable"); // ini return result
               }, 
               child: const Text("Disable"),
               
@@ -382,18 +679,121 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
               ),
               child: const Text('Enable'),
               onPressed: () {
-                Navigator.of(context).pop();
+                Navigator.of(context).pop("Enable"); // ini return result
               },
             ),
           ],
+        );
+      }
+    ).then((hasil) {
+      if(hasil == "disable"){
+        print("User Click Disable");
+      }else if(hasil == "Enable"){
+        print("User Click Enable");
+      }else{ // kondisi klo user keluar dr modal tanpa pilih apapun
+        print("User g pilih apa2");
+      }
+    });
+  }
+
+  Future<void> showDatePickerDialog(BuildContext context, String? mode) async {
+    String statusPp = "";
+    DateTime? selectedDate;
+
+    if(ppSwitch){
+      statusPp = "Tanggal Pulang Pergi";
+    }else{
+      if(mode == "pergi"){
+        statusPp = "Tanggal Pergi";
+      }else{
+        statusPp = "Tanggal Pulang";
+      }
+    }
+
+    return showDialog(
+      context: context, 
+      builder: (BuildContext context){
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          title: Center(
+            child: Column(
+              children: [
+                Text("Pilih $statusPp", style: TextStyle(fontSize: 18),),
+
+                SizedBox(height: 15,),
+                
+                Container(
+                  decoration: const BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(
+                        color: Colors.black87,
+                        width: 0.5
+                      )
+                    )
+                  ),
+                )
+              ],
+            ),
+          ),
+          content: Container(
+            width: 300, // Set a fixed width
+            height: 400, // Set a fixed height
+            child: SfDateRangePicker(
+              headerHeight: 50,
+              showNavigationArrow: true,
+              minDate: (mode == "pergi") ? DateTime.now() : DateTime.now().add(Duration(days: 1)),
+              backgroundColor: Colors.white,
+              headerStyle: const DateRangePickerHeaderStyle(
+                backgroundColor: Colors.white,
+                textAlign: TextAlign.center,
+                textStyle: TextStyle(
+                  fontStyle: FontStyle.normal,
+                  fontSize: 20,
+                  letterSpacing: 1,
+                  color: Colors.black,
+                )
+              ),
+              onSelectionChanged: (DateRangePickerSelectionChangedArgs args) {
+                selectedDate = args.value;
+                var formattedDate = DateFormat('dd-MM-yyyy').format(selectedDate!);
+                
+                if(ppSwitch){
+                  txtTglBrkt.text = formattedDate;
+                  txtTglBalik.text = formattedDate;
+                }else{
+                  if(mode == "pergi"){
+                    txtTglBrkt.text = formattedDate;
+                  }else{
+                    txtTglBalik.text = formattedDate;
+                  }
+                }
+
+                Navigator.of(context).pop();
+                //print(formattedDate);
+              },
+            ),
+          ),
+          // actions: [
+          //   TextButton(
+          //     onPressed: () {
+          //       Navigator.of(context).pop();
+          //     },
+          //     child: const Text("OK")
+          //   )
+          // ],
         );
       }
     );
   }
 }
 
+
+// class buat isi modal
 class IsiModalBis extends StatefulWidget {
-  const IsiModalBis({super.key});
+  var kotaAsal;
+  var kotaTujuan;
+
+  IsiModalBis({super.key, this.kotaAsal, this.kotaTujuan});
 
   @override
   State<IsiModalBis> createState() => _IsiModalBisState();
@@ -431,7 +831,7 @@ class _IsiModalBisState extends State<IsiModalBis> {
             ),
             SizedBox(height: 5,),
             Text(
-              "Sekitar 10km"
+              "${widget.kotaAsal} -> ${widget.kotaTujuan}"
             ),
             SizedBox(height: 5,),
             MaterialButton(
@@ -440,12 +840,9 @@ class _IsiModalBisState extends State<IsiModalBis> {
                 borderRadius: BorderRadius.circular(10)
               ),
               onPressed: () {
-                Navigator.push(
-                  context, 
-                  MaterialPageRoute(
-                    builder: (context) => Pesantiket(existsHalte: "Damri")
-                  )
-                );
+                bodyPesanTiketKey.currentState?.ubahTextBis("Damriku"); // akses fungsi di kls lain.
+
+                Navigator.of(context).pop();
               },
               child: Text("Pergi Ke Sini"),
             ),
