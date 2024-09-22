@@ -472,111 +472,58 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                     SizedBox(height: 10,),
 
                     Container(
-                      width: double.infinity, // buat datatable ambil fullwidth dari parent
-                      child: DataTable(
-                        columnSpacing: 30,
-                        dataRowMinHeight: 50, // Minimum height for each row
-                        dataRowMaxHeight: 100, // Maximum height for each row
-                        columns: const [
-                          DataColumn(
-                            label: Expanded(
-                              child: Text(
-                                "Jasa / \nKelas Bis",
-                                style: TextStyle(fontSize: 15),
-                              ),
-                            ),
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Header Row (Simulating DataTable Columns)
+                          Row(
+                            children: [
+                              _buildHeaderCell('Bus / Class'),
+                              _buildHeaderCell('Route'),
+                              _buildHeaderCell('Passengers'),
+                              _buildHeaderCell('Dates'),
+                              _buildHeaderCell('Cost'),
+                            ],
                           ),
-                          DataColumn(
-                            label: Expanded(
-                              child: Text(
-                                "Destinasi",
-                                style: TextStyle(fontSize: 15),
-                              ),
-                            ),
+                          SizedBox(height: 8.0),
+                          
+                          // First Data Row
+                          Row(
+                            children: [
+                              _buildDataCell('Bus 1 / Class A'),
+                              _buildDataCell('City A -> City B'),
+                              _buildDataCell('50'),
+                              _buildDataCell('2024-09-22\n2024-09-23'),
+                              _buildDataCell('Rp. 100.000'),
+                            ],
                           ),
-                          DataColumn(
-                            //sengaja pake sizebox biar widthnya kecil. g bth space byk
-                            label: SizedBox(
-                              width: 10,
-                              child: Icon(Icons.people_alt_outlined)
+                          Divider(), // Bottom border for first row
 
-                            )
-                          ),
-                          DataColumn(
-                            label: Expanded(
-                              child: Text(
-                                "Jlh Hari",
-                                style: TextStyle(fontSize: 15),
-                              ),
-                            ),
-                          ),
-                          DataColumn(
-                            label: Expanded(
-                              child: Text(
-                                "Biaya",
-                                style: TextStyle(fontSize: 15),
-                              ),
-                            ),
-                          ),
-                        ],
-                        rows: [
-                          DataRow(
-                            cells: <DataCell>[
-                              DataCell(
-                                Expanded(
-                                  //width: 70,
-                                  child: Text("${busPilihan.text} / ${txtKlsBis.text}"),
-                                )
-                              ),
-                              DataCell(
-                                Expanded(
-                                  //width: 100,
-                                  child: Text("${txtKotaAsal.text} -> ${txtKotaTujuan.text}"),
-                                )
-                              ),
-                              DataCell(
-                                SizedBox(
-                                  width: 20,
-                                  child: Text(txtJlhPenumpang.text),
-                                )
-                              ),
-                              DataCell(
-                                Expanded(
-                                  //width: 75,
-                                  child: Text("${txtTglBrkt.text}\n${txtTglBalik.text}"),
-                                )
-                              ),
-                              DataCell(
-                                SizedBox(
-                                  width: 120,
-                                  child: Text("Rp. 100.000", softWrap: false,),
-                                )
-                              ),
+                          // Second Data Row (without bottom border)
+                          Row(
+                            children: [
+                              _buildDataCell('Bus 2 / Class B'),
+                              _buildDataCell('City C -> City D'),
+                              _buildDataCell('30'),
+                              _buildDataCell('2024-09-24\n2024-09-25'),
+                              _buildDataCell('Rp. 150.000'),
                             ],
                           ),
-                          DataRow(
-                            cells: <DataCell>[
-                              DataCell(Text("")),
-                              DataCell(Text("")),
-                              DataCell(Text("")),
-                              DataCell(Text("Rincian Biaya : ")),
-                              DataCell(Text("")),
-                            ],
-                          ),
-                          DataRow(
-                            cells: <DataCell>[
-                              DataCell(Text("")),
-                              DataCell(Text("")),
-                              DataCell(Text("")),
-                              DataCell(Text("Rincian Biaya : ")),
-                              DataCell(Text("")),
+                          // No Divider (no bottom border for second row)
+
+                          Row(
+                            children: [
+                              _buildDataCell('Bus 2 / Class B'),
+                              _buildDataCell('City C -> City D'),
+                              _buildDataCell('30'),
+                              _buildDataCell('2024-09-24\n2024-09-25'),
+                              _buildDataCell('Rp. 150.000'),
                             ],
                           ),
                         ],
                       ),
-                    )
-
-
+                    ),
                   ],
                 ),
               ),
@@ -587,44 +534,24 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
     );
   }
 
-  List<DataRow> _createRows() {
-    return [
-      DataRow(
-        cells: <DataCell>[
-          DataCell(Text("Bus 1 / Class A")),
-          DataCell(Text("City A -> City B")),
-          DataCell(Text("50")),
-          DataCell(Text("2024-09-22\n2024-09-23")),
-          DataCell(Text("Rp. 100.000")),
-        ],
+  // Helper method to build header cells
+  Widget _buildHeaderCell(String text) {
+    return Expanded(
+      child: Text(
+        text,
+        style: TextStyle(fontWeight: FontWeight.bold),
       ),
-      DataRow(
-        cells: <DataCell>[
-          DataCell(Text("Bus 2 / Class B")),
-          DataCell(Text("City C -> City D")),
-          DataCell(Text("30")),
-          DataCell(Text("2024-09-24\n2024-09-25")),
-          DataCell(Text("Rp. 150.000")),
-        ],
-        color: MaterialStateProperty.resolveWith<Color?>(
-          (Set<MaterialState> states) {
-            if (states.contains(MaterialState.selected)) {
-              return Theme.of(context).colorScheme.primary.withOpacity(0.08);
-            }
-            return null; // Use the default value.
-          },
-        ),
+    );
+  }
+
+  // Helper method to build data cells
+  Widget _buildDataCell(String text) {
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: Text(text),
       ),
-      DataRow(
-        cells: <DataCell>[
-          DataCell(Text("Bus 3 / Class C")),
-          DataCell(Text("City E -> City F")),
-          DataCell(Text("40")),
-          DataCell(Text("2024-09-26\n2024-09-27")),
-          DataCell(Text("Rp. 200.000")),
-        ],
-      ),
-    ];
+    );
   }
 
   final ScrollController _scrollController = ScrollController();
