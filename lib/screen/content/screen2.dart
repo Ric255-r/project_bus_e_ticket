@@ -83,7 +83,7 @@ class _Kontennya extends State<IsiBody> {
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
-    print(screenHeight);
+    // print(screenHeight);
 
     // return Center(
     //   child: Text('Selamat Datang Di ${widget.dataPassing}'),

@@ -100,9 +100,12 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
 
   List<String> kota = ["Pontianak", "Singkawang", "Sambas"];
 
+  double? screenWidth;
+  
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
+    screenWidth = MediaQuery.of(context).size.width;
 
     if(widget.existsHalteStless != null){
       busPilihan.text = widget.existsHalteStless!;
@@ -124,7 +127,7 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
             Container(
               color: Colors.blue[400],
               height: 300,
-              child:  Center(
+              child: Center(
                 child: Column(
                   children: [
                     SizedBox(height: 30,),
@@ -479,7 +482,7 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                           // Header Row (Simulating DataTable Columns)
                           Row(
                             children: [
-                              _buildHeaderCell('Bus / Class'),
+                              _buildHeaderCell('Bus /\nClass'),
                               _buildHeaderCell('Route'),
                               _buildHeaderCell('Passengers'),
                               _buildHeaderCell('Dates'),
@@ -499,28 +502,97 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                             ],
                           ),
                           Divider(), // Bottom border for first row
-
+                          
+                          // klo mw buat borderbottom, pake divider
                           // Second Data Row (without bottom border)
-                          Row(
-                            children: [
-                              _buildDataCell('Bus 2 / Class B'),
-                              _buildDataCell('City C -> City D'),
-                              _buildDataCell('30'),
-                              _buildDataCell('2024-09-24\n2024-09-25'),
-                              _buildDataCell('Rp. 150.000'),
-                            ],
-                          ),
-                          // No Divider (no bottom border for second row)
+                          // Row(
+                          //   children: [
+                          //     _buildDataCell('Bus 2 / Class B'),
+                          //     _buildDataCell('City C -> City D'),
+                          //     _buildDataCell('30'),
+                          //     _buildDataCell('2024-09-24\n2024-09-25'),
+                          //     _buildDataCell('Rp. 150.000'),
+                          //   ],
+                          // ),
+                          // // No Divider (no bottom border for second row)
 
                           Row(
                             children: [
-                              _buildDataCell('Bus 2 / Class B'),
-                              _buildDataCell('City C -> City D'),
-                              _buildDataCell('30'),
-                              _buildDataCell('2024-09-24\n2024-09-25'),
-                              _buildDataCell('Rp. 150.000'),
+                              _buildDataCell(""),
+                              _buildDataCell(""),
+                              _buildDataCell("Rincian Biaya", modenya: "bold"),
+                              _buildDataCell(""),
+                              _buildDataCell("")
                             ],
                           ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _buildDataCell(""),
+                              _buildDataCell(""),
+                              _buildDataCell('Bis & \nKelas Bis', modenya: "bold"),
+                              _buildDataCell('Damri'),
+                              _buildDataCell('Executive'),
+                            ],
+                          ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _buildDataCell(''),
+                              _buildDataCell(''),
+                              _buildDataCell('Rute', modenya: "bold"),
+                              _buildDataCell('Singkawang'),
+                              _buildDataCell('Sambas'),
+                            ],
+                          ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+
+                            children: [
+                              _buildDataCell(''),
+                              _buildDataCell(''),
+                              _buildDataCell(''),
+                              _buildDataCell('Harga/Hari', modenya: "bold"),
+                              _buildDataCell('Rp.120.000', modenya: "bold"),
+                            ],
+                          ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+
+                            children: [
+                              _buildDataCell(''),
+                              _buildDataCell(''),
+                              _buildDataCell('Penumpang', modenya: "bold"),
+                              _buildDataCell('${txtJlhPenumpang.text}'),
+                              _buildDataCell('Orang'),
+                            ],
+                          ),
+
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+
+                            children: [
+                              _buildDataCell(''),
+                              _buildDataCell(''),
+                              _buildDataCell('Jangka Waktu', modenya: "bold"),
+                              _buildDataCell('${txtJlhPenumpang.text}'),
+                              _buildDataCell('Hari'),
+                            ],
+                          ),
+
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+
+                            children: [
+                              _buildDataCell(''),
+                              _buildDataCell(''),
+                              _buildDataCell(''),
+                              _buildDataCell('Total Harga', modenya: "bold"),
+                              _buildDataCell('Rp.120.000', modenya: "bold"),
+                            ],
+                          ),
+                          
+
                         ],
                       ),
                     ),
@@ -532,8 +604,9 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
         ),
       ),
     );
+    
   }
-
+  
   // Helper method to build header cells
   Widget _buildHeaderCell(String text) {
     return Expanded(
@@ -545,14 +618,30 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
   }
 
   // Helper method to build data cells
-  Widget _buildDataCell(String text) {
+  // supaya bisa nullable, mesti dibungkus dalam object.
+  Widget _buildDataCell(String text, {String? modenya}) {
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: Text(text),
+        child: (modenya == "bold") ? 
+          Text(text, style: TextStyle(fontWeight: FontWeight.bold),) 
+          : Text(text),
       ),
     );
   }
+
+  // Widget _buildDataCell(String text, {String? modenya, double? widthnya}){
+  //   return SizedBox(
+  //     width: 100,
+  //     child: Padding(
+  //       padding: EdgeInsets.only(
+  //         top: 8, bottom: 8, 
+  //         left: (screenWidth! <= 1000) ? 10: 60,
+  //       ), 
+  //       child: (modenya == "bold") ? Text(text, style: TextStyle(fontWeight: FontWeight.bold),) : Text(text),
+  //     ),
+  //   );
+  // }
 
   final ScrollController _scrollController = ScrollController();
 
