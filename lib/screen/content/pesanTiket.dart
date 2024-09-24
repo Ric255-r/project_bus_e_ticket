@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:intl/intl.dart'; //buat convert date
+import 'package:auto_size_text/auto_size_text.dart';
+
 
 // biar bisa akses variabel/fungsi dari class ini
 final GlobalKey<_BodyPesanTiketState> bodyPesanTiketKey = GlobalKey<_BodyPesanTiketState>();
@@ -184,7 +186,7 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                 // klo g die error
                 child: Container(
                   padding: EdgeInsets.all(16),
-                  height: (screenHeight <= 700) ? screenHeight + 50 : screenHeight - 350,
+                  height: (screenHeight <= 700) ? screenHeight + 50 : screenHeight - 300,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start, // buat ratakiri
                     children: [
@@ -545,7 +547,11 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                                 flex: 1,
                                 child: Align(
                                   alignment: Alignment.centerRight,
-                                  child: Text("${txtKotaAsal.text} -> ${txtKotaTujuan.text}"),
+                                  child: AutoSizeText( // ini plugin. update pubspec.yaml
+                                    "${txtKotaAsal.text} -> ${txtKotaTujuan.text}",
+                                    maxLines: 1,
+                                    minFontSize: 5,
+                                  ),
                                 ),
                               )
                             ],
@@ -599,7 +605,11 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                                 flex: 1,
                                 child: Align(
                                   alignment: Alignment.centerRight,
-                                  child: Text("${txtTglBrkt.text} - ${txtTglBalik.text}"),
+                                  child: AutoSizeText( // ini plugin. update pubspec.yaml
+                                    "${txtTglBrkt.text} -> ${txtTglBalik.text}",
+                                    maxLines: 1,
+                                    minFontSize: 5,
+                                  ),
                                 ),
                               )
                             ],

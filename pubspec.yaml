@@ -55,6 +55,7 @@ dev_dependencies:
   geolocator: ^9.0.2
   syncfusion_flutter_datepicker: ^27.1.48
   intl: ^0.18.0
+  auto_size_text: ^3.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
