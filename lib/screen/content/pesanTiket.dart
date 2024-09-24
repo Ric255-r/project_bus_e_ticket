@@ -120,7 +120,7 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
 
     return SingleChildScrollView(
       child: SizedBox(
-        height: (screenHeight <= 700) ? screenHeight + 800 : screenHeight * 1.5,
+        height: (screenHeight <= 700) ? screenHeight * 1.3 : screenHeight * 1.8,
         width: MediaQuery.of(context).size.width,
         child: Stack(
           children: [
@@ -165,7 +165,7 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                 // klo g die error
                 child: Container(
                   padding: EdgeInsets.all(16),
-                  height: (screenHeight <= 700) ? screenHeight + 50 : screenHeight - 300,
+                  height: (screenHeight <= 700) ? screenHeight + 50 : screenHeight - 350,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start, // buat ratakiri
                     children: [
@@ -449,7 +449,7 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
 
             if(isCheckHarga)
             Positioned(
-              top: (screenHeight <= 700) ? screenHeight + 350 : screenHeight - 120,
+              top: (screenHeight <= 700) ? screenHeight + 500 : screenHeight - 100,
               left: 20,
               right: 20,
               child: Container(
@@ -676,7 +676,8 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                       child: Text("Pilih Jasa Bis Yang Diinginkan"),
                     ),
                   ),
-                  Expanded(
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.5,
                     child: Scrollbar( // ini buat nunjukin scrollbar
                       thumbVisibility: true,
                       controller: _scrollController,
@@ -685,70 +686,71 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                         controller: _scrollController,
                         itemCount: 1, // hitung peritem = 1 biji
                         itemBuilder: (context, index){
-                          return Column(
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(
-                                  left: 10,
-                                  right: 10
-                                ),
-                                child: InkWell(
+                          return Padding(
+                            padding: EdgeInsets.only(
+                              left: 10, right: 10
+                            ),
+                            child: Column(
+                              children: [
+                                InkWell(
                                   onTap: () {
-                                    print("Hai ini klik");
+                                    setState(() {
+                                      busPilihan.text = "Damriku";
+                                      txtKlsBis.text = "Executive";
+                                    });
+                                    Navigator.pop(context);
                                   },
                                   child: IsiModalBis(kotaAsal: txtKotaAsal.text, kotaTujuan: txtKotaTujuan.text,),
                                 ),
-                              ),
-                                              
-                              SizedBox(height: 40,),
+                                
+                                                
+                                SizedBox(height: 40,),
 
-                              Padding(
-                                padding: EdgeInsets.only(
-                                  left: 10,
-                                  right: 10
-                                ),
-                                child: InkWell(
+                                InkWell(
                                   onTap: () {
-                                    print("Hai ini klik");
+                                    setState(() {
+                                      busPilihan.text = "Damriku";
+                                      txtKlsBis.text = "Executive";
+
+                                      
+                                    });
+                                    Navigator.pop(context);
                                   },
                                   child: IsiModalBis(kotaAsal: txtKotaAsal.text, kotaTujuan: txtKotaTujuan.text,),
                                 ),
-                              ),
 
-                              SizedBox(height: 40,),
+                                SizedBox(height: 40,),
 
-                              Padding(
-                                padding: EdgeInsets.only(
-                                  left: 10,
-                                  right: 10
-                                ),
-                                child: InkWell(
+                                InkWell(
                                   onTap: () {
-                                    print("Hai ini klik");
+                                    setState(() {
+                                      busPilihan.text = "Damriku";
+                                      txtKlsBis.text = "Executive";
+
+                                    });
+                                    Navigator.pop(context);
                                   },
                                   child: IsiModalBis(kotaAsal: txtKotaAsal.text, kotaTujuan: txtKotaTujuan.text,),
                                 ),
-                              ),
+                                SizedBox(height: 40,),
 
-                              SizedBox(height: 40,),
-
-                              Padding(
-                                padding: EdgeInsets.only(
-                                  left: 10,
-                                  right: 10
-                                ),
-                                child: InkWell(
+                                InkWell(
                                   onTap: () {
-                                    print("Hai ini klik");
+                                    setState(() {
+                                      busPilihan.text = "Damriku";
+                                      txtKlsBis.text = "Executive";
+
+                                    });
+                                    Navigator.pop(context);
                                   },
                                   child: IsiModalBis(kotaAsal: txtKotaAsal.text, kotaTujuan: txtKotaTujuan.text,),
                                 ),
-                              ),
 
-                              SizedBox(height: 20,)
+                                SizedBox(height: 20,)
 
 
-                            ],
+                              ],
+                            ),
                           );
                         }
                       )
@@ -994,7 +996,7 @@ class _IsiModalBisState extends State<IsiModalBis> {
             Row(
               children: [
                 Expanded(
-                  child: Text("Pontianak", style: TextStyle(fontWeight: FontWeight.bold)),
+                  child: Text("${widget.kotaAsal}", style: TextStyle(fontWeight: FontWeight.bold)),
                 ),
                 Expanded(
                   child: Align(
@@ -1003,7 +1005,7 @@ class _IsiModalBisState extends State<IsiModalBis> {
                       padding: EdgeInsets.only(
                         right: 5
                       ),
-                      child: Text("Singkawang", style: TextStyle(fontWeight: FontWeight.bold)),
+                      child: Text("${widget.kotaTujuan}", style: TextStyle(fontWeight: FontWeight.bold)),
                     ),
                   ),
                 )
@@ -1053,6 +1055,54 @@ class _IsiModalBisState extends State<IsiModalBis> {
                   ),
                 )
               ],
+            ),
+            SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(15),
+                      child: Image.asset(
+                        'assets/images/bisdamri1.jpeg',
+                        width: double.infinity,
+                        height: 120,
+                        
+                      ),
+                    )
+                  ),
+                ),
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(15),
+                      child: Image.asset(
+                        'assets/images/bisdamri2.jpeg',
+                        width: double.infinity,
+                        height: 130,
+                        
+                      ),
+                    )
+                  ),
+                ),
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(15),
+                      child: Image.asset(
+                        'assets/images/bisdamri3.jpg',
+                        width: double.infinity,
+                        height: 120,
+                        
+                      ),
+                    )
+                  ),
+                ),
+              ]
             ),
           ],
         ),

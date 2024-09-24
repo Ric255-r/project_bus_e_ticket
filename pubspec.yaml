@@ -78,6 +78,12 @@ flutter:
     - assets/images/wisata.png
     - assets/images/guidebook.png
     - assets/images/damrilogo.png
+    - assets/images/bisdamri1.jpeg
+    - assets/images/bisdamri2.jpeg
+    - assets/images/bisdamri3.jpg
+    - assets/images/bisats1.jpg
+    - assets/images/bisats1.jpg
+    - assets/images/bisats3.jpg
     # - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
