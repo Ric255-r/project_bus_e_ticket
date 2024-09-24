@@ -165,7 +165,7 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                 // klo g die error
                 child: Container(
                   padding: EdgeInsets.all(16),
-                  height: (screenHeight <= 700) ? screenHeight + 50 : screenHeight - 400,
+                  height: (screenHeight <= 700) ? screenHeight + 50 : screenHeight - 300,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start, // buat ratakiri
                     children: [
@@ -645,72 +645,124 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
 
   final ScrollController _scrollController = ScrollController();
 
-  Future<void> _dialogBuilder(BuildContext context) async {
-    return showDialog(
-      context: context, 
-      builder: (BuildContext context){
-        return AlertDialog(
-          scrollable: true,
-          title: Center(
-            child: const Text("Jasa Bis Tersedia"),
-          ),
-          content: Container(
-            width: MediaQuery.of(context).size.width * 0.8,
-            height: MediaQuery.of(context).size.height * 0.6,
-            child: Scrollbar( // ini buat nunjukin scrollbar
-              thumbVisibility: true,
-              controller: _scrollController,
-              child: ListView.builder( //pakai builder. awalnya pake singlechildscrollview
-                controller: _scrollController,
-                itemCount: 1, // hitung peritem = 1 biji
-                itemBuilder: (context, index){
-                  return Column(
-                    children: [
-                      IsiModalBis(kotaAsal: txtKotaAsal.text, kotaTujuan: txtKotaTujuan.text,),
-                      IsiModalBis(kotaAsal: txtKotaAsal.text, kotaTujuan: txtKotaTujuan.text,),
-                      IsiModalBis(kotaAsal: txtKotaAsal.text, kotaTujuan: txtKotaTujuan.text,),
-                      IsiModalBis(kotaAsal: txtKotaAsal.text, kotaTujuan: txtKotaTujuan.text,),
-                      IsiModalBis(kotaAsal: txtKotaAsal.text, kotaTujuan: txtKotaTujuan.text,),
+  Future<Object> _dialogBuilder(BuildContext context) async {
+    //awalnya alertdialog, cmn kuganti berdasarkan rekomen AI
+    return showGeneralDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
+      barrierColor: Colors.black45,
+      transitionDuration: const Duration(milliseconds: 200),
+      pageBuilder: (BuildContext buildContext, Animation animation, Animation secondaryAnimation) {
+        return Scaffold(
+          backgroundColor: Colors.transparent,
+          body: Center(
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(25)
+              ),
+              width: MediaQuery.of(context).size.width * 0.95, // sini buat atur lebar dialog
+              height: MediaQuery.of(context).size.height * 0.6,
+              child: Column(
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(25)
+                    ),
+                    child: Center(
+                      child: Text("Pilih Jasa Bis Yang Diinginkan"),
+                    ),
+                  ),
+                  Expanded(
+                    child: Scrollbar( // ini buat nunjukin scrollbar
+                      thumbVisibility: true,
+                      controller: _scrollController,
+                      thickness: 5,
+                      child: ListView.builder( //pakai builder. awalnya pake singlechildscrollview
+                        controller: _scrollController,
+                        itemCount: 1, // hitung peritem = 1 biji
+                        itemBuilder: (context, index){
+                          return Column(
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.only(
+                                  left: 10,
+                                  right: 10
+                                ),
+                                child: InkWell(
+                                  onTap: () {
+                                    print("Hai ini klik");
+                                  },
+                                  child: IsiModalBis(kotaAsal: txtKotaAsal.text, kotaTujuan: txtKotaTujuan.text,),
+                                ),
+                              ),
+                                              
+                              SizedBox(height: 40,),
 
-                    ],
-                  );
-                }
+                              Padding(
+                                padding: EdgeInsets.only(
+                                  left: 10,
+                                  right: 10
+                                ),
+                                child: InkWell(
+                                  onTap: () {
+                                    print("Hai ini klik");
+                                  },
+                                  child: IsiModalBis(kotaAsal: txtKotaAsal.text, kotaTujuan: txtKotaTujuan.text,),
+                                ),
+                              ),
+
+                              SizedBox(height: 40,),
+
+                              Padding(
+                                padding: EdgeInsets.only(
+                                  left: 10,
+                                  right: 10
+                                ),
+                                child: InkWell(
+                                  onTap: () {
+                                    print("Hai ini klik");
+                                  },
+                                  child: IsiModalBis(kotaAsal: txtKotaAsal.text, kotaTujuan: txtKotaTujuan.text,),
+                                ),
+                              ),
+
+                              SizedBox(height: 40,),
+
+                              Padding(
+                                padding: EdgeInsets.only(
+                                  left: 10,
+                                  right: 10
+                                ),
+                                child: InkWell(
+                                  onTap: () {
+                                    print("Hai ini klik");
+                                  },
+                                  child: IsiModalBis(kotaAsal: txtKotaAsal.text, kotaTujuan: txtKotaTujuan.text,),
+                                ),
+                              ),
+
+                              SizedBox(height: 20,)
+
+
+                            ],
+                          );
+                        }
+                      )
+                    ),
+                  )
+                ],
               )
-            )
+            ),
           ),
-          actions: [
-            TextButton(
-              style: TextButton.styleFrom(
-                textStyle: Theme.of(context).textTheme.labelLarge
-              ),
-              onPressed: (){
-                Navigator.of(context).pop("disable"); // ini return result
-              }, 
-              child: const Text("Disable"),
-              
-            ),
-            TextButton(
-              style: TextButton.styleFrom(
-                textStyle: Theme.of(context).textTheme.labelLarge,
-              ),
-              child: const Text('Enable'),
-              onPressed: () {
-                Navigator.of(context).pop("Enable"); // ini return result
-              },
-            ),
-          ],
         );
-      }
-    ).then((hasil) {
-      if(hasil == "disable"){
-        print("User Click Disable");
-      }else if(hasil == "Enable"){
-        print("User Click Enable");
-      }else{ // kondisi klo user keluar dr modal tanpa pilih apapun
-        print("User g pilih apa2");
-      }
-    });
+      },
+    );
   }
+
 
   Future<void> showDatePickerDialog(BuildContext context, String? mode) async {
     String statusPp = "";
@@ -818,53 +870,193 @@ class IsiModalBis extends StatefulWidget {
 class _IsiModalBisState extends State<IsiModalBis> {
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Padding(
-          padding: EdgeInsets.only(
-            bottom: 35
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(15.0),
-            child: Container(
-              color: Colors.black12,
-              height: 110,
-              width: 110,
-            ),
-          ),
-        ),
-        SizedBox(width: 10,),
-
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.grey.shade100,
+        borderRadius: BorderRadius.circular(10)
+      ),
+      child: Padding(
+        padding: EdgeInsets.all(10),
+        child: Column(
           children: [
-            Text(
-              "Damri", 
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500
-              ),
-            ),
-            SizedBox(height: 5,),
-            Text(
-              "${widget.kotaAsal} -> ${widget.kotaTujuan}"
-            ),
-            SizedBox(height: 5,),
-            MaterialButton(
-              color: Colors.blue,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10)
-              ),
-              onPressed: () {
-                bodyPesanTiketKey.currentState?.ubahTextBis("Damriku"); // akses fungsi di kls lain.
+            SizedBox(height: 20,),
 
-                Navigator.of(context).pop();
-              },
-              child: Text("Pergi Ke Sini"),
+            Row(
+              children: [
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.only(bottom: 1),
+                    child: Image.asset(
+                      'assets/images/damrilogo.png',
+                      height: 50,
+                      width: 100,
+                      alignment: Alignment.centerLeft,
+                    ),
+                  ),
+                ),
+                const Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      bottom: 10,
+                      right: 5
+                    ),
+                    child: Align(
+                      alignment: Alignment.topRight,
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(
+                              left: 20
+                            ),
+                            child: Text("Rp.300.000", style: TextStyle(fontWeight: FontWeight.bold),),
+                          ),
+                          SizedBox(height: 10,),
+                          Text("Hari Berikutnya", style: TextStyle(fontWeight: FontWeight.w400)),
+                        ],
+                      ),
+                    ),
+                  )
+                ),
+              ],
+            ),
+
+            SizedBox(height: 10,),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                const Expanded(
+                  flex: 1,
+                  child: Text(
+                    "19:52", 
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 10
+
+                    )
+                  )
+                ),
+                Expanded(
+                  flex: 2,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(color: Colors.black54, width: 1.0)
+                      )
+                    ),
+                  )
+                ),
+                Expanded(
+                  flex: 1,
+                  child: Center(
+                    child: Text(
+                      "9h 5m",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 10
+
+                      )
+                    ),
+                  )
+                ),
+                Expanded(
+                  flex: 2,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(color: Colors.black54, width: 1.0)
+                      )
+                    ),
+                  )
+                ),
+                Expanded(
+                  flex: 1,
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                        right: 5
+                      ),
+                      child: Text(
+                        "19:52", 
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 10
+
+                        )
+                      ),
+                    ),
+                  )
+                ),
+              ],
+            ),
+            SizedBox(height: 10,),
+
+            Row(
+              children: [
+                Expanded(
+                  child: Text("Pontianak", style: TextStyle(fontWeight: FontWeight.bold)),
+                ),
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                        right: 5
+                      ),
+                      child: Text("Singkawang", style: TextStyle(fontWeight: FontWeight.bold)),
+                    ),
+                  ),
+                )
+              ],
+            ),
+
+            SizedBox(height: 15,),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const Expanded(
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Column(
+                      children: [
+                        Text("Damri, Executive", style: TextStyle(fontWeight: FontWeight.bold)),
+                        Text("40 Kursi Tersedia", style: TextStyle(fontWeight: FontWeight.w200))
+                      ],
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                        right: 5
+                      ),
+                      child: SizedBox(
+                        height: 30,
+                        width: 60,
+                        child: ElevatedButton(
+                          onPressed: () {}, 
+                          
+                          style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)
+                            ),
+                            backgroundColor: Colors.green.shade200,
+                            padding: EdgeInsets.zero
+                          ),
+                          child: Text("4,4 * ")
+                        ),
+                      )
+                    ),
+                  ),
+                )
+              ],
             ),
           ],
         ),
-      ],
+      )
     );
   }
 }
