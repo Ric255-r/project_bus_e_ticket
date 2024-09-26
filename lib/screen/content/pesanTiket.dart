@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:bus_hub/screen/content/checkout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
@@ -141,7 +142,7 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
 
     return SingleChildScrollView(
       child: SizedBox(
-        height: (screenHeight <= 700) ? screenHeight * 2.0 : screenHeight * 1.3,
+        height: (screenHeight <= 700) ? screenHeight * 2.0 : screenHeight * 1.75,
         width: MediaQuery.of(context).size.width,
         child: Stack(
           children: [
@@ -163,6 +164,8 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                 ),
               )
             ),
+            SizedBox(height: 20,),
+            
             Positioned(
               top: 240,
               left: 20,
@@ -186,7 +189,7 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                 // klo g die error
                 child: Container(
                   padding: EdgeInsets.all(16),
-                  height: (screenHeight <= 700) ? screenHeight + 50 : screenHeight - 300,
+                  height: (screenHeight <= 700) ? screenHeight + 50 : screenHeight - 80,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start, // buat ratakiri
                     children: [
@@ -478,7 +481,7 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
 
             if(isCheckHarga)
             Positioned(
-              top: (screenHeight <= 700) ? screenHeight + 320 : screenHeight - 50,
+              top: (screenHeight <= 700) ? screenHeight + 320 : screenHeight + 180,
               left: 20,
               right: 20,
               child: Container(
@@ -758,6 +761,20 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                         ],
                       ),
                     ),
+                  
+                    SizedBox(height: 5,),
+
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context, MaterialPageRoute(builder: (builder) => MenuCheckout())
+                        );
+                      },
+                      child: Text("Lanjut Ke Pembayaran"),
+                    ),
+
+                    SizedBox(height: 10,),
+
                   ],
                 ),
               ),

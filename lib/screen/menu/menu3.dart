@@ -27,7 +27,7 @@ class _KontenMenu3 extends State<IsiMenu3> {
 
     return SingleChildScrollView(
       child: SizedBox(
-        height: (screenHeight <= 700) ? screenHeight + 400 : screenHeight,
+        height: (screenHeight <= 700) ? screenHeight + 400 : screenHeight +150,
         child: Stack(
           children: [
             Container(
@@ -59,8 +59,8 @@ class _KontenMenu3 extends State<IsiMenu3> {
                           child: Row(
                             children: [
                               SizedBox(
-                                width: 100,
-                                child: Icon(Icons.account_circle, size: 100,),
+                                width: 80,
+                                child: Icon(Icons.account_circle, size: 85,),
                               ),
                               SizedBox(
                                 width: 250,

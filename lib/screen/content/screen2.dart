@@ -7,6 +7,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import '../function/confirmExit.dart';
 import './halteTerdekat.dart';
 import './pesanTiket.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 
 // referensi carousel slider
 // https://stackoverflow.com/questions/78688921/error-carouselcontroller-is-imported-from-both-package-in-flutter
@@ -96,6 +97,8 @@ class _Kontennya extends State<IsiBody> {
     //     ],
     //   ),
     // );
+
+    print(MediaQuery.of(context).size.width);
 
     return SingleChildScrollView(
       child: SizedBox(
@@ -264,9 +267,10 @@ class _Kontennya extends State<IsiBody> {
                                         const SizedBox(height: 5), // Add some spacing between image and text
                                         
                                         const Center(
-                                          child: Text(
-                                            'Pesan Tiket',
-                                            style: TextStyle(fontSize: 12, color: Colors.black),
+                                          child: AutoSizeText(
+                                            "Pesan Tiket",
+                                            maxLines: 1,
+                                            minFontSize: 8,
                                           ),
                                         ),
                                       ],
@@ -314,10 +318,13 @@ class _Kontennya extends State<IsiBody> {
                                         ),
                                         const SizedBox(height: 5), // Add some spacing between image and text
                                         
-                                        const Text(
-                                          'Halte Terdekat',
-                                          style: TextStyle(fontSize: 12, color: Colors.black),
-                                        ),
+                                        Text(
+                                          "Halte Terdekat", 
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        )
                                       ],
                                     )
                                   )
@@ -362,6 +369,7 @@ class _Kontennya extends State<IsiBody> {
                                         const Text(
                                           'Paket Wisata',
                                           style: TextStyle(fontSize: 12, color: Colors.black),
+                                          textAlign: TextAlign.center,
                                         ),
                                       ],
                                     )
@@ -407,6 +415,7 @@ class _Kontennya extends State<IsiBody> {
                                         const Text(
                                           'Panduan Bepergian',
                                           style: TextStyle(fontSize: 12, color: Colors.black),
+                                          textAlign: TextAlign.center,
                                         ),
                                       ],
                                     )

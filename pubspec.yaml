@@ -56,6 +56,7 @@ dev_dependencies:
   syncfusion_flutter_datepicker: ^27.1.48
   intl: ^0.18.0
   auto_size_text: ^3.0.0
+  image_picker: ^1.1.2
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -85,6 +86,8 @@ flutter:
     - assets/images/bisats1.jpg
     - assets/images/bisats1.jpg
     - assets/images/bisats3.jpg
+    - assets/images/logobank.png
+    - assets/images/cash.png
     # - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
