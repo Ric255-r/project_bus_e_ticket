@@ -189,7 +189,7 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                 // klo g die error
                 child: Container(
                   padding: EdgeInsets.all(16),
-                  height: (screenHeight <= 700) ? screenHeight + 50 : screenHeight - 80,
+                  height: (screenHeight <= 700) ? screenHeight + 50 : (screenHeight >= 900) ? screenHeight - 200 : screenHeight - 80,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start, // buat ratakiri
                     children: [

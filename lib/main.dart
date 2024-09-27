@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import './screen/function/confirmExit.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter/services.dart';
 // referensi :
 // https://stackoverflow.com/questions/51765092/how-to-scroll-page-in-flutter
 // https://www.dhiwise.com/post/how-to-flutter-navigate-to-a-new-page-with-data-passing
@@ -12,7 +13,14 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 // https://gedetikapermana.medium.com/flutter-membuat-bottom-navigation-bar-9c6fadde865a
 // https://medium.com/@azizndao/mastering-http-requests-in-flutter-with-dio-package-975b75002911
 void main() {
-  runApp(const MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown
+  ]).then((_) {
+    runApp(const MyApp());
+
+  });
 }
 
 // Alurnya Adalah 
@@ -132,7 +140,7 @@ class _FirstScreen extends State {
       await storage.write(key: 'jwt', value: responseData['authorization']['token']);
 
       Navigator.push(
-        context, 
+        context,
         MaterialPageRoute(
           builder: (context) => SecondScreen(data: responseData ))
       );

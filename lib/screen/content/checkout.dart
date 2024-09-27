@@ -1,6 +1,8 @@
 import 'dart:io';
+import 'package:bus_hub/screen/content/successCheckout.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:dio/dio.dart';
 
 class MenuCheckout extends StatelessWidget {
   const MenuCheckout({super.key});
@@ -40,170 +42,285 @@ class _StfulMenuCheckoutState extends State<StfulMenuCheckout> {
   String paymentMethod = "Transfer";
   File? _imgFile;
 
+  Future<void> _submitBukti(BuildContext context) async {
+    var dio = Dio();
+    try {
+      String fileName = _imgFile!.path.split("/").last;
+      FormData formData = FormData.fromMap({
+        'buktiByr': await MultipartFile.fromFile(_imgFile!.path, filename: fileName)
+      });
+
+      // salah bodo. pas url akhir aku kasih "/" jadi di API hrs menyesuaikan
+      var response = await dio.post('http://192.168.100.59:5500/api/checkout', 
+        data: formData,
+        options: Options(
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        )
+        
+      );
+
+      if(context.mounted){
+        Navigator.push(
+          context, 
+          MaterialPageRoute(builder: (context) => const MenuSuccess())
+        );
+      }
+
+    } catch (e) {
+      print("Error $e");
+    }
+  }
 
   Future<void> _buatBukti() async {
-    final ImagePicker _picker = ImagePicker();
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
 
-    // await _displayPickImageDialog(context, false, (double? maxWidth,
-    // double? maxHeight, int? quality, int? limit) async {
-    //   try {
-    //     final XFile? pickedFile = await _picker.pickImage(
-    //       source: source,
-    //       maxWidth: maxWidth,
-    //       maxHeight: maxHeight,
-    //       imageQuality: quality,
-    //     );
-    //     setState(() {
-    //       _imgFile!(pickedFile);
-    //     });
-    //   } catch (e) {
-    //     setState(() {
-    //       _pickImageError = e;
-    //     });
-    //   }
-    // });
+    if (image != null) {
+      setState(() {
+        _imgFile = File(image.path);
+      });
+    }
   }
 
 
   @override
   Widget build(BuildContext context) {
+    var tinggi =  MediaQuery.of(context).size.height;
+    var lebar = MediaQuery.of(context).size.width;
 
     return SingleChildScrollView(
       child: Container(
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
+        height: (tinggi <= 700) ? tinggi * 2 : tinggi + 300,
+        width: lebar,
         color: Colors.blue[400],
         child: Stack(
           children: [
             Container(
-              height: 220,
+              height: 150,
               margin: EdgeInsets.only(
-                left: 20, right: 20, top: 30
+                left: 20, right: 20, top: 20
               ),
+              width: lebar,
               decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10)
+                borderRadius: BorderRadius.circular(10),
+                color: Colors.white
               ),
-              child: Padding(
+              child: const Padding(
                 padding: EdgeInsets.only(
-                  top: 20,
-                  left: 30,
-                  right: 30
+                  left: 20, right: 20
                 ),
                 child: Column(
+                  // mainAxisAlignment: MainAxisAlignment.start,
+                  // crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
                         Expanded(
+                          flex: 1,
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                              top: 20
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Icon(
+                                  Icons.lock_clock,
+                                  size: 40,
+                                )
+                              ],
+                            )
+                          )
+                        ),
+                        Expanded(
+                          flex: 5,
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                              top: 10
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Bayar Sebelum",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    
+                                  ),
+                                  textAlign: TextAlign.left,
+                                ),
+                                Text("28 Desember 2024"),
+                              ],
+                            ),
+                          )
+                        ),
+                      ],
+                    ),
+
+                    Divider(),
+                    SizedBox(height: 10,),
+
+                    Row(
+                      children: [
+                        Expanded(
                           child: Text(
-                            "Metode Pembayaran",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                    SizedBox(height: 30,),
-
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        
-                        Expanded(
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Image.asset(
-                              'assets/images/logobank.png',
-                              height: 50,
-                              width: 50,
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 3,
-                          child: Text("Bank Transfer")
-                        ),
-                        SizedBox(
-                          //buat radio
-                            width: 40,
-                          // height: 40,
-                          child: Align(
-                            alignment: Alignment.centerRight,
-                            child: Radio<String>(
-                              value: 'Transfer', 
-                              groupValue: paymentMethod, 
-                              onChanged: (String? value){
-                                setState(() {
-                                  paymentMethod = value!;
-
-                                  print(paymentMethod);
-                                });
-                              }
-                            ),
+                            "Total Tagihan"
                           )
                         )
                       ],
                     ),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        
                         Expanded(
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Image.asset(
-                              'assets/images/cash.png',
-                              height: 50,
-                              width: 50,
-                            ),
+                          child: Text(
+                            "Rp. 120.000",
+                            style: TextStyle(fontWeight: FontWeight.bold),
                           ),
-                        ),
-                        Expanded(
-                          flex: 3,
-                          child: Text("Cash")
-                        ),
-                        SizedBox(
-                          //buat radio
-                            width: 40,
-                          // height: 40,
-                          child: Align(
-                            alignment: Alignment.centerRight,
-                            child: Radio<String>(
-                              value: 'Cash', 
-                              groupValue: paymentMethod, 
-                              onChanged: (String? value){
-                                setState(() {
-                                  paymentMethod = value!;
-
-                                  print(paymentMethod);
-                                });
-                              }
-                            ),
-                          )
                         )
                       ],
-                    ),
+                    )
+
 
                   ],
                 ),
               ),
+
             ),
-          
-            SizedBox(height: 20,),
 
             Positioned(
-              top: 280,
+              top: 150,
+              child: Container(
+                width: MediaQuery.of(context).size.width -40,
+                height: 220,
+                margin: EdgeInsets.only(
+                  left: 20, right: 20, top: 30
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10)
+                ),
+                child: Padding(
+                  padding: EdgeInsets.only(
+                    top: 20,
+                    left: 20,
+                    right: 30
+                  ),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              "Metode Pembayaran",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                      SizedBox(height: 20,),
+
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          
+                          Expanded(
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Image.asset(
+                                'assets/images/logobank.png',
+                                height: 50,
+                                width: 50,
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            flex: 3,
+                            child: Text("Bank Transfer")
+                          ),
+                          SizedBox(
+                            //buat radio
+                              width: 40,
+                            // height: 40,
+                            child: Align(
+                              alignment: Alignment.centerRight,
+                              child: Radio<String>(
+                                value: 'Transfer', 
+                                groupValue: paymentMethod, 
+                                onChanged: (String? value){
+                                  setState(() {
+                                    paymentMethod = value!;
+
+                                    print(paymentMethod);
+                                  });
+                                }
+                              ),
+                            )
+                          )
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          
+                          Expanded(
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Image.asset(
+                                'assets/images/cash.png',
+                                height: 50,
+                                width: 50,
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            flex: 3,
+                            child: Text("Cash")
+                          ),
+                          SizedBox(
+                            //buat radio
+                              width: 40,
+                            // height: 40,
+                            child: Align(
+                              alignment: Alignment.centerRight,
+                              child: Radio<String>(
+                                value: 'Cash', 
+                                groupValue: paymentMethod, 
+                                onChanged: (String? value){
+                                  setState(() {
+                                    paymentMethod = value!;
+
+                                    print(paymentMethod);
+                                  });
+                                }
+                              ),
+                            )
+                          )
+                        ],
+                      ),
+
+                    ],
+                  ),
+                ),
+              ),
+          
+            ),
+
+            Positioned(
+              top: 410,
               child: Container(
                 margin: EdgeInsets.only(
                   left: 20.0, right: 20.0
                 ),
                 width: MediaQuery.of(context).size.width - 40,
-                height: 300,
+                height: (_imgFile != null && paymentMethod == "Transfer") ? 350 : 270,
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(5)
+                  borderRadius: BorderRadius.circular(10)
                 ),
 
                 child: Padding(
@@ -257,16 +374,23 @@ class _StfulMenuCheckoutState extends State<StfulMenuCheckout> {
 
                       if(paymentMethod == "Transfer")
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Expanded(
-                            child: ElevatedButton(
-                              onPressed: () {
-                                _buatBukti();
-                                showAlertUpload(context);
-                              }, 
-                              child: Text("Upload Bukti Bayar")
-                            )
-                          )
+                          Column(
+                            children: [
+                              _imgFile == null
+                                  ? Text('No image selected.')
+                                  : Image.file(_imgFile!, height: 100, width: 100,),
+                              
+                              if(_imgFile == null)
+                              SizedBox(height: 20,),
+
+                              ElevatedButton(
+                                onPressed: _buatBukti,
+                                child: Text((_imgFile != null) ? "Ganti Foto Bukti?" : "Upload Bukti Bayar"),
+                              ),
+                            ],
+                          ),
                         ],
                       ),
 
@@ -276,7 +400,7 @@ class _StfulMenuCheckoutState extends State<StfulMenuCheckout> {
                         padding: EdgeInsets.only(
                           bottom: 20
                         ),
-                        child : const Row(
+                        child : Row(
                           children: [
                             Expanded(
                               child: Text(
@@ -307,6 +431,46 @@ class _StfulMenuCheckoutState extends State<StfulMenuCheckout> {
                     ],
                   ),
                 )
+              )
+            ),
+
+            if(_imgFile != null && paymentMethod == "Transfer")
+            Positioned(
+              top: 790,
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                margin: EdgeInsets.only(
+                  left: 20, right: 20
+                ),
+                //alignment: Alignment.centerRight,
+                // height: 1,
+                //width: 300,
+                decoration: BoxDecoration(
+                  //color: Colors.green[300],
+                  borderRadius: BorderRadius.circular(10)
+                ),
+                child: Column(
+                  //crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Row(
+                      children: [
+                        Spacer(), // This will take up all available space
+
+                        Padding(
+                          padding: EdgeInsets.only(
+                            right: 40
+                          ),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              _submitBukti(context);
+                            },
+                            child: Text("Konfirmasi Pembayaran ->"),
+                          ),
+                        ),
+                      ],
+                    )                
+                  ],
+                ), 
               )
             )
           ],
