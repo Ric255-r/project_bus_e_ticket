@@ -1,3 +1,4 @@
+import 'package:bus_hub/screen/function/ip_address.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:dio/dio.dart';
@@ -7,7 +8,7 @@ Future<Map<String, dynamic>> getMyData(jwt) async {
   var dio = Dio();
 
   try {
-    var response = await dio.get('http://192.168.1.26:5500/api/user',
+    var response = await dio.get('${myIpAddr()}/user',
       options: Options(
         headers: {
           "Authorization" : "Bearer $jwt"

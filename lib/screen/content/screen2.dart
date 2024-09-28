@@ -14,7 +14,6 @@ import 'package:auto_size_text/auto_size_text.dart';
 // referensi carousel slider
 // https://stackoverflow.com/questions/78688921/error-carouselcontroller-is-imported-from-both-package-in-flutter
 
-
 class SecondScreen extends StatelessWidget {
   // harus define sebagai Map. supaya bisa get data kek data['a']['b']
   final Map<String, dynamic> data;
@@ -102,8 +101,6 @@ class _Kontennya extends State<IsiBody> {
     //     ],
     //   ),
     // );
-
-    print(MediaQuery.of(context).size.width);
 
     return SingleChildScrollView(
       child: SizedBox(
@@ -580,6 +577,7 @@ class _KontenNavbar extends State<IsiNavbar> {
   // Harus pake tipedata ini kalo mau passing data object ke file lain
   late Map<String, dynamic> dataIsiNavbar;
 
+  @override
   void initState(){
     super.initState();
     // widget isiData diambil dari argument class SecondScreen(paling atas codeny).

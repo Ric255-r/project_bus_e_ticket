@@ -10,7 +10,7 @@ class Menu2 extends StatelessWidget {
     // TODO: implement build
     return Scaffold(
       // appBar: AppBar(title: Text('Second Screen')),
-      body: Text('Hai ini dari ${getDataNya['usernya']['email']}'),
+      body: Text('Hai ini Menu History dari ${getDataNya['usernya']['email']}'),
     );
   }
 }

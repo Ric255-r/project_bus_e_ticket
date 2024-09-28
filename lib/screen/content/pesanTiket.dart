@@ -61,6 +61,7 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
   bool ppSwitch = false;
   bool isCheckHarga = false;
   String changeUbahTextBis = "";
+  double tarifBis = 300000;
 
   void ubahTextBis(String value){
     setState(() {
@@ -139,6 +140,28 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
 
     var selectedCity;
     var selectedCityTujuan;
+
+    var totalBiaya = 0.0;
+
+    if(txtJlhPenumpang.text != ""){
+      if(!ppSwitch){
+        totalBiaya = (tarifBis * double.parse(txtJlhPenumpang.text)) * 2;
+      }else{
+        totalBiaya = tarifBis * double.parse(txtJlhPenumpang.text);
+      }
+    }
+
+    final String formattedTarifBis = NumberFormat.currency(
+      locale: "id_ID",
+      symbol: "Rp. ",
+      decimalDigits: 0
+    ).format(tarifBis);
+
+    final String formattedTotalBiaya = NumberFormat.currency(
+      locale: "id_ID",
+      symbol: "Rp. ",
+      decimalDigits: 0,
+    ).format(totalBiaya);
 
     return SingleChildScrollView(
       child: SizedBox(
@@ -315,7 +338,7 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                             child:  Text("Tanggal Berangkat"),
                           ),
                           Expanded(
-                            child:  Text("Round Trip?", textAlign: TextAlign.right,)
+                            child:  Text("Pergi Saja?", textAlign: TextAlign.right,)
                           )
                         ],
                       ),
@@ -572,7 +595,7 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                                 flex: 1,
                                 child: Align(
                                   alignment: Alignment.centerRight,
-                                  child: Text("Rp. 300.000 / Orang"),
+                                  child: Text("$formattedTarifBis / Orang"),
                                 ),
                               )
                             ],
@@ -602,14 +625,15 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                             children: [
                               Expanded(
                                 flex: 1,
-                                child: Text("Lama Waktu")
+                                child: Text("Tanggal Booking")
                               ),
                               Expanded(
                                 flex: 1,
                                 child: Align(
                                   alignment: Alignment.centerRight,
                                   child: AutoSizeText( // ini plugin. update pubspec.yaml
-                                    "${txtTglBrkt.text} -> ${txtTglBalik.text}",
+                                    //"${txtTglBrkt.text} / ${txtTglBalik.text}",
+                                    (ppSwitch) ? txtTglBrkt.text : "${txtTglBrkt.text} / ${txtTglBalik.text}",
                                     maxLines: 1,
                                     minFontSize: 5,
                                   ),
@@ -618,6 +642,30 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                             ],
                           ),
 
+
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                flex: 1,
+                                child: Text("Jenis Tiket ${!ppSwitch ? "(x2)" : "(x1)"}")
+                              ),
+                              Expanded(
+                                flex: 1,
+                                child: Align(
+                                  alignment: Alignment.centerRight,
+                                  child: AutoSizeText( // ini plugin. update pubspec.yaml
+                                    (ppSwitch) ? "Pergi" : "Pulang Pergi",
+                                    maxLines: 1,
+                                    minFontSize: 5,
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+
+
+                          
                           Divider(), // buat garis
 
                           Row(
@@ -635,7 +683,7 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                                   ),
                                   child: Align(
                                     alignment: Alignment.centerRight,
-                                    child: Text("Rp.1.200.000", style: TextStyle(fontWeight: FontWeight.bold),)
+                                    child: Text(formattedTotalBiaya, style: TextStyle(fontWeight: FontWeight.bold),)
                                   ),
                                 ),
                               )
@@ -767,7 +815,10 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                     ElevatedButton(
                       onPressed: () {
                         Navigator.push(
-                          context, MaterialPageRoute(builder: (builder) => MenuCheckout())
+                          context, 
+                          MaterialPageRoute(
+                            builder: (builder) => MenuCheckout(totalBiaya: formattedTotalBiaya,)
+                          )
                         );
                       },
                       child: Text("Lanjut Ke Pembayaran"),
@@ -958,6 +1009,8 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
       }
     }
 
+
+
     return showDialog(
       context: context, 
       builder: (BuildContext context){
@@ -1004,10 +1057,10 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
               onSelectionChanged: (DateRangePickerSelectionChangedArgs args) {
                 selectedDate = args.value;
                 var formattedDate = DateFormat('dd-MM-yyyy').format(selectedDate!);
-                
+
                 if(ppSwitch){
                   txtTglBrkt.text = formattedDate;
-                  txtTglBalik.text = formattedDate;
+                  txtTglBalik.text = "";
                 }else{
                   if(mode == "pergi"){
                     txtTglBrkt.text = formattedDate;

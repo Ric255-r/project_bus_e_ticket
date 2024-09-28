@@ -1,11 +1,14 @@
 import 'dart:io';
 import 'package:bus_hub/screen/content/successCheckout.dart';
+import 'package:bus_hub/screen/function/ip_address.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class MenuCheckout extends StatelessWidget {
-  const MenuCheckout({super.key});
+  var totalBiaya;
+  MenuCheckout({this.totalBiaya});
 
   @override
   Widget build(BuildContext context) {
@@ -25,14 +28,15 @@ class MenuCheckout extends StatelessWidget {
             ),
           ),
         ),
-        body: StfulMenuCheckout(),
+        body: StfulMenuCheckout(totalBiaya: totalBiaya,),
       )
     );
   }
 }
 
 class StfulMenuCheckout extends StatefulWidget {
-  const StfulMenuCheckout({super.key});
+  var totalBiaya;
+  StfulMenuCheckout({this.totalBiaya});
 
   @override
   State<StfulMenuCheckout> createState() => _StfulMenuCheckoutState();
@@ -44,6 +48,14 @@ class _StfulMenuCheckoutState extends State<StfulMenuCheckout> {
 
   Future<void> _submitBukti(BuildContext context) async {
     var dio = Dio();
+    var storage = new FlutterSecureStorage();
+
+    var jwt = await storage.read(key: "jwt");
+    // final now = DateTime.now();
+    // final parseNow = DateTime.parse("$now");
+
+    // print(parseNow.minute);
+    
     try {
       String fileName = _imgFile!.path.split("/").last;
       FormData formData = FormData.fromMap({
@@ -51,10 +63,11 @@ class _StfulMenuCheckoutState extends State<StfulMenuCheckout> {
       });
 
       // salah bodo. pas url akhir aku kasih "/" jadi di API hrs menyesuaikan
-      var response = await dio.post('http://192.168.1.26:5500/api/checkout', 
+      var response = await dio.post('${myIpAddr()}/checkout', 
         data: formData,
         options: Options(
           headers: {
+            "Authorization": "Bearer $jwt",
             'Content-Type': 'multipart/form-data'
           }
         )
@@ -64,7 +77,9 @@ class _StfulMenuCheckoutState extends State<StfulMenuCheckout> {
       if(context.mounted){
         Navigator.push(
           context, 
-          MaterialPageRoute(builder: (context) => const MenuSuccess())
+          MaterialPageRoute(
+            builder: (context) => MenuSuccess(totalHarga: widget.totalBiaya,)
+          )
         );
       }
 
@@ -107,7 +122,7 @@ class _StfulMenuCheckoutState extends State<StfulMenuCheckout> {
                 borderRadius: BorderRadius.circular(10),
                 color: Colors.white
               ),
-              child: const Padding(
+              child: Padding(
                 padding: EdgeInsets.only(
                   left: 20, right: 20
                 ),
@@ -175,7 +190,7 @@ class _StfulMenuCheckoutState extends State<StfulMenuCheckout> {
                       children: [
                         Expanded(
                           child: Text(
-                            "Rp. 120.000",
+                            widget.totalBiaya,
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                         )

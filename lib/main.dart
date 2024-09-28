@@ -1,3 +1,4 @@
+import 'package:bus_hub/screen/function/ip_address.dart';
 import 'package:flutter/material.dart';
 import 'screen/content/screen2.dart';
 import 'package:dio/dio.dart';
@@ -126,7 +127,7 @@ class _FirstScreen extends State {
       // setting php artisan kek gini
       // php artisan serve --host=192.168.150.166
       // wajib pake ip host. kalo kaga dia g jln.
-      final response = await dio.post('http://192.168.1.26:5500/api/login', 
+      final response = await dio.post("${myIpAddr()}/login", 
         data: {
           'email': tfnum1.text,
           'passwd': tfnum2.text
@@ -143,7 +144,9 @@ class _FirstScreen extends State {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => SecondScreen(data: responseData ))
+          builder: (context) => 
+          SecondScreen(data: responseData )
+        )
       );
 
       tfnum1.text = "";

@@ -1,12 +1,15 @@
 import 'package:bus_hub/screen/content/halteTerdekat.dart';
 import 'package:bus_hub/screen/content/screen2.dart';
+import 'package:bus_hub/screen/function/ip_address.dart';
 import 'package:bus_hub/screen/function/me.dart';
 import 'package:bus_hub/screen/menu/menu2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:dio/dio.dart';
 
 class MenuSuccess extends StatelessWidget {
-  const MenuSuccess({super.key});
+  var totalHarga;
+  MenuSuccess({this.totalHarga});
 
   @override
   Widget build(BuildContext context) {
@@ -18,14 +21,15 @@ class MenuSuccess extends StatelessWidget {
           // toolbarHeight: 40,
           backgroundColor: Colors.white,
         ),
-        body: TampilanSukses(),
+        body: TampilanSukses(totalBiaya: totalHarga,),
       )
     );
   }
 }
 
 class TampilanSukses extends StatefulWidget {
-  const TampilanSukses({super.key});
+  var totalBiaya;
+  TampilanSukses({this.totalBiaya});
 
   @override
   State<TampilanSukses> createState() => _TampilanSuksesState();
@@ -33,11 +37,54 @@ class TampilanSukses extends StatefulWidget {
 
 class _TampilanSuksesState extends State<TampilanSukses> {
   var storage = new FlutterSecureStorage();
+  var dio = Dio();
+  Map<String, dynamic>? responseData;
+  String? datePart;
+  String? timePart;
+
+  Future<void> getTransaksi() async {
+    try {
+      var jwt = await storage.read(key: "jwt");
+
+      var response = await dio.get("${myIpAddr()}/checkout",
+        options: Options(
+          headers: {
+            "Authorization" : "Bearer $jwt"
+          }
+        )
+      );
+
+      setState(() {
+        responseData = response.data;
+        
+        String? dateTimeString = responseData!['tgl_trans'];
+
+        if(dateTimeString != null){
+          List<String> dateTimePart = dateTimeString.split("T");
+          datePart = dateTimePart[0];
+          // buang timezone sekalian & detik2 akhir 
+          timePart = dateTimePart[1].split('+')[0].split(".")[0]; 
+        }
+      });
+
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getTransaksi();
+  }
+
 
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
 
+    // ak letak fungsi dalam widget supaya nda butuh parameter context.
     Future<void> tarikJwt(String menu) async {
       var myJwt = await storage.read(key: 'jwt');
 
@@ -52,8 +99,7 @@ class _TampilanSuksesState extends State<TampilanSukses> {
         Navigator.pushAndRemoveUntil(
           context, 
           MaterialPageRoute(
-            builder: (context) => 
-              (menu == "History") 
+            builder: (context) => (menu == "History") 
               ? SecondScreen(data: data, indexScreen: 1,) 
               : SecondScreen(data: data)
           ), 
@@ -65,10 +111,8 @@ class _TampilanSuksesState extends State<TampilanSukses> {
     return WillPopScope(
       onWillPop: () async {
         tarikJwt("SecondScreen");
-
         return false; // mencegah aksi default backbutton
       },
-
       child: Stack(
         children: [
           Container(
@@ -86,7 +130,7 @@ class _TampilanSuksesState extends State<TampilanSukses> {
               padding: EdgeInsets.only(
                 left: 20, right: 20
               ),
-              child: Column(
+              child: (responseData != null) ? Column(
                 children: [
                   const Row(
                     children: [
@@ -100,7 +144,7 @@ class _TampilanSuksesState extends State<TampilanSukses> {
                     children: [
                       Expanded(
                         child: Text(
-                          "Rp. 10", 
+                          widget.totalBiaya, 
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
@@ -128,12 +172,12 @@ class _TampilanSuksesState extends State<TampilanSukses> {
 
                   Divider(),
 
-                  Row(
+                  const Row(
                     children: [
                       Text(
                         "Rincian Transaksi",
                         style: TextStyle(
-                          fontSize: 11
+                          fontSize: 11, fontWeight: FontWeight.bold
                         ),
                       )
                     ],
@@ -193,7 +237,7 @@ class _TampilanSuksesState extends State<TampilanSukses> {
                     children: [
                       Expanded(
                         child: Text(
-                          "Waktu",
+                          "Wakt Transaksi",
                           style: TextStyle(
                             fontSize: 11
                           ),
@@ -201,7 +245,7 @@ class _TampilanSuksesState extends State<TampilanSukses> {
                       ),
                       Expanded(
                         child: Text(
-                          "13:17",
+                          timePart ?? "N/A", //default value kalo timepart is null
                           textAlign: TextAlign.right,
                           style: TextStyle(
                             fontSize: 11,
@@ -217,7 +261,7 @@ class _TampilanSuksesState extends State<TampilanSukses> {
                     children: [
                       Expanded(
                         child: Text(
-                          "Tanggal",
+                          "Tanggal Transaksi",
                           style: TextStyle(
                             fontSize: 11
                           ),
@@ -225,7 +269,7 @@ class _TampilanSuksesState extends State<TampilanSukses> {
                       ),
                       Expanded(
                         child: Text(
-                          "27 September 24",
+                          datePart ?? "N/A", //default value kalo variable is null
                           textAlign: TextAlign.right,
                           style: TextStyle(
                             fontSize: 11,
@@ -250,7 +294,7 @@ class _TampilanSuksesState extends State<TampilanSukses> {
                       ),
                       Expanded(
                         child: Text(
-                          "TRANS0001",
+                          responseData!['id_trans'],
                           textAlign: TextAlign.right,
                           style: TextStyle(
                             fontSize: 11,
@@ -295,16 +339,16 @@ class _TampilanSuksesState extends State<TampilanSukses> {
                         child: Text(
                           "Total",
                           style: TextStyle(
-                            fontSize: 11
+                            fontSize: 11, fontWeight: FontWeight.bold
                           ),
                         )
                       ),
                       Expanded(
                         child: Text(
-                          "Rp. 1",
+                          widget.totalBiaya,
                           textAlign: TextAlign.right,
                           style: TextStyle(
-                            fontSize: 11,
+                            fontSize: 11, fontWeight: FontWeight.bold
                           ),
                         )
                       )
@@ -320,7 +364,7 @@ class _TampilanSuksesState extends State<TampilanSukses> {
                       Expanded(
                         child: ElevatedButton(
                           onPressed: () {
-                        
+                            tarikJwt("SecondScreen");
                           }, 
                           child: Text("Back To Home")
                         )
@@ -336,7 +380,7 @@ class _TampilanSuksesState extends State<TampilanSukses> {
                     ],
                   ),
                 ],
-              ),
+              ) : const Center(child: CircularProgressIndicator()),
             ),
           )
         ],
