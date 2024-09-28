@@ -634,7 +634,7 @@ class _KontenNavbar extends State<IsiNavbar> {
           title: (_currentIndex == 0) ? Column(
             crossAxisAlignment: CrossAxisAlignment.start, //rata kiri
             children: [
-              Text('Hai ${dataIsiNavbar['user']['name']}', style: TextStyle(fontSize: 16),),
+              Text('Hai ${dataIsiNavbar['usernya']['username']}', style: TextStyle(fontSize: 16),),
               const Padding(
                 padding: EdgeInsets.only(
                   top: 3,

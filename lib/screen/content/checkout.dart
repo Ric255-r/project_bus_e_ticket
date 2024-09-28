@@ -51,7 +51,7 @@ class _StfulMenuCheckoutState extends State<StfulMenuCheckout> {
       });
 
       // salah bodo. pas url akhir aku kasih "/" jadi di API hrs menyesuaikan
-      var response = await dio.post('http://192.168.100.59:5500/api/checkout', 
+      var response = await dio.post('http://192.168.1.26:5500/api/checkout', 
         data: formData,
         options: Options(
           headers: {

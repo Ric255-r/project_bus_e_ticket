@@ -1037,6 +1037,7 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
 
 
 // class buat isi modal
+// ignore: must_be_immutable
 class IsiModalBis extends StatefulWidget {
   var kotaAsal;
   var kotaTujuan;
