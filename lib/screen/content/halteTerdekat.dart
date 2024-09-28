@@ -62,9 +62,7 @@ class _KontenMap extends State<IsiMap>{
   double latitudenya = 0.0;
   double longitudenya = 0.0;
   MapController? controller;
-  bool _isSetLocation = false;
   bool _isLoading = true;
-  bool _isRefreshed = false;
 
   Future<void> _drawUserCircle(double radiusnya) async {
     if (controller != null && _isLoading == false) {

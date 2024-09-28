@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/services.dart';
 import '../menu/menu3.dart';
 import 'package:flutter/material.dart' hide CarouselController;
@@ -16,8 +18,9 @@ import 'package:auto_size_text/auto_size_text.dart';
 class SecondScreen extends StatelessWidget {
   // harus define sebagai Map. supaya bisa get data kek data['a']['b']
   final Map<String, dynamic> data;
+  final int? indexScreen; // buat set halaaman
   // Ambil parameter dari main.dart
-  SecondScreen({required this.data});
+  SecondScreen({required this.data, this.indexScreen});
   // end ambil data main.dart
 
   // anggapannya class ini class pertamakali onload.
@@ -25,7 +28,9 @@ class SecondScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: IsiNavbar(isiData: data)
+      child: indexScreen != null 
+        ? IsiNavbar(isiData: data, indexScreen: indexScreen,)
+        : IsiNavbar(isiData: data)
     );
   }
 }
@@ -556,9 +561,10 @@ class _Kontennya extends State<IsiBody> {
 class IsiNavbar extends StatefulWidget {
   // Buat Parameter. yang ada di SecondScreen.
   final Map<String, dynamic> isiData;
+  final int? indexScreen;
 
     // argumen ini di isi dengan data yg sama dengan body()
-  IsiNavbar({required this.isiData});
+  IsiNavbar({required this.isiData, this.indexScreen});
   // End Parameter
 
   @override
@@ -578,6 +584,10 @@ class _KontenNavbar extends State<IsiNavbar> {
     super.initState();
     // widget isiData diambil dari argument class SecondScreen(paling atas codeny).
     dataIsiNavbar = widget.isiData;
+
+    if(widget.indexScreen != null){
+      _currentIndex = widget.indexScreen!;
+    }
 
     _children = [
       IsiBody(dataPassing: dataIsiNavbar),
