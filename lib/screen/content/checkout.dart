@@ -397,7 +397,7 @@ class _StfulMenuCheckoutState extends State<StfulMenuCheckout> {
                                   ? Text('No image selected.')
                                   : Image.file(_imgFile!, height: 100, width: 100,),
                               
-                              if(_imgFile == null)
+                              // if(_imgFile == null)
                               SizedBox(height: 20,),
 
                               ElevatedButton(

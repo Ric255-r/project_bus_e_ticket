@@ -1,11 +1,13 @@
 import 'dart:async';
 
 import 'package:bus_hub/screen/content/checkout.dart';
+import 'package:bus_hub/screen/function/ip_address.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:intl/intl.dart'; //buat convert date
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:dio/dio.dart';
 
 
 // biar bisa akses variabel/fungsi dari class ini
@@ -62,6 +64,7 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
   bool isCheckHarga = false;
   String changeUbahTextBis = "";
   double tarifBis = 300000;
+  var dio = Dio();
 
   void ubahTextBis(String value){
     setState(() {
@@ -71,6 +74,8 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
   }
 
   bool showErrorText = false;
+  bool showDetailHarga = false;
+  bool showErrorDetailHarga = false;
 
   void fnShowErrorText(){
     setState(() {
@@ -83,6 +88,37 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
         showErrorText = false;
       });
     });
+  }
+
+  void fnShowErrorDetailHarga(){
+    setState(() {
+      showErrorDetailHarga = true;
+    });
+
+    Timer(Duration(seconds: 3), () {
+      setState(() {
+        showErrorDetailHarga = false;
+      });
+    });
+  }
+
+  List<String> kota = [];
+  List<String> idKota = [];
+  List<dynamic> arrayRespBis = [];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    // kalo lewat initstate, ga perlu panggil pake keyword "await"
+    // penjelasan AI : 
+    // In the initState method, you don’t use await directly 
+    //because initState itself cannot be marked as async. 
+    //The initState method is a synchronous method, 
+    //and marking it as async would change its return type to Future<void>, 
+    //which is not allowed for lifecycle methods in Flutter
+    apiKota();
   }
 
   @override
@@ -102,7 +138,42 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
     super.dispose();
   }
 
-  List<String> kota = ["Pontianak", "Singkawang", "Sambas"];
+
+  Future<void> apiKota() async{
+    try {
+      var response = await dio.get("${myIpAddr()}/kota");
+      var respBis = await dio.get("${myIpAddr()}/listbis");
+
+      //krn select * return dlm array, maka declare dlu dlm bentuk array
+      List<dynamic> responseBis = respBis.data;
+      List<dynamic> responseData = response.data;
+
+      List<String> arrIdKota = [];
+      List<String> arrNamaKota = [];
+
+      for(var kota in responseData){
+        arrIdKota.add(kota['id_kota']);
+        arrNamaKota.add(kota['nama_kota']);
+      }
+
+      setState(() {
+        kota = arrNamaKota;
+        idKota = arrIdKota;
+        arrayRespBis = responseBis;
+      });
+    } catch (e) {
+      print(e);
+      
+      setState(() {
+        kota = [];
+        idKota = [];
+        arrayRespBis = [];
+      });
+    }
+  }
+
+  //  ga bs langsung tarik spt ini. mesti lewat initstate krn async function;
+  //List<String> kota = tarikKota('kota');
 
   double? screenWidth;
 
@@ -212,7 +283,7 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                 // klo g die error
                 child: Container(
                   padding: EdgeInsets.all(16),
-                  height: (screenHeight <= 700) ? screenHeight + 50 : (screenHeight >= 900) ? screenHeight - 200 : screenHeight - 80,
+                  height: (screenHeight <= 700) ? screenHeight + 50 : (screenHeight >= 900) ? screenHeight - 200 : screenHeight - 70,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start, // buat ratakiri
                     children: [
@@ -256,6 +327,7 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                         onChanged: (String? newValue) {
                           setState(() {
                             selectedCity = newValue;
+                            showDetailHarga = false;
                             txtKotaAsal.text = (newValue == null) ? "" : newValue;
                           });
                         },
@@ -283,6 +355,7 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                         onChanged: (String? newValue){
                           setState(() {
                             selectedCityTujuan = newValue;
+                            showDetailHarga = false;
                             txtKotaTujuan.text = (newValue == null) ? "" : newValue;
                           });
                         }
@@ -297,6 +370,7 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                               fnShowErrorText();
                             }else{
                               _dialogBuilder(context);
+                              showDetailHarga = false;
                             }
                           },
                           child: IgnorePointer( //mencegah textfield interactive
@@ -348,6 +422,11 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                             TextField(
                               controller: txtTglBrkt,
                               onTap: () {
+                                setState(() {
+                                  txtTglBrkt.text = "";
+                                  txtTglBalik.text = ""; //supaya pas on tap ini hilang jg
+                                  showDetailHarga = false;
+                                });
                                 showDatePickerDialog(context, "pergi");
                               },
                               readOnly: true,
@@ -367,6 +446,8 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                                     onChanged: (bool value) {
                                       setState(() {
                                         ppSwitch = value;
+                                        txtTglBalik.text = "";
+                                        showDetailHarga = false;
                                       });
                                     },
                                   ),
@@ -391,6 +472,10 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                               controller: txtTglBalik,
                               readOnly: true,
                               onTap: () {
+                                setState(() {
+                                  txtTglBalik.text = "";
+                                  showDetailHarga = false;
+                                });
                                 showDatePickerDialog(context, "pulang");
                               },
                               decoration: const InputDecoration(
@@ -437,7 +522,12 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                                           Icons.account_box,
                                           size: 28.0,
                                         ),
-                                      )
+                                      ),
+                                      onChanged: (String? value) {
+                                        setState(() {
+                                          showDetailHarga = false;
+                                        });
+                                      },
                                     ),
                                   ),
                                 )
@@ -477,6 +567,20 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                         onPressed: () {
                           setState(() {
                             isCheckHarga = true;
+
+                            if(txtKotaAsal.text != "" && txtKotaTujuan.text != "" && busPilihan.text != "" 
+                              && txtTglBrkt.text != "" && txtJlhPenumpang.text != "" && txtKlsBis.text != ""){
+                                
+                              if(!ppSwitch && txtTglBalik.text == ""){
+                                fnShowErrorDetailHarga();
+                              }else{
+                                showDetailHarga = true;
+                              }
+                            }else{
+                              showDetailHarga = false;
+                              fnShowErrorDetailHarga();
+                            }
+
                           });
 
                           // Use this to wait until the frame is built and then scroll
@@ -493,16 +597,31 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10)
                         ),
-                      )
+                      ),
+
+                      if(showErrorDetailHarga)
+                      AnimatedOpacity(
+                        opacity: showErrorDetailHarga ? 1.0 : 0.0, 
+                        duration: Duration(milliseconds: 200),
+                        child: Padding(
+                          padding: EdgeInsets.only(bottom: 20),
+                          child: const Text(
+                            "Harap Mengisi Semua data sebelum di Check Harga",
+                            style: TextStyle(color: Colors.red),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
               )
             ),
+
+
           
             SizedBox(height: 20,),
 
-            if(isCheckHarga)
+            if(isCheckHarga && showDetailHarga)
             Positioned(
               top: (screenHeight <= 700) ? screenHeight + 320 : screenHeight + 180,
               left: 20,
@@ -555,7 +674,11 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                                 flex: 1,
                                 child: Align( // tambah align biar bs kekanan
                                   alignment: Alignment.centerRight, 
-                                  child: Text("${busPilihan.text} / ${txtKlsBis.text}"),
+                                  child: AutoSizeText(
+                                    "${busPilihan.text} / ${txtKlsBis.text}",
+                                    maxLines: 1,
+                                    minFontSize: 7,
+                                  ),
                                 ),
                               )
                             ],
@@ -576,7 +699,7 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                                   child: AutoSizeText( // ini plugin. update pubspec.yaml
                                     "${txtKotaAsal.text} -> ${txtKotaTujuan.text}",
                                     maxLines: 1,
-                                    minFontSize: 5,
+                                    minFontSize: 7,
                                   ),
                                 ),
                               )
@@ -917,68 +1040,69 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                         itemBuilder: (context, index){
                           return Padding(
                             padding: EdgeInsets.only(
-                              left: 10, right: 10
+                              left: 10, right: 10,
                             ),
                             child: Column(
-                              children: [
-                                InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      busPilihan.text = "Damriku";
-                                      txtKlsBis.text = "Executive";
-                                    });
-                                    Navigator.pop(context);
-                                  },
-                                  child: IsiModalBis(kotaAsal: txtKotaAsal.text, kotaTujuan: txtKotaTujuan.text,),
-                                ),
-                                
-                                                
-                                SizedBox(height: 40,),
+                              // cek dan filter dlu dalam bentuk list apakah hasil dari kondisi empty atau nda
+                              children: arrayRespBis.where((item) {
+                                return item['kota_awal'] == txtKotaAsal.text.trim() && item['kota_akhir'] == txtKotaTujuan.text.trim();
+                              }).toList().isNotEmpty ? 
+                                // kalo nd empty maka filter ulang utk dijadikan map.
+                                arrayRespBis.where((item) => 
+                                  item['kota_awal'] == txtKotaAsal.text && item['kota_akhir'] == txtKotaTujuan.text
+                                ).map((item) {
+                                  return InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        busPilihan.text = item['nama_bis'];
+                                        txtKlsBis.text = item['nama_kelas'];
+                                      });
+                                      Navigator.pop(context);
+                                    },
+                                    child: Padding(
+                                      padding: EdgeInsets.only(
+                                        bottom: 10
+                                      ),
+                                      child: IsiModalBis(
+                                        kotaAsal: txtKotaAsal.text, 
+                                        kotaTujuan: txtKotaTujuan.text, 
+                                        harga: "Rp. ${(item['harga']).round()}",
+                                        lama_tempuh: item['lama_tempuh_jam'],
+                                        waktu_berangkat: item['waktu_berangkat'],
+                                        waktu_sampai: item['waktu_sampai'],
+                                      ),
+                                    ),
+                                  );
+                                }).toList() : [Text("No Data")]
 
-                                InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      busPilihan.text = "Damriku";
-                                      txtKlsBis.text = "Executive";
-
-                                      
-                                    });
-                                    Navigator.pop(context);
-                                  },
-                                  child: IsiModalBis(kotaAsal: txtKotaAsal.text, kotaTujuan: txtKotaTujuan.text,),
-                                ),
-
-                                SizedBox(height: 40,),
-
-                                InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      busPilihan.text = "Damriku";
-                                      txtKlsBis.text = "Executive";
-
-                                    });
-                                    Navigator.pop(context);
-                                  },
-                                  child: IsiModalBis(kotaAsal: txtKotaAsal.text, kotaTujuan: txtKotaTujuan.text,),
-                                ),
-                                SizedBox(height: 40,),
-
-                                InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      busPilihan.text = "Damriku";
-                                      txtKlsBis.text = "Executive";
-
-                                    });
-                                    Navigator.pop(context);
-                                  },
-                                  child: IsiModalBis(kotaAsal: txtKotaAsal.text, kotaTujuan: txtKotaTujuan.text,),
-                                ),
-
-                                SizedBox(height: 20,)
-
-
-                              ],
+                              
+                              // kode lama
+                              // arrayRespBis.map((item) {
+                              //   var stop = false;
+                              //   if( (item['kota_awal'] == txtKotaAsal.text && item['kota_akhir'] == txtKotaTujuan.text) 
+                              //     || (item['kota_akhir'] == txtKotaAsal.text && item['kota_asal'] == txtKotaTujuan.text)
+                              //   ){
+                              //     return InkWell(
+                              //       onTap: () {
+                              //         setState(() {
+                              //           busPilihan.text = item['nama_bis'];
+                              //           txtKlsBis.text = item['nama_kelas'];
+                              //         });
+                              //         Navigator.pop(context);
+                              //       },
+                              //       child: IsiModalBis(
+                              //         kotaAsal: txtKotaAsal.text, 
+                              //         kotaTujuan: txtKotaTujuan.text, 
+                              //         harga: item['harga'],
+                              //         lama_tempuh: item['lama_tempuh_jam'],
+                              //         waktu_berangkat: item['waktu_berangkat'],
+                              //         waktu_sampai: item['waktu_sampai'],
+                              //       ),
+                              //     );
+                              //   }else{
+                              //     return Text("No Data");
+                              //   }
+                              // }).toList(),
                             ),
                           );
                         }
@@ -1008,6 +1132,7 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
         statusPp = "Tanggal Pulang";
       }
     }
+
 
 
 
@@ -1094,8 +1219,21 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
 class IsiModalBis extends StatefulWidget {
   var kotaAsal;
   var kotaTujuan;
+  var harga;
+  var waktu_berangkat;
+  var waktu_sampai;
+  var lama_tempuh;
 
-  IsiModalBis({super.key, this.kotaAsal, this.kotaTujuan});
+
+  IsiModalBis({
+      super.key, 
+      this.kotaAsal, 
+      this.kotaTujuan, 
+      this.harga, 
+      this.waktu_berangkat,
+      this.waktu_sampai,
+      this.lama_tempuh
+  });
 
   @override
   State<IsiModalBis> createState() => _IsiModalBisState();
@@ -1128,7 +1266,7 @@ class _IsiModalBisState extends State<IsiModalBis> {
                     ),
                   ),
                 ),
-                const Expanded(
+                Expanded(
                   child: Padding(
                     padding: EdgeInsets.only(
                       bottom: 10,
@@ -1142,7 +1280,7 @@ class _IsiModalBisState extends State<IsiModalBis> {
                             padding: EdgeInsets.only(
                               left: 20
                             ),
-                            child: Text("Rp.300.000", style: TextStyle(fontWeight: FontWeight.bold),),
+                            child: Text("${widget.harga}", style: TextStyle(fontWeight: FontWeight.bold),),
                           ),
                           SizedBox(height: 10,),
                           Text("Hari Berikutnya", style: TextStyle(fontWeight: FontWeight.w400)),
@@ -1158,14 +1296,13 @@ class _IsiModalBisState extends State<IsiModalBis> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                const Expanded(
+                Expanded(
                   flex: 1,
                   child: Text(
-                    "19:52", 
-                    style: TextStyle(
+                    "${widget.waktu_berangkat}", 
+                    style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 10
-
                     )
                   )
                 ),
@@ -1182,12 +1319,13 @@ class _IsiModalBisState extends State<IsiModalBis> {
                 Expanded(
                   flex: 1,
                   child: Center(
-                    child: Text(
-                      "9h 5m",
-                      style: TextStyle(
+                    child: AutoSizeText(
+                      "${widget.lama_tempuh}",
+                      maxLines: 1,
+                      minFontSize: 5,
+                      maxFontSize: 10,
+                      style: const TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 10
-
                       )
                     ),
                   )
@@ -1211,8 +1349,8 @@ class _IsiModalBisState extends State<IsiModalBis> {
                         right: 5
                       ),
                       child: Text(
-                        "19:52", 
-                        style: TextStyle(
+                        "${widget.waktu_sampai}", 
+                        style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 10
 
