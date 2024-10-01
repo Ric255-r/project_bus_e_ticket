@@ -7,8 +7,20 @@ import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class MenuCheckout extends StatelessWidget {
+  // Declare Variable utk Parameter/argument
   var totalBiaya;
-  MenuCheckout({this.totalBiaya});
+  var id_bis;
+  var tgl_pergi, tgl_balik, jlh_penumpang, hrg_tiket_perorg;
+
+  // Jadikan ini sebagai argument. ambil dari variable di atas
+  MenuCheckout({
+    this.totalBiaya, 
+    this.id_bis,
+    this.tgl_pergi,
+    this.tgl_balik,
+    this.jlh_penumpang, 
+    this.hrg_tiket_perorg
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +40,14 @@ class MenuCheckout extends StatelessWidget {
             ),
           ),
         ),
-        body: StfulMenuCheckout(totalBiaya: totalBiaya,),
+        body: StfulMenuCheckout(
+          totalBiaya: totalBiaya,
+          idBis: id_bis,
+          tglPergi: tgl_pergi,
+          tglBalik: tgl_balik,
+          jlhPenumpang: jlh_penumpang,
+          hrgTiketPerOrg: hrg_tiket_perorg
+        ),
       )
     );
   }
@@ -36,7 +55,16 @@ class MenuCheckout extends StatelessWidget {
 
 class StfulMenuCheckout extends StatefulWidget {
   var totalBiaya;
-  StfulMenuCheckout({this.totalBiaya});
+  var idBis, tglPergi, tglBalik, jlhPenumpang, hrgTiketPerOrg;
+
+  StfulMenuCheckout({
+    this.totalBiaya, 
+    this.idBis,
+    this.tglPergi,
+    this.tglBalik,
+    this.jlhPenumpang,
+    this.hrgTiketPerOrg
+  });
 
   @override
   State<StfulMenuCheckout> createState() => _StfulMenuCheckoutState();
@@ -58,8 +86,16 @@ class _StfulMenuCheckoutState extends State<StfulMenuCheckout> {
     
     try {
       String fileName = _imgFile!.path.split("/").last;
+      // yg total_biaya ak jadikan array yg terdiri dari String Formatted di index 0, sama value real di index 1
+      // ak malas mw buat parameter lg.
       FormData formData = FormData.fromMap({
-        'buktiByr': await MultipartFile.fromFile(_imgFile!.path, filename: fileName)
+        'buktiByr': await MultipartFile.fromFile(_imgFile!.path, filename: fileName),
+        'total_harga': widget.totalBiaya[1],
+        'id_bis': widget.idBis,
+        'tgl_pergi': widget.tglPergi,
+        'tgl_balik': widget.tglBalik,
+        'jlh_penumpang': widget.jlhPenumpang,
+        'hrg_tiket_perorg': widget.hrgTiketPerOrg,
       });
 
       // salah bodo. pas url akhir aku kasih "/" jadi di API hrs menyesuaikan
@@ -78,7 +114,7 @@ class _StfulMenuCheckoutState extends State<StfulMenuCheckout> {
         Navigator.push(
           context, 
           MaterialPageRoute(
-            builder: (context) => MenuSuccess(totalHarga: widget.totalBiaya,)
+            builder: (context) => MenuSuccess(totalHarga: widget.totalBiaya[0],)
           )
         );
       }
@@ -190,7 +226,7 @@ class _StfulMenuCheckoutState extends State<StfulMenuCheckout> {
                       children: [
                         Expanded(
                           child: Text(
-                            widget.totalBiaya,
+                            widget.totalBiaya[0],
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                         )

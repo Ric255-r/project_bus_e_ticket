@@ -64,6 +64,7 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
   bool isCheckHarga = false;
   String changeUbahTextBis = "";
   double tarifBis = 300000;
+  String id_bis = "";
   var dio = Dio();
 
   void ubahTextBis(String value){
@@ -329,6 +330,7 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                             selectedCity = newValue;
                             showDetailHarga = false;
                             txtKotaAsal.text = (newValue == null) ? "" : newValue;
+                            busPilihan.text = "";
                           });
                         },
                       ),
@@ -357,6 +359,7 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                             selectedCityTujuan = newValue;
                             showDetailHarga = false;
                             txtKotaTujuan.text = (newValue == null) ? "" : newValue;
+                            busPilihan.text = "";
                           });
                         }
                       ),
@@ -940,7 +943,16 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                         Navigator.push(
                           context, 
                           MaterialPageRoute(
-                            builder: (builder) => MenuCheckout(totalBiaya: formattedTotalBiaya,)
+                            builder: (builder) => MenuCheckout(
+                            // yg total_biaya ak jadikan array yg terdiri dari String Formatted di index 0, sama value real di index 1
+                            // ak malas mw buat parameter lg.
+                              totalBiaya: [formattedTotalBiaya, totalBiaya],
+                              id_bis: id_bis,
+                              tgl_pergi: txtTglBrkt.text,
+                              tgl_balik: txtTglBalik.text,
+                              jlh_penumpang: int.parse(txtJlhPenumpang.text),
+                              hrg_tiket_perorg: totalBiaya / int.parse(txtJlhPenumpang.text),
+                            )
                           )
                         );
                       },
@@ -1045,7 +1057,7 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                             child: Column(
                               // cek dan filter dlu dalam bentuk list apakah hasil dari kondisi empty atau nda
                               children: arrayRespBis.where((item) {
-                                return item['kota_awal'] == txtKotaAsal.text.trim() && item['kota_akhir'] == txtKotaTujuan.text.trim();
+                                return item['kota_awal'] == txtKotaAsal.text && item['kota_akhir'] == txtKotaTujuan.text;
                               }).toList().isNotEmpty ? 
                                 // kalo nd empty maka filter ulang utk dijadikan map.
                                 arrayRespBis.where((item) => 
@@ -1054,6 +1066,7 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                                   return InkWell(
                                     onTap: () {
                                       setState(() {
+                                        id_bis = item['id_bis'];
                                         busPilihan.text = item['nama_bis'];
                                         txtKlsBis.text = item['nama_kelas'];
                                       });
