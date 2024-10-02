@@ -41,6 +41,7 @@ class Pesantiket extends StatelessWidget {
   }
 }
 
+// ignore: must_be_immutable
 class BodyPesanTiket extends StatefulWidget {
   // Buat parameter utk ambil dari statelesswidget
   final String? existsHalteStless;
@@ -63,7 +64,7 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
   bool ppSwitch = false;
   bool isCheckHarga = false;
   String changeUbahTextBis = "";
-  double tarifBis = 300000;
+  double tarifBis = 0.0;
   String id_bis = "";
   var dio = Dio();
 
@@ -202,8 +203,12 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
     final screenHeight = MediaQuery.of(context).size.height;
     screenWidth = MediaQuery.of(context).size.width;
 
+    var showBisPilihan;
+    
     if(widget.existsHalteStless != null){
-      busPilihan.text = widget.existsHalteStless!;
+      // busPilihan.text = widget.existsHalteStless!;
+      // ini buat if kalo dia pencet lewat menu halte, maka ada modif tampilan sedikit
+      showBisPilihan = widget.existsHalteStless!;
     }
 
     if(changeUbahTextBis != ""){
@@ -253,13 +258,23 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                       'assets/images/tayo.png',
                       height: 150,
                       width: 150,
+                    ),
+
+                    SizedBox(height: 30,),
+
+                    if(showBisPilihan != null)
+                    Text(
+                      "Bus Pilihan : $showBisPilihan",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w500
+                      ),
                     )
 
                   ],
                 ),
               )
             ),
-            SizedBox(height: 20,),
             
             Positioned(
               top: 240,
@@ -365,14 +380,21 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                       ),
                       const SizedBox(height: 20,),
 
-                      const Text("Jasa Bis"),
+                      Text(
+                        (showBisPilihan != null) ? "Pilih Jadwal" : "Jasa Bis"
+                      ),
                       Container(
                         child: InkWell(
                           onTap: () {
                             if(txtKotaAsal.text.isEmpty || txtKotaTujuan.text.isEmpty){
                               fnShowErrorText();
                             }else{
-                              _dialogBuilder(context);
+                              if(showBisPilihan != null){
+                                _dialogBuilder(context, txtBusPilihan: showBisPilihan);
+                              }else{
+                                _dialogBuilder(context);
+                              }
+
                               showDetailHarga = false;
                             }
                           },
@@ -380,8 +402,8 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                             child: TextField(
                               readOnly: true,
                               controller: busPilihan,
-                              decoration: const InputDecoration(
-                                hintText: 'Bus Pilihan',
+                              decoration: InputDecoration(
+                                hintText: (showBisPilihan != null) ? "Pilih Jadwal": "Bus Pilihan",
                                 hintStyle: TextStyle(
                                   fontWeight: FontWeight.w200
                                 ),
@@ -1009,7 +1031,24 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
   // }
 
 
-  Future<Object> _dialogBuilder(BuildContext context) async {
+  Future<Object> _dialogBuilder(BuildContext context, {String? txtBusPilihan}) async {
+    // kalau pilih lewat menu halte
+    List<dynamic>? arrWhereBisLike;
+    if(txtBusPilihan != null){
+      var dio = Dio();
+
+      try {
+        var response = await dio.get('${myIpAddr()}/listbis/${txtBusPilihan}');
+
+        setState(() {
+          arrWhereBisLike = response.data;
+        });
+      } catch (e) {
+        print("Error dialog builder ${e}");
+      }
+    }
+
+    // ini kalo di pilih lewat menu pesan tiket
     //awalnya alertdialog, cmn kuganti berdasarkan rekomen AI
     return showGeneralDialog(
       context: context,
@@ -1037,7 +1076,9 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                       borderRadius: BorderRadius.circular(25)
                     ),
                     child: Center(
-                      child: Text("Pilih Jasa Bis Yang Diinginkan"),
+                      child: Text(
+                        (txtBusPilihan != null) ? "Pilih Jadwal Bis Anda" : "Pilih Jasa Bis Yang Diinginkan"
+                      ),
                     ),
                   ),
                   SizedBox(
@@ -1054,7 +1095,9 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                             padding: EdgeInsets.only(
                               left: 10, right: 10,
                             ),
-                            child: Column(
+                            // arrWhereBisLike itu isinya query where like.
+                            // ini kalo dia akses pakai menu pesan tiket
+                            child: (arrWhereBisLike == null) ? Column(
                               // cek dan filter dlu dalam bentuk list apakah hasil dari kondisi empty atau nda
                               children: arrayRespBis.where((item) {
                                 return item['kota_awal'] == txtKotaAsal.text && item['kota_akhir'] == txtKotaTujuan.text;
@@ -1069,6 +1112,7 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                                         id_bis = item['id_bis'];
                                         busPilihan.text = item['nama_bis'];
                                         txtKlsBis.text = item['nama_kelas'];
+                                        tarifBis = item['harga'];
                                       });
                                       Navigator.pop(context);
                                     },
@@ -1083,6 +1127,7 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                                         lama_tempuh: item['lama_tempuh_jam'],
                                         waktu_berangkat: item['waktu_berangkat'],
                                         waktu_sampai: item['waktu_sampai'],
+                                        nama_bis: item['nama_bis'],
                                       ),
                                     ),
                                   );
@@ -1116,6 +1161,43 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                               //     return Text("No Data");
                               //   }
                               // }).toList(),
+                            ) : Column(
+                              // ini kondisi kalo arrWhereBisLike ada isinya. akses pakai menu halte terdekat
+                              // cek dan filter dlu dalam bentuk list apakah hasil dari kondisi empty atau nda
+                              children: arrWhereBisLike!.where((item) {
+                                return item['kota_awal'] == txtKotaAsal.text && item['kota_akhir'] == txtKotaTujuan.text;
+                              }).toList().isNotEmpty ? 
+                                // kalo nd empty maka filter ulang utk dijadikan map.
+                                arrWhereBisLike!.where((item) => 
+                                  item['kota_awal'] == txtKotaAsal.text && item['kota_akhir'] == txtKotaTujuan.text
+                                ).map((item) {
+                                  return InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        id_bis = item['id_bis'];
+                                        busPilihan.text = item['nama_bis'];
+                                        txtKlsBis.text = item['nama_kelas'];
+                                        tarifBis = item['harga'];
+                                      });
+                                      Navigator.pop(context);
+                                    },
+                                    child: Padding(
+                                      padding: EdgeInsets.only(
+                                        bottom: 10
+                                      ),
+                                      child: IsiModalBis(
+                                        kotaAsal: txtKotaAsal.text, 
+                                        kotaTujuan: txtKotaTujuan.text, 
+                                        harga: "Rp. ${(item['harga']).round()}",
+                                        lama_tempuh: item['lama_tempuh_jam'],
+                                        waktu_berangkat: item['waktu_berangkat'],
+                                        waktu_sampai: item['waktu_sampai'],
+                                        nama_bis: item['nama_bis'],
+                                      ),
+                                    ),
+                                  );
+                                }).toList() : [Text("No Data")]
+
                             ),
                           );
                         }
@@ -1236,6 +1318,8 @@ class IsiModalBis extends StatefulWidget {
   var waktu_berangkat;
   var waktu_sampai;
   var lama_tempuh;
+  var nama_bis;
+  var kapasitas_penumpang;
 
 
   IsiModalBis({
@@ -1245,7 +1329,8 @@ class IsiModalBis extends StatefulWidget {
       this.harga, 
       this.waktu_berangkat,
       this.waktu_sampai,
-      this.lama_tempuh
+      this.lama_tempuh,
+      this.nama_bis,
   });
 
   @override
@@ -1400,12 +1485,12 @@ class _IsiModalBisState extends State<IsiModalBis> {
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                const Expanded(
+                Expanded(
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: Column(
                       children: [
-                        Text("Damri, Executive", style: TextStyle(fontWeight: FontWeight.bold)),
+                        Text("${widget.nama_bis}", style: TextStyle(fontWeight: FontWeight.bold)),
                         Text("40 Kursi Tersedia", style: TextStyle(fontWeight: FontWeight.w200))
                       ],
                     ),
