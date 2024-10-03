@@ -74,7 +74,7 @@ class _StfulMenuCheckoutState extends State<StfulMenuCheckout> {
   String paymentMethod = "Transfer";
   File? _imgFile;
 
-  Future<void> _submitBukti(BuildContext context) async {
+  Future<void> _submitBukti(BuildContext context, {String? mode}) async {
     var dio = Dio();
     var storage = new FlutterSecureStorage();
 
@@ -85,18 +85,35 @@ class _StfulMenuCheckoutState extends State<StfulMenuCheckout> {
     // print(parseNow.minute);
     
     try {
-      String fileName = _imgFile!.path.split("/").last;
-      // yg total_biaya ak jadikan array yg terdiri dari String Formatted di index 0, sama value real di index 1
-      // ak malas mw buat parameter lg.
-      FormData formData = FormData.fromMap({
-        'buktiByr': await MultipartFile.fromFile(_imgFile!.path, filename: fileName),
-        'total_harga': widget.totalBiaya[1],
-        'id_bis': widget.idBis,
-        'tgl_pergi': widget.tglPergi,
-        'tgl_balik': widget.tglBalik,
-        'jlh_penumpang': widget.jlhPenumpang,
-        'hrg_tiket_perorg': widget.hrgTiketPerOrg,
-      });
+      FormData? formData;
+
+      if(mode == "cash"){
+        // yg total_biaya ak jadikan array yg terdiri dari String Formatted di index 0, sama value real di index 1
+        // ak malas mw buat parameter lg.
+        formData = FormData.fromMap({
+          // note. dk bole passing data berisi null. fastapi bkl baca 422 unprocessable entity
+          //'buktiByr': "bayarCash",
+          'total_harga': widget.totalBiaya[1],
+          'id_bis': widget.idBis,
+          'tgl_pergi': widget.tglPergi,
+          'tgl_balik': widget.tglBalik,
+          'jlh_penumpang': widget.jlhPenumpang,
+          'hrg_tiket_perorg': widget.hrgTiketPerOrg,
+        });
+      }else{
+        String fileName = _imgFile!.path.split("/").last;
+        // yg total_biaya ak jadikan array yg terdiri dari String Formatted di index 0, sama value real di index 1
+        // ak malas mw buat parameter lg.
+        formData = FormData.fromMap({
+          'buktiByr': await MultipartFile.fromFile(_imgFile!.path, filename: fileName),
+          'total_harga': widget.totalBiaya[1],
+          'id_bis': widget.idBis,
+          'tgl_pergi': widget.tglPergi,
+          'tgl_balik': widget.tglBalik,
+          'jlh_penumpang': widget.jlhPenumpang,
+          'hrg_tiket_perorg': widget.hrgTiketPerOrg,
+        });
+      }
 
       // salah bodo. pas url akhir aku kasih "/" jadi di API hrs menyesuaikan
       var response = await dio.post('${myIpAddr()}/checkout', 
@@ -109,15 +126,6 @@ class _StfulMenuCheckoutState extends State<StfulMenuCheckout> {
         )
         
       );
-
-      if(context.mounted){
-        Navigator.push(
-          context, 
-          MaterialPageRoute(
-            builder: (context) => MenuSuccess(totalHarga: widget.totalBiaya[0],)
-          )
-        );
-      }
 
     } catch (e) {
       print("Error $e");
@@ -473,7 +481,17 @@ class _StfulMenuCheckoutState extends State<StfulMenuCheckout> {
                         children: [
                           Expanded(
                             child: ElevatedButton(
-                              onPressed: () {}, 
+                              onPressed: () {
+                                _submitBukti(context, mode: "cash");
+
+                                Navigator.push(
+                                  context, 
+                                  MaterialPageRoute(builder: (context) => MenuSuccess(
+                                    totalHarga: widget.totalBiaya[0],
+                                    mode: "cash",
+                                  ))
+                                );
+                              }, 
                               child: Text("Menuju Kasir")
                             )
                           )
@@ -514,6 +532,13 @@ class _StfulMenuCheckoutState extends State<StfulMenuCheckout> {
                           child: ElevatedButton(
                             onPressed: () {
                               _submitBukti(context);
+                              
+                              Navigator.push(
+                                context, 
+                                MaterialPageRoute(
+                                  builder: (context) => MenuSuccess(totalHarga: widget.totalBiaya[0],)
+                                )
+                              );
                             },
                             child: Text("Konfirmasi Pembayaran ->"),
                           ),

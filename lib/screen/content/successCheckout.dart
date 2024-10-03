@@ -6,10 +6,12 @@ import 'package:bus_hub/screen/menu/menu2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:dio/dio.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 class MenuSuccess extends StatelessWidget {
   var totalHarga;
-  MenuSuccess({this.totalHarga});
+  var mode;
+  MenuSuccess({this.totalHarga, this.mode = "transfer"});
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +23,10 @@ class MenuSuccess extends StatelessWidget {
           // toolbarHeight: 40,
           backgroundColor: Colors.white,
         ),
-        body: TampilanSukses(totalBiaya: totalHarga,),
+        body: TampilanSukses(
+          totalBiaya: totalHarga, 
+          mode: (mode == "cash") ? "cash" : mode,
+        ),
       )
     );
   }
@@ -29,7 +34,8 @@ class MenuSuccess extends StatelessWidget {
 
 class TampilanSukses extends StatefulWidget {
   var totalBiaya;
-  TampilanSukses({this.totalBiaya});
+  var mode;
+  TampilanSukses({this.totalBiaya, this.mode});
 
   @override
   State<TampilanSukses> createState() => _TampilanSuksesState();
@@ -132,10 +138,21 @@ class _TampilanSuksesState extends State<TampilanSukses> {
               ),
               child: (responseData != null) ? Column(
                 children: [
-                  const Row(
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      // kombinasikan mainaxisalignment dengan align untuk centerkan expanded
                       Expanded(
-                        child: Icon(Icons.money, size: 100,),
+                        child: widget.mode == "cash" 
+                        ? Align(
+                            alignment: Alignment.center,
+                            child: QrImageView(
+                              data: responseData!['id_trans'],
+                              version: QrVersions.auto,
+                              size: 100,
+                            ),
+                          )
+                        : Icon(Icons.money, size: 100,),
                       )
                     ],
                   ),
@@ -155,11 +172,13 @@ class _TampilanSuksesState extends State<TampilanSukses> {
                     ],
                   ),
 
-                  const Row(
+                  Row(
                     children: [
                       Expanded(
                         child: Text(
-                          "Diteruskan kepada Ekspedisi Damriku", 
+                          (widget.mode == "cash") 
+                            ? "Silahkan menunjukkan QR Code ini ke Kasir"
+                            : "Diteruskan kepada Ekspedisi Damriku", 
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontWeight: FontWeight.w300,
@@ -221,7 +240,7 @@ class _TampilanSuksesState extends State<TampilanSukses> {
                       ),
                       Expanded(
                         child: Text(
-                          "Transfer",
+                          widget.mode == "cash" ? "Cash" : "Transfer",
                           textAlign: TextAlign.right,
                           style: TextStyle(
                             fontSize: 11,
@@ -308,6 +327,8 @@ class _TampilanSuksesState extends State<TampilanSukses> {
 
 
                   SizedBox(height: 5,),
+                  
+                  if(widget.mode == "transfer")
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
@@ -385,6 +406,27 @@ class _TampilanSuksesState extends State<TampilanSukses> {
           )
         ],
       ),
+    );
+  }
+}
+
+class TampilanCash extends StatefulWidget {
+  var totalBiaya;
+
+  TampilanCash({this.totalBiaya});
+
+  @override
+  State<TampilanCash> createState() => _TampilanCashState();
+}
+
+class _TampilanCashState extends State<TampilanCash> {
+  @override
+  Widget build(BuildContext context) {
+    return WillPopScope(
+      onWillPop: () async {
+        return true;
+      },
+      child: Text("Hai"), 
     );
   }
 }
