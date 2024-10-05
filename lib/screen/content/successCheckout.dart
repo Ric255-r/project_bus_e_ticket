@@ -8,6 +8,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:dio/dio.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
+// ignore: must_be_immutable
 class MenuSuccess extends StatelessWidget {
   var totalHarga;
   var mode;

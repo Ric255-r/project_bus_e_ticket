@@ -1,5 +1,7 @@
 import 'dart:ffi';
 
+import 'package:bus_hub/screen/content/paketWisata.dart';
+import 'package:bus_hub/screen/content/panduanBepergian.dart';
 import 'package:flutter/services.dart';
 import '../menu/menu3.dart';
 import 'package:flutter/material.dart' hide CarouselController;
@@ -340,13 +342,17 @@ class _Kontennya extends State<IsiBody> {
                                   ),
                                   child: GestureDetector(
                                     onTap: () {
-                                      Fluttertoast.showToast(
-                                        msg: "Paket Wisata",
-                                        toastLength: Toast.LENGTH_SHORT,
-                                        gravity: ToastGravity.BOTTOM,
-                                        timeInSecForIosWeb: 1,
-                                        textColor: Colors.white,
-                                        fontSize: 16.0
+                                      // Fluttertoast.showToast(
+                                      //   msg: "Paket Wisata",
+                                      //   toastLength: Toast.LENGTH_SHORT,
+                                      //   gravity: ToastGravity.BOTTOM,
+                                      //   timeInSecForIosWeb: 1,
+                                      //   textColor: Colors.white,
+                                      //   fontSize: 16.0
+                                      // );
+                                      Navigator.push(
+                                        context, 
+                                        MaterialPageRoute(builder: (context) => paketwisata1(title: "lala"))
                                       );
                                     },
                                     child: Column(
@@ -386,13 +392,17 @@ class _Kontennya extends State<IsiBody> {
                                   ),
                                   child: GestureDetector(
                                     onTap: () {
-                                      Fluttertoast.showToast(
-                                        msg: "Panduan Berpergian",
-                                        toastLength: Toast.LENGTH_SHORT,
-                                        gravity: ToastGravity.BOTTOM,
-                                        timeInSecForIosWeb: 1,
-                                        textColor: Colors.white,
-                                        fontSize: 16.0
+                                      // Fluttertoast.showToast(
+                                      //   msg: "Panduan Berpergian",
+                                      //   toastLength: Toast.LENGTH_SHORT,
+                                      //   gravity: ToastGravity.BOTTOM,
+                                      //   timeInSecForIosWeb: 1,
+                                      //   textColor: Colors.white,
+                                      //   fontSize: 16.0
+                                      // );
+                                      Navigator.push(
+                                        context, 
+                                        MaterialPageRoute(builder: (context) => panduan())
                                       );
                                     },
                                     child: Column(

@@ -79,25 +79,27 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
   bool showDetailHarga = false;
   bool showErrorDetailHarga = false;
 
+  Timer? _timerErr;
   void fnShowErrorText(){
     setState(() {
       showErrorText = true;
     });
 
     //bikin timer utk switch kondisinya lagi slama 3 detik;
-    Timer(Duration(seconds: 3), () {
+    _timerErr = Timer(Duration(seconds: 3), () {
       setState(() {
         showErrorText = false;
       });
     });
   }
 
+  Timer? _timer;
   void fnShowErrorDetailHarga(){
     setState(() {
       showErrorDetailHarga = true;
     });
 
-    Timer(Duration(seconds: 3), () {
+    _timer = Timer(Duration(seconds: 3), () {
       setState(() {
         showErrorDetailHarga = false;
       });
@@ -136,6 +138,10 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
     txtTglBalik.dispose();
     txtJlhPenumpang.dispose();
     txtKlsBis.dispose();
+
+    // timer harus di dispose juga
+    _timer?.cancel();
+    _timerErr?.cancel();
 
     super.dispose();
   }
@@ -227,7 +233,7 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
         totalBiaya = tarifBis * double.parse(txtJlhPenumpang.text);
       }
     }
-
+    
     final String formattedTarifBis = NumberFormat.currency(
       locale: "id_ID",
       symbol: "Rp. ",
@@ -648,7 +654,7 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
 
             if(isCheckHarga && showDetailHarga)
             Positioned(
-              top: (screenHeight <= 700) ? screenHeight + 320 : screenHeight + 180,
+              top: (screenHeight <= 700) ? screenHeight + 320 : screenHeight + 80,
               left: 20,
               right: 20,
               child: Container(
