@@ -249,6 +249,7 @@ class _paketwisata1 extends State<paketwisata1> {
                                               tgl_balik: items['tgl_balik'],
                                               jlh_penumpang: items['jlhpenumpang'],
                                               hrg_tiket_perorg: items['harga_paket'] / items['jlhpenumpang'],
+                                              id_paket: items['id_paket']
                                             )
                                           )
                                         );

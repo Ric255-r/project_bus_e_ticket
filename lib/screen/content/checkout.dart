@@ -12,7 +12,7 @@ class MenuCheckout extends StatelessWidget {
   // Declare Variable utk Parameter/argument
   var totalBiaya;
   var id_bis;
-  var tgl_pergi, tgl_balik, jlh_penumpang, hrg_tiket_perorg;
+  var tgl_pergi, tgl_balik, jlh_penumpang, hrg_tiket_perorg, id_paket;
 
   // Jadikan ini sebagai argument. ambil dari variable di atas
   MenuCheckout({
@@ -21,7 +21,8 @@ class MenuCheckout extends StatelessWidget {
     this.tgl_pergi,
     this.tgl_balik,
     this.jlh_penumpang, 
-    this.hrg_tiket_perorg
+    this.hrg_tiket_perorg,
+    this.id_paket
   });
 
   @override
@@ -48,7 +49,8 @@ class MenuCheckout extends StatelessWidget {
           tglPergi: tgl_pergi,
           tglBalik: tgl_balik,
           jlhPenumpang: jlh_penumpang,
-          hrgTiketPerOrg: hrg_tiket_perorg
+          hrgTiketPerOrg: hrg_tiket_perorg,
+          id_paket: id_paket
         ),
       )
     );
@@ -57,7 +59,7 @@ class MenuCheckout extends StatelessWidget {
 
 class StfulMenuCheckout extends StatefulWidget {
   var totalBiaya;
-  var idBis, tglPergi, tglBalik, jlhPenumpang, hrgTiketPerOrg;
+  var idBis, tglPergi, tglBalik, jlhPenumpang, hrgTiketPerOrg, id_paket;
 
   StfulMenuCheckout({
     this.totalBiaya, 
@@ -65,7 +67,8 @@ class StfulMenuCheckout extends StatefulWidget {
     this.tglPergi,
     this.tglBalik,
     this.jlhPenumpang,
-    this.hrgTiketPerOrg
+    this.hrgTiketPerOrg,
+    this.id_paket
   });
 
   @override
@@ -76,18 +79,24 @@ class _StfulMenuCheckoutState extends State<StfulMenuCheckout> {
   String paymentMethod = "Transfer";
   File? _imgFile;
 
+  var isSubmitted = false;
   Future<void> _submitBukti(BuildContext context, {String? mode}) async {
     var dio = Dio();
     var storage = new FlutterSecureStorage();
 
     var jwt = await storage.read(key: "jwt");
-    // final now = DateTime.now();
-    // final parseNow = DateTime.parse("$now");
 
-    // print(parseNow.minute);
+    setState(() {
+      isSubmitted = true;
+    });
     
     try {
       FormData? formData;
+      // Buat Tambah Key value lain ke dalam formData
+      Map<String, dynamic> mapIdPaket = {};
+      if(widget.id_paket != null || widget.id_paket != ""){
+        mapIdPaket['id_paket'] = widget.id_paket;
+      }
 
       if(mode == "cash"){
         // yg total_biaya ak jadikan array yg terdiri dari String Formatted di index 0, sama value real di index 1
@@ -101,20 +110,26 @@ class _StfulMenuCheckoutState extends State<StfulMenuCheckout> {
           'tgl_balik': widget.tglBalik,
           'jlh_penumpang': widget.jlhPenumpang,
           'hrg_tiket_perorg': widget.hrgTiketPerOrg,
+          ...mapIdPaket
         });
       }else{
         String fileName = _imgFile!.path.split("/").last;
         // yg total_biaya ak jadikan array yg terdiri dari String Formatted di index 0, sama value real di index 1
         // ak malas mw buat parameter lg.
         formData = FormData.fromMap({
-          'buktiByr': await MultipartFile.fromFile(_imgFile!.path, filename: fileName),
+          //'buktiByr': await MultipartFile.fromFile(_imgFile!.path, filename: fileName),
           'total_harga': widget.totalBiaya[1],
           'id_bis': widget.idBis,
           'tgl_pergi': widget.tglPergi,
           'tgl_balik': widget.tglBalik,
           'jlh_penumpang': widget.jlhPenumpang,
           'hrg_tiket_perorg': widget.hrgTiketPerOrg,
+          ...mapIdPaket
         });
+
+        MultipartFile multipartFile = await MultipartFile.fromFile(_imgFile!.path, filename: fileName);
+        formData.files.add(MapEntry('buktiByr', multipartFile));
+      
       }
 
       // salah bodo. pas url akhir aku kasih "/" jadi di API hrs menyesuaikan
@@ -126,8 +141,21 @@ class _StfulMenuCheckoutState extends State<StfulMenuCheckout> {
             'Content-Type': 'multipart/form-data'
           }
         )
-        
       );
+
+      if(response.statusCode == 200){
+        if(context.mounted){
+          Navigator.push(
+            context, 
+            MaterialPageRoute(
+              builder: (context) => MenuSuccess(
+                totalHarga: widget.totalBiaya[0],
+                mode: (mode == "cash") ? "cash" : "transfer",
+              )
+            )
+          );
+        }
+      }
 
     } catch (e) {
       print("Error $e");
@@ -483,20 +511,23 @@ class _StfulMenuCheckoutState extends State<StfulMenuCheckout> {
                       Row(
                         children: [
                           Expanded(
-                            child: ElevatedButton(
+                            child: IgnorePointer(
+                              ignoring: isSubmitted,
+                              child: ElevatedButton(
+                              
                               onPressed: () {
                                 _submitBukti(context, mode: "cash");
-
-                                Navigator.push(
-                                  context, 
-                                  MaterialPageRoute(builder: (context) => MenuSuccess(
-                                    totalHarga: widget.totalBiaya[0],
-                                    mode: "cash",
-                                  ))
-                                );
-                              }, 
-                              child: Text("Menuju Kasir")
-                            )
+                                
+                              },
+                              child: isSubmitted 
+                                ? SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(),
+                                  )
+                                : Text("Menuju Kasir"),
+                              ),
+                            ),
                           )
                         ],
                       ),
@@ -532,18 +563,28 @@ class _StfulMenuCheckoutState extends State<StfulMenuCheckout> {
                           padding: EdgeInsets.only(
                             right: 40
                           ),
-                          child: ElevatedButton(
+                          child: IgnorePointer(
+                            ignoring: isSubmitted,
+                            child: ElevatedButton(
+                            
                             onPressed: () {
                               _submitBukti(context);
                               
-                              Navigator.push(
-                                context, 
-                                MaterialPageRoute(
-                                  builder: (context) => MenuSuccess(totalHarga: widget.totalBiaya[0],)
-                                )
-                              );
+                              // Navigator.push(
+                              //   context, 
+                              //   MaterialPageRoute(
+                              //     builder: (context) => MenuSuccess(totalHarga: widget.totalBiaya[0],)
+                              //   )
+                              // );
                             },
-                            child: Text("Konfirmasi Pembayaran ->"),
+                            child: isSubmitted 
+                              ? SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: CircularProgressIndicator(),
+                                )
+                              : Text("Konfirmasi Pembayaran ->"),
+                            ),
                           ),
                         ),
                       ],
