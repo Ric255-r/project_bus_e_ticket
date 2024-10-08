@@ -1,4 +1,7 @@
 import 'package:bus_hub/screen/content/faq.dart';
+import 'package:bus_hub/screen/menu/syaratDanKet.dart';
+import 'package:bus_hub/screen/menu/ubahPassword.dart';
+import 'package:bus_hub/screen/menu/ubahProfil.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:bus_hub/main.dart';
@@ -141,13 +144,17 @@ class _KontenMenu3 extends State<IsiMenu3> {
                                 ),
                                 child: GestureDetector(
                                   onTap: () {
-                                    Fluttertoast.showToast(
-                                      msg: "Klik Profile",
-                                      toastLength: Toast.LENGTH_LONG,
-                                      gravity: ToastGravity.BOTTOM,
-                                      timeInSecForIosWeb: 10,
-                                      textColor: Colors.white,
-                                      fontSize: 16.0
+                                    // Fluttertoast.showToast(
+                                    //   msg: "Klik Profile",
+                                    //   toastLength: Toast.LENGTH_LONG,
+                                    //   gravity: ToastGravity.BOTTOM,
+                                    //   timeInSecForIosWeb: 10,
+                                    //   textColor: Colors.white,
+                                    //   fontSize: 16.0
+                                    // );
+                                    Navigator.push(
+                                      context, 
+                                      MaterialPageRoute(builder: (context) => SecondUbahProfile())
                                     );
                                   },
                                   child: const Row(
@@ -191,13 +198,9 @@ class _KontenMenu3 extends State<IsiMenu3> {
                                 ),
                                 child: GestureDetector(
                                   onTap: () {
-                                    Fluttertoast.showToast(
-                                      msg: "Klik Profile 2",
-                                      toastLength: Toast.LENGTH_LONG,
-                                      gravity: ToastGravity.BOTTOM,
-                                      timeInSecForIosWeb: 10,
-                                      textColor: Colors.white,
-                                      fontSize: 16.0
+                                    Navigator.push(
+                                      context, 
+                                      MaterialPageRoute(builder: (context) => SecondUbahPass())
                                     );
                                   },
                                   child: const Row(
@@ -305,13 +308,9 @@ class _KontenMenu3 extends State<IsiMenu3> {
                                 ),
                                 child: GestureDetector(
                                   onTap: () {
-                                    Fluttertoast.showToast(
-                                      msg: "Klik Profile 2",
-                                      toastLength: Toast.LENGTH_LONG,
-                                      gravity: ToastGravity.BOTTOM,
-                                      timeInSecForIosWeb: 10,
-                                      textColor: Colors.white,
-                                      fontSize: 16.0
+                                    Navigator.push(
+                                      context, 
+                                      MaterialPageRoute(builder: (context) => SecondSK())
                                     );
                                   },
                                   child: const Row(

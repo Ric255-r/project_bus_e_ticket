@@ -76,7 +76,7 @@ class StfulMenuCheckout extends StatefulWidget {
 }
 
 class _StfulMenuCheckoutState extends State<StfulMenuCheckout> {
-  String paymentMethod = "Transfer";
+  String paymentMethod = "transfer";
   File? _imgFile;
 
   var isSubmitted = false;
@@ -339,7 +339,7 @@ class _StfulMenuCheckoutState extends State<StfulMenuCheckout> {
                             child: Align(
                               alignment: Alignment.centerRight,
                               child: Radio<String>(
-                                value: 'Transfer', 
+                                value: 'transfer', 
                                 groupValue: paymentMethod, 
                                 onChanged: (String? value){
                                   setState(() {
@@ -378,7 +378,7 @@ class _StfulMenuCheckoutState extends State<StfulMenuCheckout> {
                             child: Align(
                               alignment: Alignment.centerRight,
                               child: Radio<String>(
-                                value: 'Cash', 
+                                value: 'cash', 
                                 groupValue: paymentMethod, 
                                 onChanged: (String? value){
                                   setState(() {
@@ -407,7 +407,7 @@ class _StfulMenuCheckoutState extends State<StfulMenuCheckout> {
                   left: 20.0, right: 20.0
                 ),
                 width: MediaQuery.of(context).size.width - 40,
-                height: (_imgFile != null && paymentMethod == "Transfer") ? 350 : 270,
+                height: (_imgFile != null && paymentMethod == "transfer") ? 350 : 270,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10)
@@ -439,7 +439,7 @@ class _StfulMenuCheckoutState extends State<StfulMenuCheckout> {
                       
                       Divider(),
 
-                      if(paymentMethod == "Transfer")
+                      if(paymentMethod == "transfer")
                       Padding(
                         padding: EdgeInsets.only(
                           bottom: 20
@@ -462,7 +462,7 @@ class _StfulMenuCheckoutState extends State<StfulMenuCheckout> {
                       ),
 
 
-                      if(paymentMethod == "Transfer")
+                      if(paymentMethod == "transfer")
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -485,7 +485,7 @@ class _StfulMenuCheckoutState extends State<StfulMenuCheckout> {
                       ),
 
 
-                      if(paymentMethod == "Cash")
+                      if(paymentMethod == "cash")
                       const Padding(
                         padding: EdgeInsets.only(
                           bottom: 20
@@ -507,7 +507,7 @@ class _StfulMenuCheckoutState extends State<StfulMenuCheckout> {
                         ),
                       ),
 
-                      if(paymentMethod == "Cash")
+                      if(paymentMethod == "cash")
                       Row(
                         children: [
                           Expanded(
@@ -537,7 +537,7 @@ class _StfulMenuCheckoutState extends State<StfulMenuCheckout> {
               )
             ),
 
-            if(_imgFile != null && paymentMethod == "Transfer")
+            if(_imgFile != null && paymentMethod == "transfer")
             Positioned(
               top: 790,
               child: Container(
