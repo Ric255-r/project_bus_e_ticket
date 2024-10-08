@@ -90,6 +90,20 @@ flutter:
     - assets/images/bisats3.jpg
     - assets/images/logobank.png
     - assets/images/cash.png
+    - assets/images/tiketbis.jpeg
+    - assets/images/tiketbis2.png
+    - assets/images/haltebis.png
+    - assets/images/bayar.png
+    - assets/images/kunjungan.png
+    - assets/images/sabuk.png
+    - assets/images/lari.png
+    - assets/images/rokok.png
+    - assets/images/pekkong.png
+    - assets/images/pekkongril.png
+    - assets/images/ketapang2.jpeg
+    - assets/images/malay2.jpeg
+    - assets/images/sambas2.jpeg
+    - assets/images/tayo.png
     # - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

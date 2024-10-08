@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'dart:io';
 import 'package:bus_hub/screen/content/successCheckout.dart';
 import 'package:bus_hub/screen/function/ip_address.dart';
@@ -175,6 +177,7 @@ class _StfulMenuCheckoutState extends State<StfulMenuCheckout> {
                   // crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
+                      // ignore: prefer_const_literals_to_create_immutables
                       children: [
                         Expanded(
                           flex: 1,
@@ -268,7 +271,7 @@ class _StfulMenuCheckoutState extends State<StfulMenuCheckout> {
                   ),
                   child: Column(
                     children: [
-                      Row(
+                      const Row(
                         children: [
                           Expanded(
                             child: Text(
