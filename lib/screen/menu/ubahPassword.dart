@@ -200,7 +200,7 @@ class _KontenMenuUbahPass extends State<IsiMenuUbahPass> {
                         Expanded(
                           child: Padding(
                             padding: const EdgeInsets.only(
-                              top: 670,
+                              top: 610,
                               left: 20,
                               right: 20,
                             ),

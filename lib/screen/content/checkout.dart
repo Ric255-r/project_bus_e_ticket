@@ -79,7 +79,9 @@ class _StfulMenuCheckoutState extends State<StfulMenuCheckout> {
   String paymentMethod = "transfer";
   File? _imgFile;
 
+  // buat enable disable button buat ke successCheckout.dart
   var isSubmitted = false;
+
   Future<void> _submitBukti(BuildContext context, {String? mode}) async {
     var dio = Dio();
     var storage = new FlutterSecureStorage();
@@ -144,6 +146,7 @@ class _StfulMenuCheckoutState extends State<StfulMenuCheckout> {
       );
 
       if(response.statusCode == 200){
+
         if(context.mounted){
           Navigator.push(
             context, 
@@ -469,8 +472,8 @@ class _StfulMenuCheckoutState extends State<StfulMenuCheckout> {
                           Column(
                             children: [
                               _imgFile == null
-                                  ? Text('No image selected.')
-                                  : Image.file(_imgFile!, height: 100, width: 100,),
+                                ? Text('No image selected.')
+                                : Image.file(_imgFile!, height: 100, width: 100,),
                               
                               // if(_imgFile == null)
                               SizedBox(height: 20,),
@@ -588,7 +591,7 @@ class _StfulMenuCheckoutState extends State<StfulMenuCheckout> {
                           ),
                         ),
                       ],
-                    )                
+                    )
                   ],
                 ), 
               )

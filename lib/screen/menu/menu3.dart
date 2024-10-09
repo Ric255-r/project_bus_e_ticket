@@ -1,4 +1,6 @@
 import 'package:bus_hub/screen/content/faq.dart';
+import 'package:bus_hub/screen/content/kebijakanPrivasi.dart';
+import 'package:bus_hub/screen/content/profile.dart';
 import 'package:bus_hub/screen/menu/syaratDanKet.dart';
 import 'package:bus_hub/screen/menu/ubahPassword.dart';
 import 'package:bus_hub/screen/menu/ubahProfil.dart';
@@ -37,59 +39,67 @@ class _KontenMenu3 extends State<IsiMenu3> {
             Container(
               color: Colors.blue[400],
               height: 300,
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                        top: 40,
-                        bottom: 100,
-                        left: 20,
-                        right: 20
-                      ),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade100,
-                          borderRadius: BorderRadius.circular(25),
-                          border: Border.all(
-                            color: Colors.blueGrey.shade100
-                          )
+              child: InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context, 
+                    MaterialPageRoute(builder: (context) => SecondProfile())
+                  );
+                },
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                          top: 40,
+                          bottom: 100,
+                          left: 20,
+                          right: 20
                         ),
-                        height: 150,
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                            left: 20
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade100,
+                            borderRadius: BorderRadius.circular(25),
+                            border: Border.all(
+                              color: Colors.blueGrey.shade100
+                            )
                           ),
-                          child: Row(
-                            children: [
-                              SizedBox(
-                                width: 80,
-                                child: Icon(Icons.account_circle, size: 85,),
-                              ),
-                              SizedBox(
-                                width: 250,
-                                child: Padding(
-                                  padding: EdgeInsets.only(
-                                    left: 30,
-                                    bottom: 0
-                                  ),
-                                  child: RichText(
-                                    textAlign: TextAlign.left,
-                                    text: const TextSpan(
-                                      text: 'Asep Budiman \n\nMau Ngapain Hari Ini? \n',
-                                      style: TextStyle(color: Colors.black),
+                          height: 150,
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                              left: 20
+                            ),
+                            child: Row(
+                              children: [
+                                SizedBox(
+                                  width: 80,
+                                  child: Icon(Icons.account_circle, size: 85,),
+                                ),
+                                SizedBox(
+                                  width: 250,
+                                  child: Padding(
+                                    padding: EdgeInsets.only(
+                                      left: 30,
+                                      bottom: 0
+                                    ),
+                                    child: RichText(
+                                      textAlign: TextAlign.left,
+                                      text: const TextSpan(
+                                        text: 'Asep Budiman \n\nMau Ngapain Hari Ini? \n',
+                                        style: TextStyle(color: Colors.black),
+                                      ),
                                     ),
                                   ),
-                                ),
-                              )
+                                )
 
-                            ]
+                              ]
+                            ),
                           ),
                         ),
-                      ),
+                      )
                     )
-                  )
-                ],
+                  ],
+                ),
               ),
             ),
             Positioned(
@@ -354,14 +364,18 @@ class _KontenMenu3 extends State<IsiMenu3> {
                                 ),
                                 child: GestureDetector(
                                   onTap: () {
-                                    Fluttertoast.showToast(
-                                      msg: "Klik Profile 2",
-                                      toastLength: Toast.LENGTH_LONG,
-                                      gravity: ToastGravity.BOTTOM,
-                                      timeInSecForIosWeb: 10,
-                                      textColor: Colors.white,
-                                      fontSize: 16.0
+                                    Navigator.push(
+                                      context, 
+                                      MaterialPageRoute(builder: (context) => Kebijakan(title: "title"))
                                     );
+                                    // Fluttertoast.showToast(
+                                    //   msg: "Klik Profile 2",
+                                    //   toastLength: Toast.LENGTH_LONG,
+                                    //   gravity: ToastGravity.BOTTOM,
+                                    //   timeInSecForIosWeb: 10,
+                                    //   textColor: Colors.white,
+                                    //   fontSize: 16.0
+                                    // );
                                   },
                                   child: const Row(
                                     children: [

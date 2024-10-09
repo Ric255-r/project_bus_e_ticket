@@ -3,35 +3,33 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:bus_hub/main.dart';
 
 
-class SecondUbahProfile extends StatelessWidget {
-  const SecondUbahProfile({super.key});
-
+class SecondProfile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(title: Text("Ubah Profil"),
+        appBar: AppBar(title: Text("Profil Anda"),
         backgroundColor: Colors.blue[400],),
-        body: IsiMenuUbahProfil(),
+        body: IsiMenuProfil(),
       )
     );
   }
 }
 
 
-class IsiMenuUbahProfil extends StatefulWidget {
+class IsiMenuProfil extends StatefulWidget {
   @override
-  _KontenUbahProfil createState() => _KontenUbahProfil();
+  _KontenProfil createState() => _KontenProfil();
 }
 
-class _KontenUbahProfil extends State<IsiMenuUbahProfil> {
+class _KontenProfil extends State<IsiMenuProfil> {
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return SingleChildScrollView(
       child: SizedBox(
-        height: (screenHeight <= 700) ? screenHeight + 485 : screenHeight,
+        height: (screenHeight <= 700) ? screenHeight + 475 : screenHeight - 50,
         child: Stack(
           children: [
             // Bagian Carousel
@@ -82,10 +80,10 @@ class _KontenUbahProfil extends State<IsiMenuUbahProfil> {
               )
             ),
             Positioned(
-              top: 245,
+              top: 255,
               left: 20,
               right: 20,
-              bottom: 75,
+              bottom: 35,
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -122,20 +120,17 @@ class _KontenUbahProfil extends State<IsiMenuUbahProfil> {
                     alignment: Alignment.centerLeft,
                     padding: const EdgeInsets.only(left: 30, top: 20, right : 30),
                     child: TextFormField(
-                      readOnly: false,
-                      initialValue: 'Asep Budiman',
+                      readOnly: true,
+                      
                     decoration: InputDecoration(
-                      enabledBorder: OutlineInputBorder(
+                      disabledBorder: OutlineInputBorder(
                         borderSide: const BorderSide(width: 1, color: Colors.black),
                         borderRadius: BorderRadius.circular(15),
                       ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(width: 1, color: Colors.black),
-                        borderRadius: BorderRadius.circular(15),
-                      ),
+                      border: const UnderlineInputBorder(),
+                      labelText: 'Asep Budiman',
                     ),
-                    enabled: true,
-                    
+                    enabled: false,
                   ),
                   ),
 
@@ -149,21 +144,19 @@ class _KontenUbahProfil extends State<IsiMenuUbahProfil> {
                   Container(
                     width: MediaQuery.of(context).size.width,
                     alignment: Alignment.centerLeft,
-                    padding: const EdgeInsets.only(left: 30, bottom: 20, right : 30),
+                    padding: const EdgeInsets.only(left: 30, bottom: 20,  right : 30),
                     child: TextFormField(
-                      readOnly: false,
-                      initialValue: '-',
+                      readOnly: true,
+                      
                     decoration: InputDecoration(
-                      enabledBorder: OutlineInputBorder(
+                      disabledBorder: OutlineInputBorder(
                         borderSide: const BorderSide(width: 1, color: Colors.black),
                         borderRadius: BorderRadius.circular(15),
                       ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(width: 1, color: Colors.black),
-                        borderRadius: BorderRadius.circular(15),
-                      ),
+                      border: const UnderlineInputBorder(),
+                      labelText: '-',
                     ),
-                    enabled: true,
+                    enabled: false,
                   ),
                   ),
 
@@ -182,21 +175,19 @@ class _KontenUbahProfil extends State<IsiMenuUbahProfil> {
                     Container(
                     width: MediaQuery.of(context).size.width,
                     alignment: Alignment.centerLeft,
-                    padding: const EdgeInsets.only(left: 30, bottom:20, right : 30),
+                    padding: const EdgeInsets.only(left: 30, bottom: 20,  right : 30),
                     child: TextFormField(
-                      readOnly: false,
-                      initialValue: '-',
+                      readOnly: true,
+                      
                     decoration: InputDecoration(
-                      enabledBorder: OutlineInputBorder(
+                      disabledBorder: OutlineInputBorder(
                         borderSide: const BorderSide(width: 1, color: Colors.black),
                         borderRadius: BorderRadius.circular(15),
                       ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(width: 1, color: Colors.black),
-                        borderRadius: BorderRadius.circular(15),
-                      ),
+                      border: const UnderlineInputBorder(),
+                      labelText: '-',
                     ),
-                    enabled: true,
+                    enabled: false,
                   ),
                   ),
 
@@ -215,21 +206,19 @@ class _KontenUbahProfil extends State<IsiMenuUbahProfil> {
                     Container(
                     width: MediaQuery.of(context).size.width,
                     alignment: Alignment.centerLeft,
-                    padding: const EdgeInsets.only(left: 30, bottom: 20, right : 30),
+                    padding: const EdgeInsets.only(left: 30, bottom: 20,  right : 30),
                     child: TextFormField(
-                      readOnly: false,
-                      initialValue: '-',
+                      readOnly: true,
+                      
                     decoration: InputDecoration(
-                      enabledBorder:  OutlineInputBorder(
+                      disabledBorder: OutlineInputBorder(
                         borderSide: const BorderSide(width: 1, color: Colors.black),
                         borderRadius: BorderRadius.circular(15),
                       ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(width: 1, color: Colors.black),
-                        borderRadius: BorderRadius.circular(15),
-                      ),
+                      border: const UnderlineInputBorder(),
+                      labelText: '-',
                     ),
-                    enabled: true,
+                    enabled: false,
                   ),
                   ),
 
@@ -249,57 +238,30 @@ class _KontenUbahProfil extends State<IsiMenuUbahProfil> {
                     Container(
                     width: MediaQuery.of(context).size.width,
                     alignment: Alignment.centerLeft,
-                    padding: const EdgeInsets.only(left: 30, bottom: 20, right : 30),
+                    padding: const EdgeInsets.only(left: 30, bottom: 10,  right : 30),
                     child: TextFormField(
-                      readOnly: false,
-                      initialValue: '-',
+                      readOnly: true,
+                      
                     decoration: InputDecoration(
-                      enabledBorder: OutlineInputBorder(
+                      disabledBorder: OutlineInputBorder(
                         borderSide: const BorderSide(width: 1, color: Colors.black),
                         borderRadius: BorderRadius.circular(15),
                       ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(width: 1, color: Colors.black),
-                        borderRadius: BorderRadius.circular(15),
-                      ),
+                      border: const UnderlineInputBorder(),
+                      labelText: '-',
                     ),
-                    enabled: true,
+                    enabled: false,
                   ),
-                  ),
-
-                  ]
-                  )
+                 ),
+                ]
+               )
               )
-            ),
-            Row(
-              children: [
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.only(
-                      top: 845,
-                      left: 20,
-                      right: 20
-                    ),
-                    child: MaterialButton(
-                      height: 50,
-                      onPressed: () {
-
-                      },
-                      child: Text('Simpan', style: TextStyle(color: Colors.white),),
-                      minWidth: 200,
-                      color: Colors.blue[400],
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        
-                      ),
-                    )
-                  )
-                )
-              ],
-            ),
-          ]
-        )
-      )
-    );
+            )
+           ]
+          )
+         )
+        );
+           
+    
   }
 }
