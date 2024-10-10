@@ -1,3 +1,4 @@
+import 'package:bus_hub/register.dart';
 import 'package:bus_hub/screen/function/ip_address.dart';
 import 'package:flutter/material.dart';
 import 'screen/content/screen2.dart';
@@ -34,55 +35,36 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'Flutter',
-        theme: ThemeData(
-          // This is the theme of your application.
-          //
-          // TRY THIS: Try running your application with "flutter run". You'll see
-          // the application has a purple toolbar. Then, without quitting the app,
-          // try changing the seedColor in the colorScheme below to Colors.green
-          // and then invoke "hot reload" (save your changes or press the "hot
-          // reload" button in a Flutter-supported IDE, or press "r" if you used
-          // the command line to start the app).
-          //
-          // Notice that the counter didn't reset back to zero; the application
-          // state is not lost during the reload. To reset the state, use hot
-          // restart instead.
-          //
-          // This works for code too, not just values: Most code changes can be
-          // tested with just a hot reload.
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-          useMaterial3: true,
-        ),
-        // home: const MyHomePage(title: 'Popopop'),
-        home: Scaffold(
-          appBar: AppBar(
-            title: const Text('Flutter Pertama Saya'),
-            backgroundColor: Colors.red[300],
-          ),
-          // body: MyTextField(),
-          body: MyTextField(),
-          // body: Row(
-          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //   children: [
-          //     Container(
-          //       child: Text("Hello 1"),
-          //       color: Colors.lightBlue,
-          //       padding: EdgeInsets.all(30.0),
-          //     ),
-          //     Container(
-          //       child: Text("Hello 2"),
-          //       color: Colors.purple,
-          //       padding: EdgeInsets.all(30.0),
-          //     ),
-          //     Container(
-          //       child: Text("Hello 3"),
-          //       color: Colors.yellowAccent,
-          //       padding: EdgeInsets.all(30.0),
-          //     )
-          //   ],
-          // ),
-        ));
+      title: 'Flutter',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        // This is the theme of your application.
+        //
+        // TRY THIS: Try running your application with "flutter run". You'll see
+        // the application has a purple toolbar. Then, without quitting the app,
+        // try changing the seedColor in the colorScheme below to Colors.green
+        // and then invoke "hot reload" (save your changes or press the "hot
+        // reload" button in a Flutter-supported IDE, or press "r" if you used
+        // the command line to start the app).
+        //
+        // Notice that the counter didn't reset back to zero; the application
+        // state is not lost during the reload. To reset the state, use hot
+        // restart instead.
+        //
+        // This works for code too, not just values: Most code changes can be
+        // tested with just a hot reload.
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        useMaterial3: true,
+      ),
+      // home: const MyHomePage(title: 'Popopop'),
+      home: Scaffold(
+        // appBar: AppBar(
+        //   title: const Text('Flutter Pertama Saya'),
+        //   backgroundColor: Colors.red[300],
+        // ),
+        // body: MyTextField(),
+        body: MyTextField(),
+      ));
   }
 }
 
@@ -141,12 +123,21 @@ class _FirstScreen extends State {
       await storage.write(key: 'jwt', value: responseData['access_token']);
       
 
-      Navigator.push(
-        context,
+      // Navigator.push(
+      //   context,
+      //   MaterialPageRoute(
+      //     builder: (context) => 
+      //     SecondScreen(data: responseData )
+      //   )
+      // );
+
+      // ini biar dia ngereplace urlnya. jadi pas user back, dia nda nembak ke login lagi.
+      Navigator.pushReplacement(
+        context, 
         MaterialPageRoute(
-          builder: (context) => 
-          SecondScreen(data: responseData )
-        )
+          builder: (context) =>  SecondScreen(data: responseData,)
+        ),
+        // (Route<dynamic> route) => false
       );
 
       tfnum1.text = "";
@@ -210,88 +201,163 @@ class _FirstScreen extends State {
     // jadi Column -> Row -> Expanded -> Padding (Opsional).
     // inti flutter ni berlapis lapis
 
-    final screenHeight = MediaQuery.of(context).size.height;
+    final height = MediaQuery.of(context).size.height;
+    final width = MediaQuery.of(context).size.width;
+
+    print(width);
 
     return WillPopScope(
       onWillPop: () async => await showPopUpExit(context),
-      child: ListView(
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: Padding(
-                  padding: EdgeInsets.only(
-                    left: 10,
-                    top: (screenHeight >= 1000) ? 300 : 100,
-                  ),
-                  child: const Text("Username", style: TextStyle(fontSize: 18),),
-                )
-              ),
-            ],
+      child: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Colors.blue, Color(0xFFD8BFD8)],
           ),
-          Row(
-            children: [
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 10, right: 20),
-                  child: TextField(controller: tfnum1),
-                )
-              ),
-            ],
-          ),
+        ),
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          body: SingleChildScrollView(
+            child: Column(
+              children: [
+                Container(
+                  alignment: Alignment.center,
+                  padding: EdgeInsets.only(top: (height / 4)),
+                  child: Container(
+                    width: width - 100,
+                    height: 400,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Stack(
+                      children: [
+                        // Logo
+                        Positioned(
+                          top: 25,
+                          left: 0,
+                          right: 0,
+                          child: Container(
+                            alignment: Alignment.center,
+                            //width: ,
+                            height: 80,
+                            child: Image.asset('assets/images/tayo.png'),
+                          ),
+                        ),
 
-          const Row(
-            children: [
-              Expanded(
-                child: Padding(
-                  padding: EdgeInsets.only(
-                    top: 30,
-                    left: 10
-                  ),
-                  child: Text(
-                    "Password", 
-                    style: TextStyle(fontSize: 18),
+                        // Form title
+                        Positioned(
+                          top: 110,
+                          left: 0,
+                          right: 0,
+                          child: Center(
+                            child: Text(
+                              'Login',
+                              style: TextStyle(
+                                fontSize: 25,
+                                fontWeight: FontWeight.bold
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        // Email Field
+                        Positioned(
+                          top: 160,
+                          left: 20,
+                          right: 20,
+                          child: SizedBox(
+                            width: width - 100,
+                            child: TextField(
+                              controller: tfnum1,
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                labelText: 'Email',
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        // Masukkan Pass Field
+                        Positioned(
+                          top: 230,
+                          left: 20,
+                          right: 20,
+                          child: SizedBox(
+                            width: width - 100,
+                            child: TextField(
+                              controller: tfnum2,
+                              obscureText: true,
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                labelText: 'Password',
+                              ),
+                            ),
+                          ),
+                        ),
+
+
+                        // Submit
+                        Positioned(
+                          top: 280,
+                          left: 0,
+                          right: 0,
+                          child: Container(
+                            alignment: Alignment.center,
+                            //width: ,
+                            height: 80,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                utkLogin(context);
+                              }, 
+                              child: Text("Login")
+                            ),
+                          ),
+                        ),
+
+                        // Sudah Punya Akun? Text
+                        Positioned(
+                          top: 360,
+                          left: 40,
+                          child: SizedBox(
+                            height: 20,
+                            child: Row(
+                              children: [
+                                Text('Belum punya Akun?'),
+
+                                InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context, 
+                                      MaterialPageRoute(builder: (context) => MenuRegister())
+                                    );
+                                  },
+                                  child: Text(
+                                    ' Regis Sekarang',
+                                    style: TextStyle(color: Colors.blue[700]),
+                                    
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      
+
+                      
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                    top: 1,
-                    left: 10,
-                    right: 20
-                  ), 
-                  child: TextField(
-                    controller: tfnum2,
-                  ),
-                )
-              ),
-            ],
-          ),
-          // Tambah Spasi Manual
-          RichText(text: const TextSpan(text: '')),
-          // End Tambah Spasi.
-          Row(children: [
-            Expanded(
-              child: ElevatedButton(
-                onPressed: () {
-                  // AddTwoNumber();
-                  utkLogin(context);
-                },
-                child: const Text("Login"),
-              ),
+              ],
             ),
-            // Text(outputnya),
-          ]),
-          // Tambah Spasi Manual
-          RichText(text: const TextSpan(text: '')),
-          // End Tambah Spasi.
-          Center(child: Text(outputnya))
-        ]
+          ),
+        ),
       ), 
     );
   }

@@ -647,35 +647,50 @@ class _KontenNavbar extends State<IsiNavbar> {
       onWillPop: () async => await showPopUpExit(context),
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: (_scrollPosition >= 10) ? Colors.grey[400] : Colors.blue[400],
+          backgroundColor: Colors.blue[400],
+
+          // backgroundColor: (_scrollPosition >= 10) ? Colors.grey[400] : Colors.blue[400],
           toolbarHeight: (_currentIndex == 0) ? 80 : null,
           title: (_currentIndex == 0) ? Column(
             crossAxisAlignment: CrossAxisAlignment.start, //rata kiri
             children: [
-              Text('Hai ${dataIsiNavbar['usernya']['username']}', style: TextStyle(fontSize: 16),),
+              Text(
+                'Hai ${dataIsiNavbar['usernya']['username']}', 
+                style: TextStyle(fontSize: 16, color: Colors.white),
+                
+              ),
               const Padding(
                 padding: EdgeInsets.only(
                   top: 3,
                   bottom: 4
                 ),
-                child: Text('Welcome To Bus_Hub!', style: TextStyle(fontSize: 16)),
+                child: Text(
+                  'Welcome To Bus_Hub!', 
+                  style: TextStyle(fontSize: 16, color: Colors.white),
+                ),
               )
             ],
           ) : (_currentIndex == 2) ? const Column(
             crossAxisAlignment: CrossAxisAlignment.start, //rata kiri
             children: [
-              Text('Menu', style: TextStyle(fontSize: 16),),
+              Text(
+                'Menu', 
+                style: TextStyle(fontSize: 16, color: Colors.white),
+              ),
             ],
           ) : const Column(
             crossAxisAlignment: CrossAxisAlignment.start, //rata kiri
             children: [
-              Text('History', style: TextStyle(fontSize: 16),),
+              Text(
+                'History', 
+                style: TextStyle(fontSize: 16, color: Colors.white),
+              ),
             ],
           ),
           actions: [
             IconButton(
               onPressed: () {}, 
-              icon: Icon(Icons.search, color: Colors.black,)
+              icon: Icon(Icons.search, color: Colors.white,)
             )
           ],
           leading: Builder(
@@ -684,7 +699,7 @@ class _KontenNavbar extends State<IsiNavbar> {
                 onPressed: () {
                   Scaffold.of(context).openDrawer();
                 }, 
-                icon: Icon(Icons.menu, color: Colors.black,)
+                icon: Icon(Icons.menu, color: Colors.white,)
               );
             }
           ),

@@ -1,4 +1,7 @@
+import 'package:bus_hub/main.dart';
+import 'package:bus_hub/screen/function/ip_address.dart';
 import 'package:flutter/material.dart';
+import 'package:dio/dio.dart';
 
 class MenuRegister extends StatelessWidget {
   const MenuRegister({super.key});
@@ -7,6 +10,7 @@ class MenuRegister extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         home: IsiRegister(),
       )
     );
@@ -22,13 +26,59 @@ class IsiRegister extends StatefulWidget {
 
 //kode rio
 class _regis extends State<IsiRegister> {
+  var dio = Dio();
+  var username = "";
+  var email = "";
+  var passwd = "";
+  var repeatPassWd = "";
+
+  Future<void> buatRegis(BuildContext context) async {
+
+    if(passwd != repeatPassWd){
+      print("Password Tak Cocok");
+
+    }else{
+      try {
+        var response = await dio.post('${myIpAddr()}/register', 
+          options: Options(
+            headers: {
+              "Content-Type": "application/json"
+            }
+          ),
+          data: {
+            'username': username,
+            'email': email,
+            'passwd': passwd
+          }
+        );
+
+        switch (response.statusCode) {
+          case 409:
+            print("Error. Email Sudah Ada");
+            break;
+          case 200:
+            if(context.mounted){
+              Navigator.push(
+                context, 
+                MaterialPageRoute(builder: (context) => MyApp())
+              );
+            }
+            break;
+        }
+      } catch (e) {
+        print("Error Register di $e");
+      }
+    }
+
+  }
+
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
 
-    print(width);
-    print(height);
+    // print(width);
+    // print(height);
 
     return Container(
       decoration: const BoxDecoration(
@@ -58,34 +108,45 @@ class _regis extends State<IsiRegister> {
                       // Logo
                       Positioned(
                         top: 25,
-                        left: 110,
+                        left: 0,
+                        right: 0,
                         child: Container(
-                          width: 80,
+                          // width: 80,
+                          height: 80,
+                          alignment: Alignment.center,
                           child: Image.asset('assets/images/tayo.png'),
                         ),
                       ),
 
                       // Form title
                       Positioned(
-                        top: 100,
-                        left: 65,
-                        child: Text(
-                          'Form Registrasi',
-                          style: TextStyle(
-                            fontSize: 25,
-                            fontWeight: FontWeight.bold,
+                        top: 105,
+                        left: 0,
+                        right: 0,
+                        child: Center(
+                          child: Text(
+                            'Register',
+                            style: TextStyle(
+                              fontSize: 25,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),
 
                       // Nama Lengkap Field
                       Positioned(
-                        top: 150,
+                        top: 160,
                         left: 20,
                         right: 20,
                         child: SizedBox(
                           width: width - 100,
                           child: TextField(
+                            onChanged: (value) {
+                              setState(() {
+                                username = value;
+                              });
+                            },
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
@@ -98,12 +159,17 @@ class _regis extends State<IsiRegister> {
 
                       // Masukkan Email Field
                       Positioned(
-                        top: 220,
+                        top: 230,
                         left: 20,
                         right: 20,
                         child: SizedBox(
                           width: width - 100,
                           child: TextField(
+                            onChanged: (value) {
+                              setState(() {
+                                email = value;
+                              });
+                            },
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
@@ -116,12 +182,17 @@ class _regis extends State<IsiRegister> {
 
                       // Masukkan Password Field
                       Positioned(
-                        top: 290,
+                        top: 300,
                         left: 20,
                         right: 20,
                         child: SizedBox(
                           width: width - 100,
                           child: TextField(
+                            onChanged: (value) {
+                              setState(() {
+                                passwd = value;
+                              });
+                            },
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
@@ -134,12 +205,17 @@ class _regis extends State<IsiRegister> {
 
                       // Ulangi Password Field
                       Positioned(
-                        top: 360,
+                        top: 370,
                         left: 20,
                         right: 20,
                         child: SizedBox(
                           width: width - 100,
                           child: TextField(
+                            onChanged: (value) {
+                              setState(() {
+                                repeatPassWd = value;
+                              });
+                            },
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
@@ -152,24 +228,23 @@ class _regis extends State<IsiRegister> {
 
                       // Daftar Button
                       Positioned(
-                        top: 430,
+                        top: 440,
                         left: 20,
                         right: 20,
                         child: SizedBox(
                           width: width - 100,
                           child: Container(
                             decoration: BoxDecoration(
-                              color: Colors.blue[300],
+                              // color: Colors.blue[300],
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Align(
                               alignment: Alignment.center,
-                              child: Text(
-                                'Daftar',
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  color: Colors.white,
-                                ),
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  buatRegis(context);
+                                }, 
+                                child: Text("Daftar")
                               ),
                             ),
                           ),
@@ -186,10 +261,18 @@ class _regis extends State<IsiRegister> {
                             children: [
                               Text('Sudah punya Akun?'),
 
-                              Text(
-                                ' Login Sekarang',
-                                style: TextStyle(color: Colors.blue[700]),
-                              ),
+                              InkWell(
+                                onTap: () {
+                                  Navigator.push(
+                                    context, 
+                                    MaterialPageRoute(builder: (context) => MyApp())
+                                  );
+                                },
+                                child: Text(
+                                  ' Login Sekarang',
+                                  style: TextStyle(color: Colors.blue[700]),
+                                ),
+                              )
                             ],
                           ),
                         ),

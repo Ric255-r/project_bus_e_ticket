@@ -1,0 +1,212 @@
+class MyTextField extends StatefulWidget {
+  @override
+  _FirstScreen createState() => _FirstScreen();
+}
+
+class _FirstScreen extends State {
+  TextEditingController tfnum1 = TextEditingController();
+  TextEditingController tfnum2 = TextEditingController();
+  String outputnya = "";
+
+  var n1 = 0;
+  var n2 = 0;
+  var sum = 0;
+  String? jwt;
+
+  final storage = new FlutterSecureStorage();
+
+  // inisiasikan state. kaya react
+  void initState(){
+    super.initState();
+    _loadJwt();
+  }
+
+  Future<void> _loadJwt() async {
+    String? value = await storage.read(key: 'jwt');
+
+    setState(() {
+      jwt = value;
+    });
+  }
+  // end inisiasikan state
+
+
+  // Cara kerja dio kaya Axios. 
+  Future<void> utkLogin(context) async {
+    final dio = Dio();
+
+    try {
+      // setting php artisan kek gini
+      // php artisan serve --host=192.168.150.166
+      // wajib pake ip host. kalo kaga dia g jln.
+      final response = await dio.post("${myIpAddr()}/login", 
+        data: {
+          'email': tfnum1.text,
+          'passwd': tfnum2.text
+        }
+      );
+
+      // Parse the response data
+      final Map<String, dynamic> responseData = response.data;
+
+      // write jwt
+      await storage.write(key: 'jwt', value: responseData['access_token']);
+      
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => 
+          SecondScreen(data: responseData )
+        )
+      );
+
+      tfnum1.text = "";
+      tfnum2.text = "";
+    } catch (e) {
+      if(e is DioException){
+        if(e.response != null){
+          Fluttertoast.showToast(
+            msg: (e.response?.statusCode == 401) ? "Error Username / Password Salah" : "Error ${e.response?.statusCode}: ${e.response?.data}",
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 10,
+            textColor: Colors.white,
+            fontSize: 16.0
+          );
+        }else{
+          Fluttertoast.showToast(
+            msg: "Error ${e}",
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 10,
+            textColor: Colors.white,
+            fontSize: 16.0
+          );
+        }
+      }
+    }
+  }
+
+  
+  //Ketika menggunakan texteditingcontroller, pastikan untuk menghapus controller 
+  //ketika halaman atau widget sudah tidak digunakan. 
+  //Ini bertujuan supaya tidak menimbulkan kebocoran memori (memory leak).
+  @override
+  void dispose(){
+    tfnum1.dispose();
+    tfnum2.dispose();
+    super.dispose();
+  }
+
+  // void AddTwoNumber() {
+  //   n1 = int.parse(tfnum1.text);
+  //   n2 = int.parse(tfnum2.text);
+
+  //   sum = n1 + n2;
+
+  //   setState(() {
+  //     outputnya = sum.toString();
+  //   });
+  // }
+
+  @override
+  Widget build(BuildContext context) {
+    // alur designnya kek gini :
+    // column/listview itu paling awal, lalu dalam children column,
+    // masukin lagi row.
+    // nah dari children row, masukkin expanded. expanded disini berperan sbg col kalo di web.
+    // kalo kau buat 3 expanded dalam satu row, jadi 3 column.
+    // nah dalam child expanded lagi, kalo mw kasih jarak. lapis dengan padding.
+    // baru isi kontennya isi di dalam child padding
+    // jadi Column -> Row -> Expanded -> Padding (Opsional).
+    // inti flutter ni berlapis lapis
+
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    return WillPopScope(
+      onWillPop: () async => await showPopUpExit(context),
+      child: ListView(
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.only(
+                    left: 10,
+                    top: (screenHeight >= 1000) ? 300 : 100,
+                  ),
+                  child: const Text("Username", style: TextStyle(fontSize: 18),),
+                )
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 10, right: 20),
+                  child: TextField(controller: tfnum1),
+                )
+              ),
+            ],
+          ),
+
+          const Row(
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.only(
+                    top: 30,
+                    left: 10
+                  ),
+                  child: Text(
+                    "Password", 
+                    style: TextStyle(fontSize: 18),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                    top: 1,
+                    left: 10,
+                    right: 20
+                  ), 
+                  child: TextField(
+                    controller: tfnum2,
+                  ),
+                )
+              ),
+            ],
+          ),
+          // Tambah Spasi Manual
+          RichText(text: const TextSpan(text: '')),
+          // End Tambah Spasi.
+          Row(children: [
+            Expanded(
+              child: ElevatedButton(
+                onPressed: () {
+                  // AddTwoNumber();
+                  utkLogin(context);
+                },
+                child: const Text("Login"),
+              ),
+            ),
+            // Text(outputnya),
+          ]),
+          // Tambah Spasi Manual
+          RichText(text: const TextSpan(text: '')),
+          // End Tambah Spasi.
+          Center(child: Text(outputnya))
+        ]
+      ), 
+    );
+  }
+}
+
+
