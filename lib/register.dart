@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bus_hub/main.dart';
 import 'package:bus_hub/screen/function/ip_address.dart';
 import 'package:flutter/material.dart';
@@ -32,10 +34,22 @@ class _regis extends State<IsiRegister> {
   var passwd = "";
   var repeatPassWd = "";
 
+  bool isLoading = true;
+  bool isErrorEmail = false;
+  bool isErrorPass = false;
+  Timer? _timerErrorEmail;
+  Timer? _timerErrorPass;
+
   Future<void> buatRegis(BuildContext context) async {
 
     if(passwd != repeatPassWd){
       print("Password Tak Cocok");
+      fnShowErrorPass();
+
+      setState(() {
+        isLoading = false;
+        fnShowErrorPass();
+      });
 
     }else{
       try {
@@ -52,24 +66,80 @@ class _regis extends State<IsiRegister> {
           }
         );
 
-        switch (response.statusCode) {
-          case 409:
-            print("Error. Email Sudah Ada");
-            break;
-          case 200:
-            if(context.mounted){
-              Navigator.push(
-                context, 
-                MaterialPageRoute(builder: (context) => MyApp())
-              );
-            }
-            break;
+        if(context.mounted && response.statusCode == 200){
+          Navigator.push(
+            context, 
+            MaterialPageRoute(builder: (context) => MyApp())
+          );
         }
-      } catch (e) {
-        print("Error Register di $e");
+
+
+        // jangan buat status code 400 keatas di sini. dia masuk ke catch block
+        // switch (response.statusCode) {
+        //   case 409:
+        //     fnShowErrorEmail();
+
+        //     print("Error. Email Sudah Ada");
+
+        //     break;
+        //   case 200:
+        //     if(context.mounted){
+        //       Navigator.push(
+        //         context, 
+        //         MaterialPageRoute(builder: (context) => MyApp())
+        //       );
+        //     }
+        //     break;
+        // }
+      } on DioException catch (e){
+        if(e.response?.statusCode == 409){
+          fnShowErrorEmail();
+        }
+
+      } finally {
+        setState(() {
+          isLoading = false;
+        });
       }
     }
+  }
 
+
+
+  void fnShowErrorPass(){
+    setState(() {
+      isErrorPass = true;
+    });
+
+    _timerErrorPass = Timer((Duration(seconds: 3)), () {
+      setState(() {
+        isErrorPass = false;
+      });
+    });
+  }
+
+  
+  void fnShowErrorEmail(){
+    print("Panggil");
+
+    setState(() {
+      isErrorEmail = true;
+    });
+
+    _timerErrorEmail = Timer(Duration(seconds: 3), () {
+      setState(() {
+        isErrorEmail = false;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+
+    _timerErrorEmail?.cancel();
+    _timerErrorPass?.cancel();
   }
 
   @override
@@ -98,7 +168,7 @@ class _regis extends State<IsiRegister> {
                 padding: EdgeInsets.only(top: 130),
                 child: Container(
                   width: width - 100,
-                  height: height - 330,
+                  height: height,
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(10),
@@ -164,25 +234,57 @@ class _regis extends State<IsiRegister> {
                         right: 20,
                         child: SizedBox(
                           width: width - 100,
-                          child: TextField(
-                            onChanged: (value) {
-                              setState(() {
-                                email = value;
-                              });
-                            },
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
+                          child: Column(
+                            children: [
+                              TextField(
+                                onChanged: (value) {
+                                  setState(() {
+                                    email = value;
+                                  });
+                                },
+                                decoration: InputDecoration(
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  labelText: 'Masukkan Email',
+                                ),
                               ),
-                              labelText: 'Masukkan Email',
-                            ),
+                            ],
                           ),
                         ),
                       ),
 
+                      if(isErrorEmail)
+                      Positioned(
+                        top: 290,
+                        left: 30,
+                        right: 0,
+                        child: SizedBox(
+                          width: width - 100,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              AnimatedOpacity(
+                                opacity: isErrorEmail ? 1.0 : 0.0, 
+                                duration: Duration(milliseconds: 200),
+                                child: Padding(
+                                  padding: EdgeInsets.only(bottom: 20),
+                                  child: const Text(
+                                    "Email Sudah Ada",
+                                    style: TextStyle(color: Colors.red),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+
+
                       // Masukkan Password Field
                       Positioned(
-                        top: 300,
+                        top: (isErrorEmail) ? 330 : 300,
                         left: 20,
                         right: 20,
                         child: SizedBox(
@@ -205,7 +307,7 @@ class _regis extends State<IsiRegister> {
 
                       // Ulangi Password Field
                       Positioned(
-                        top: 370,
+                        top: isErrorEmail ? 400 : 370,
                         left: 20,
                         right: 20,
                         child: SizedBox(
@@ -226,9 +328,36 @@ class _regis extends State<IsiRegister> {
                         ),
                       ),
 
+                      if(isErrorPass)
+                      Positioned(
+                        top: 430,
+                        left: 30,
+                        right: 0,
+                        child: SizedBox(
+                          width: width - 100,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              AnimatedOpacity(
+                                opacity: isErrorPass ? 1.0 : 0.0, 
+                                duration: Duration(milliseconds: 200),
+                                child: Padding(
+                                  padding: EdgeInsets.only(bottom: 20),
+                                  child: const Text(
+                                    "Password Tidak Cocok",
+                                    style: TextStyle(color: Colors.red),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+
                       // Daftar Button
                       Positioned(
-                        top: 440,
+                        top: (isErrorEmail || isErrorPass) ? 470 : 440,
                         left: 20,
                         right: 20,
                         child: SizedBox(
@@ -253,7 +382,7 @@ class _regis extends State<IsiRegister> {
 
                       // Sudah Punya Akun? Text
                       Positioned(
-                        top: 500,
+                        top: (isErrorEmail || isErrorPass) ? 530 : 500,
                         left: 40,
                         child: SizedBox(
                           height: 20,
