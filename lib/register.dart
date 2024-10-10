@@ -29,10 +29,16 @@ class IsiRegister extends StatefulWidget {
 //kode rio
 class _regis extends State<IsiRegister> {
   var dio = Dio();
-  var username = "";
-  var email = "";
-  var passwd = "";
-  var repeatPassWd = "";
+  // var username = "";
+  // var email = "";
+  // var passwd = "";
+  // var repeatPassWd = "";
+  FocusNode usernameFocus = FocusNode();
+  TextEditingController username = TextEditingController();
+  TextEditingController email = TextEditingController();
+  TextEditingController passwd = TextEditingController();
+  TextEditingController repeatPassWd = TextEditingController();
+
 
   bool isLoading = true;
   bool isErrorEmail = false;
@@ -42,13 +48,12 @@ class _regis extends State<IsiRegister> {
 
   Future<void> buatRegis(BuildContext context) async {
 
-    if(passwd != repeatPassWd){
+    if(passwd.text != repeatPassWd.text){
       print("Password Tak Cocok");
       fnShowErrorPass();
 
       setState(() {
         isLoading = false;
-        fnShowErrorPass();
       });
 
     }else{
@@ -60,9 +65,9 @@ class _regis extends State<IsiRegister> {
             }
           ),
           data: {
-            'username': username,
-            'email': email,
-            'passwd': passwd
+            'username': username.text,
+            'email': email.text,
+            'passwd': passwd.text
           }
         );
 
@@ -97,6 +102,8 @@ class _regis extends State<IsiRegister> {
         }
 
       } finally {
+        clearData();
+
         setState(() {
           isLoading = false;
         });
@@ -104,9 +111,21 @@ class _regis extends State<IsiRegister> {
     }
   }
 
+  void clearData(){
+
+    username.clear();
+    passwd.clear();
+    repeatPassWd.clear();
+    email.clear();
+
+    usernameFocus.requestFocus();
+  }
+
 
 
   void fnShowErrorPass(){
+    clearData();
+
     setState(() {
       isErrorPass = true;
     });
@@ -168,7 +187,7 @@ class _regis extends State<IsiRegister> {
                 padding: EdgeInsets.only(top: 130),
                 child: Container(
                   width: width - 100,
-                  height: height,
+                  height: height - 300,
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(10),
@@ -212,11 +231,8 @@ class _regis extends State<IsiRegister> {
                         child: SizedBox(
                           width: width - 100,
                           child: TextField(
-                            onChanged: (value) {
-                              setState(() {
-                                username = value;
-                              });
-                            },
+                            controller: username,
+                            focusNode: usernameFocus,
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
@@ -237,11 +253,7 @@ class _regis extends State<IsiRegister> {
                           child: Column(
                             children: [
                               TextField(
-                                onChanged: (value) {
-                                  setState(() {
-                                    email = value;
-                                  });
-                                },
+                                controller: email,
                                 decoration: InputDecoration(
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(12),
@@ -290,11 +302,7 @@ class _regis extends State<IsiRegister> {
                         child: SizedBox(
                           width: width - 100,
                           child: TextField(
-                            onChanged: (value) {
-                              setState(() {
-                                passwd = value;
-                              });
-                            },
+                            controller: passwd,
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
@@ -313,11 +321,7 @@ class _regis extends State<IsiRegister> {
                         child: SizedBox(
                           width: width - 100,
                           child: TextField(
-                            onChanged: (value) {
-                              setState(() {
-                                repeatPassWd = value;
-                              });
-                            },
+                            controller: repeatPassWd,
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
