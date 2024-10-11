@@ -440,21 +440,21 @@ class _Kontennya extends State<IsiBody> {
                         ],
                       ),
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: List.generate(
-                        1, //ubah panjang bullet
-                        (index) => Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 4.0),
-                          width: (_currentPage == index) ? 12.0 : 8.0,
-                          height: (_currentPage == index) ? 12.0 : 8.0,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: _currentPage == index ? Colors.blue : Colors.grey
-                          ),
-                        )
-                      ),
-                    ),
+                    // Row(
+                    //   mainAxisAlignment: MainAxisAlignment.center,
+                    //   children: List.generate(
+                    //     1, //ubah panjang bullet
+                    //     (index) => Container(
+                    //       margin: const EdgeInsets.symmetric(horizontal: 4.0),
+                    //       width: (_currentPage == index) ? 12.0 : 8.0,
+                    //       height: (_currentPage == index) ? 12.0 : 8.0,
+                    //       decoration: BoxDecoration(
+                    //         shape: BoxShape.circle,
+                    //         color: _currentPage == index ? Colors.blue : Colors.grey
+                    //       ),
+                    //     )
+                    //   ),
+                    // ),
                     // Tambah Spasi Manual
                     RichText(text: const TextSpan(text: '')),
                     // // End Tambah Spasi.
@@ -648,7 +648,6 @@ class _KontenNavbar extends State<IsiNavbar> {
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.blue[400],
-
           // backgroundColor: (_scrollPosition >= 10) ? Colors.grey[400] : Colors.blue[400],
           toolbarHeight: (_currentIndex == 0) ? 80 : null,
           title: (_currentIndex == 0) ? Column(
@@ -747,16 +746,16 @@ class _KontenNavbar extends State<IsiNavbar> {
           onTap: onBarTapped,
           items: const [
             BottomNavigationBarItem(
-              icon: Icon(Icons.dashboard),
-              label: 'Ini Menu 1'
-            ),
-            BottomNavigationBarItem(
               icon: Icon(Icons.home),
-              label: 'Ini Menu 2'
+              label: 'Dashboard'
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.accessible_sharp),
-              label: 'Ini Menu 3'
+              icon: Icon(Icons.history),
+              label: 'History'
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.account_circle),
+              label: 'Profile'
             )
           ]
         )

@@ -74,7 +74,9 @@ class _regis extends State<IsiRegister> {
         if(context.mounted && response.statusCode == 200){
           Navigator.push(
             context, 
-            MaterialPageRoute(builder: (context) => MyApp())
+            MaterialPageRoute(builder: (context) => MyApp(
+              isNewRegister: true,
+            ))
           );
         }
 

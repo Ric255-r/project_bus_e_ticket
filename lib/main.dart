@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bus_hub/register.dart';
 import 'package:bus_hub/screen/function/ip_address.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +22,7 @@ void main() {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown
   ]).then((_) {
-    runApp(const MyApp());
+    runApp(MyApp());
 
   });
 }
@@ -29,7 +31,9 @@ void main() {
 // StatelessWidget -> StatefulWidget yang berisi createState _konten -> _konten extends State 
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  var isNewRegister;
+
+  MyApp({this.isNewRegister = false});
 
   // This widget is the root of your application.
   @override
@@ -63,31 +67,42 @@ class MyApp extends StatelessWidget {
         //   backgroundColor: Colors.red[300],
         // ),
         // body: MyTextField(),
-        body: MyTextField(),
-      ));
+        body: (isNewRegister && isNewRegister != null) 
+          ? MyTextField(isNewRegister: true,) 
+          : MyTextField(),
+      )
+    );
   }
 }
 
 class MyTextField extends StatefulWidget {
+  var isNewRegister;
+  MyTextField({this.isNewRegister});
+
   @override
   _FirstScreen createState() => _FirstScreen();
 }
 
-class _FirstScreen extends State {
+class _FirstScreen extends State<MyTextField> {
   TextEditingController tfnum1 = TextEditingController();
   TextEditingController tfnum2 = TextEditingController();
   String outputnya = "";
+  var isNewRegister;
 
   var n1 = 0;
   var n2 = 0;
   var sum = 0;
   String? jwt;
 
+  Timer? _timerIsRegister;
+
   final storage = new FlutterSecureStorage();
 
   // inisiasikan state. kaya react
+  @override
   void initState(){
     super.initState();
+    fnIsNewRegister();
     _loadJwt();
   }
 
@@ -99,6 +114,20 @@ class _FirstScreen extends State {
     });
   }
   // end inisiasikan state
+
+  // function buat show dia keregis atau nda
+  void fnIsNewRegister(){
+    setState(() {
+      isNewRegister = (widget.isNewRegister != null) ? widget.isNewRegister : false;
+    });
+
+    // timer buat setstate ke false lg
+    _timerIsRegister = Timer(Duration(seconds: 3), () {
+      setState(() {
+        isNewRegister = false;
+      });
+    });
+  }
 
 
   // Cara kerja dio kaya Axios. 
@@ -175,6 +204,8 @@ class _FirstScreen extends State {
   void dispose(){
     tfnum1.dispose();
     tfnum2.dispose();
+    _timerIsRegister?.cancel();
+
     super.dispose();
   }
 
@@ -226,7 +257,7 @@ class _FirstScreen extends State {
                   padding: EdgeInsets.only(top: (height / 4)),
                   child: Container(
                     width: width - 100,
-                    height: 400,
+                    height: 420,
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(10),
@@ -235,36 +266,55 @@ class _FirstScreen extends State {
                       children: [
                         // Logo
                         Positioned(
-                          top: 25,
+                          top: (isNewRegister != null && isNewRegister) ? 25 : 45,
                           left: 0,
                           right: 0,
-                          child: Container(
-                            alignment: Alignment.center,
-                            //width: ,
-                            height: 80,
-                            child: Image.asset('assets/images/tayo.png'),
+                          child: Column(
+                            children: [
+                              Container(
+                                alignment: Alignment.center,
+                                //width: ,
+                                height: 80,
+                                child: Image.asset('assets/images/tayo.png'),
+                              ),
+                              Center(
+                                child: Text(
+                                  'Login',
+                                  style: TextStyle(
+                                    fontSize: 25,
+                                    fontWeight: FontWeight.bold
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
 
-                        // Form title
+                        if(isNewRegister != null && isNewRegister)
                         Positioned(
-                          top: 110,
-                          left: 0,
-                          right: 0,
-                          child: Center(
+                          top: 150,
+                          left: 20,
+                          right: 20,
+                          child: Container(
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: Colors.green[400],
+                              borderRadius: BorderRadius.circular(10)
+                            ),
+                            height: 35,
                             child: Text(
-                              'Login',
+                              "Akun Berhasil Regis. Silahkan Login", 
+                              textAlign: TextAlign.center,
                               style: TextStyle(
-                                fontSize: 25,
-                                fontWeight: FontWeight.bold
+                                color: Colors.white,                                
                               ),
                             ),
-                          ),
+                          )
                         ),
 
                         // Email Field
                         Positioned(
-                          top: 160,
+                          top: 190,
                           left: 20,
                           right: 20,
                           child: SizedBox(
@@ -283,7 +333,7 @@ class _FirstScreen extends State {
 
                         // Masukkan Pass Field
                         Positioned(
-                          top: 230,
+                          top: 255,
                           left: 20,
                           right: 20,
                           child: SizedBox(
@@ -304,7 +354,7 @@ class _FirstScreen extends State {
 
                         // Submit
                         Positioned(
-                          top: 280,
+                          top: 310,
                           left: 0,
                           right: 0,
                           child: Container(
@@ -322,7 +372,7 @@ class _FirstScreen extends State {
 
                         // Sudah Punya Akun? Text
                         Positioned(
-                          top: 360,
+                          top: 380,
                           left: 40,
                           child: SizedBox(
                             height: 20,
