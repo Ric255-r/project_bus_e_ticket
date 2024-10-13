@@ -266,7 +266,7 @@ class _FirstScreen extends State<MyTextField> {
                       children: [
                         // Logo
                         Positioned(
-                          top: (isNewRegister != null && isNewRegister) ? 25 : 45,
+                          top: (isNewRegister != null && isNewRegister) ? 15 : 45,
                           left: 0,
                           right: 0,
                           child: Column(
@@ -292,7 +292,7 @@ class _FirstScreen extends State<MyTextField> {
 
                         if(isNewRegister != null && isNewRegister)
                         Positioned(
-                          top: 150,
+                          top: 140,
                           left: 20,
                           right: 20,
                           child: Container(

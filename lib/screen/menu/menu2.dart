@@ -1,4 +1,5 @@
 // ignore_for_file: prefer_const_constructors
+import 'package:bus_hub/screen/content/detailRiwayat.dart';
 import 'package:bus_hub/screen/function/ip_address.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -222,7 +223,7 @@ class _KontenMenu2 extends State<IsiMenu2> {
               left: 20,
               right: 20,
               child: Visibility(
-                visible: isPending,
+                visible: isPending, // ini buat isPending
                 child: Container(
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -252,72 +253,84 @@ class _KontenMenu2 extends State<IsiMenu2> {
                       // you will disable scrolling on the ListView, but still allow clicking on its items
                       physics: NeverScrollableScrollPhysics(),
                       children: listPending.map((items){
-                        return Stack(
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.only(top: 20, left: 10, right: 10),
-                              child: Container(
-                                width: 360,
-                                height: 120,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(15),
-                                  color: Colors.grey.withOpacity(0.2)
-                                ),
+                        return InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context, 
+                              MaterialPageRoute(
+                                builder: (context) => DetailRiwayatStless(
+                                  idTrans: items['id_trans'],
+                                )
                               )
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(top: 45, left: 40),
-                              child: Container(
-                                width: 80,
-                                height: 80,
-                                decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.black),
-                                  image: DecorationImage(
-                                    image: AssetImage('assets/images/profile.jpg'),
-                                    fit: BoxFit.cover
+                            );
+                          },
+                          child: Stack(
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.only(top: 20, left: 10, right: 10),
+                                child: Container(
+                                  width: 360,
+                                  height: 120,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(15),
+                                    color: Colors.grey.withOpacity(0.2)
                                   ),
-                                  borderRadius: BorderRadius.circular(10)
-                                ),
-                              )
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(left: 125, top: 45),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text("${items['id_rute'].substring(0,3)} -> ${items['id_rute'].substring(3, 6)}"),
-                                  Text(
-                                    (items['tgl_balik'] == items['tgl_pergi']) 
-                                    ? "${items['tgl_pergi']}"
-                                    : "${items['tgl_pergi']} -> ${items['tgl_balik']}",
-                                    style: TextStyle(
-                                      fontSize: 12
+                                )
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(top: 45, left: 40),
+                                child: Container(
+                                  width: 80,
+                                  height: 80,
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.black),
+                                    image: DecorationImage(
+                                      image: AssetImage('assets/images/profile.jpg'),
+                                      fit: BoxFit.cover
                                     ),
-                                  )
-                                ],
+                                    borderRadius: BorderRadius.circular(10)
+                                  ),
+                                )
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(left: 125, top: 45),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text("${items['id_rute'].substring(0,3)} -> ${items['id_rute'].substring(3, 6)}"),
+                                    Text(
+                                      (items['tgl_balik'] == items['tgl_pergi']) 
+                                      ? "${items['tgl_pergi']}"
+                                      : "${items['tgl_pergi']} -> ${items['tgl_balik']}",
+                                      style: TextStyle(
+                                        fontSize: 12
+                                      ),
+                                    )
+                                  ],
+                                )
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(top: 25, left: 45),
+                                child: Text(
+                                  "${items['tgl_trans'].substring(0, 10)}",
+                                  style: TextStyle(fontSize: 12)
+                                )
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(left: 120, top: 90),
+                                child: Icon(Icons.pending_actions, size: 20)
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(left: 140, top: 90),
+                                child: Text('Pending', style: TextStyle(fontSize: 12))
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(left: 290, top: 45),
+                                child: Text('${formatRp.format(items['total_harga'])}', style: TextStyle(fontSize: 12))
                               )
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(top: 25, left: 45),
-                              child: Text(
-                                "${items['tgl_trans'].substring(0, 10)}",
-                                style: TextStyle(fontSize: 12)
-                              )
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(left: 120, top: 90),
-                              child: Icon(Icons.pending_actions, size: 20)
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(left: 140, top: 90),
-                              child: Text('Pending', style: TextStyle(fontSize: 12))
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(left: 290, top: 45),
-                              child: Text('${formatRp.format(items['total_harga'])}', style: TextStyle(fontSize: 12))
-                            )
-                          
-                          ]
+                            
+                            ]
+                          ),
                         );
                       }).toList(),
                     ) : SizedBox(
@@ -336,7 +349,7 @@ class _KontenMenu2 extends State<IsiMenu2> {
               left: 20,
               right: 20,
               child : Visibility(
-                visible: isCompleted,
+                visible: isCompleted,  // ini buat isCompleted
                 child: Container(
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -366,72 +379,84 @@ class _KontenMenu2 extends State<IsiMenu2> {
                       // you will disable scrolling on the ListView, but still allow clicking on its items
                       physics: NeverScrollableScrollPhysics(),
                       children: listPending.map((items){
-                        return Stack(
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.only(top: 20, left: 10, right: 10),
-                              child: Container(
-                                width: 360,
-                                height: 120,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(15),
-                                  color: Colors.grey.withOpacity(0.2)
-                                ),
+                        return InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context, 
+                              MaterialPageRoute(
+                                builder: (context) => DetailRiwayatStless(
+                                  idTrans: items['id_trans'],
+                                )
                               )
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(top: 45, left: 40),
-                              child: Container(
-                                width: 80,
-                                height: 80,
-                                decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.black),
-                                  image: DecorationImage(
-                                    image: AssetImage('assets/images/profile.jpg'),
-                                    fit: BoxFit.cover
+                            );
+                          },
+                          child: Stack(
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.only(top: 20, left: 10, right: 10),
+                                child: Container(
+                                  width: 360,
+                                  height: 120,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(15),
+                                    color: Colors.grey.withOpacity(0.2)
                                   ),
-                                  borderRadius: BorderRadius.circular(10)
-                                ),
-                              )
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(left: 125, top: 45),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text("${items['id_rute'].substring(0,3)} -> ${items['id_rute'].substring(3, 6)}"),
-                                  Text(
-                                    (items['tgl_balik'] == items['tgl_pergi']) 
-                                    ? "${items['tgl_pergi']}"
-                                    : "${items['tgl_pergi']} -> ${items['tgl_balik']}",
-                                    style: TextStyle(
-                                      fontSize: 12
+                                )
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(top: 45, left: 40),
+                                child: Container(
+                                  width: 80,
+                                  height: 80,
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.black),
+                                    image: DecorationImage(
+                                      image: AssetImage('assets/images/profile.jpg'),
+                                      fit: BoxFit.cover
                                     ),
-                                  )
-                                ],
+                                    borderRadius: BorderRadius.circular(10)
+                                  ),
+                                )
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(left: 125, top: 45),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text("${items['id_rute'].substring(0,3)} -> ${items['id_rute'].substring(3, 6)}"),
+                                    Text(
+                                      (items['tgl_balik'] == items['tgl_pergi']) 
+                                      ? "${items['tgl_pergi']}"
+                                      : "${items['tgl_pergi']} -> ${items['tgl_balik']}",
+                                      style: TextStyle(
+                                        fontSize: 12
+                                      ),
+                                    )
+                                  ],
+                                )
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(top: 25, left: 45),
+                                child: Text(
+                                  "${items['tgl_trans'].substring(0, 10)}",
+                                  style: TextStyle(fontSize: 12)
+                                )
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(left: 120, top: 90),
+                                child: Icon(Icons.check, size: 20)
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(left: 140, top: 90),
+                                child: Text('Completed', style: TextStyle(fontSize: 12))
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(left: 290, top: 45),
+                                child: Text('${formatRp.format(items['total_harga'])}', style: TextStyle(fontSize: 12))
                               )
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(top: 25, left: 45),
-                              child: Text(
-                                "${items['tgl_trans'].substring(0, 10)}",
-                                style: TextStyle(fontSize: 12)
-                              )
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(left: 120, top: 90),
-                              child: Icon(Icons.check, size: 20)
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(left: 140, top: 90),
-                              child: Text('Completed', style: TextStyle(fontSize: 12))
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(left: 290, top: 45),
-                              child: Text('${formatRp.format(items['total_harga'])}', style: TextStyle(fontSize: 12))
-                            )
-                          
-                          ]
+                            
+                            ]
+                          )
                         );
                       }).toList(),
                     ) : SizedBox(
@@ -450,7 +475,7 @@ class _KontenMenu2 extends State<IsiMenu2> {
               left: 20,
               right: 20,
               child : Visibility(
-                visible: isCancelled,
+                visible: isCancelled, // ini buat menu iscancelled
                 child: Container(
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -464,75 +489,104 @@ class _KontenMenu2 extends State<IsiMenu2> {
                       )
                     ]
                   ),
-                  height: (listPending.isNotEmpty) ? 30 + (150.0 * listPending.length) : 400,
+                  height: (listPending.isNotEmpty) ? 200 + (150.0 * listPending.length) : 400,
                   width: MediaQuery.of(context).size.width,
-                  child: (isLoading)
-                    ? SizedBox(
+                  child: (isLoading) ? 
+                    SizedBox(
                       height: 100,
                       width: 100,
                       child: Center(
                         child: CircularProgressIndicator(),
                       ),
-                    )
-                    : (listPending.isNotEmpty) ?  
+                    ) 
+                    : (listPending.isNotEmpty) ? 
                     ListView( //ganti column dgn listview biar g error
                       // NeverScrollableScrollPhysics.
                       // you will disable scrolling on the ListView, but still allow clicking on its items
                       physics: NeverScrollableScrollPhysics(),
                       children: listPending.map((items){
-                        return Stack(
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.only(top: 20, left: 10, right: 10),
-                              child: Container(
-                                width: 360,
-                                height: 120,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(15),
-                                  color: Colors.grey.withOpacity(0.2)
-                                ),
+                        return InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context, 
+                              MaterialPageRoute(
+                                builder: (context) => DetailRiwayatStless(
+                                  idTrans: items['id_trans'],
+                                )
                               )
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(top: 45, left: 40),
-                              child: Container(
-                                width: 80,
-                                height: 80,
-                                decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.black),
-                                  image: DecorationImage(
-                                    image: AssetImage('assets/images/profile.jpg'),
-                                    fit: BoxFit.cover
+                            );
+                          },
+                          child: Stack(
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.only(top: 20, left: 10, right: 10),
+                                child: Container(
+                                  width: 360,
+                                  height: 120,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(15),
+                                    color: Colors.grey.withOpacity(0.2)
                                   ),
-                                  borderRadius: BorderRadius.circular(10)
-                                ),
+                                )
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(top: 45, left: 40),
+                                child: Container(
+                                  width: 80,
+                                  height: 80,
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.black),
+                                    image: DecorationImage(
+                                      image: AssetImage('assets/images/profile.jpg'),
+                                      fit: BoxFit.cover
+                                    ),
+                                    borderRadius: BorderRadius.circular(10)
+                                  ),
+                                )
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(left: 125, top: 45),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text("${items['id_rute'].substring(0,3)} -> ${items['id_rute'].substring(3, 6)}"),
+                                    Text(
+                                      (items['tgl_balik'] == items['tgl_pergi']) 
+                                      ? "${items['tgl_pergi']}"
+                                      : "${items['tgl_pergi']} -> ${items['tgl_balik']}",
+                                      style: TextStyle(
+                                        fontSize: 12
+                                      ),
+                                    )
+                                  ],
+                                )
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(top: 25, left: 45),
+                                child: Text(
+                                  "${items['tgl_trans'].substring(0, 10)}",
+                                  style: TextStyle(fontSize: 12)
+                                )
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(left: 120, top: 90),
+                                child: Icon(Icons.cancel, size: 20)
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(left: 140, top: 90),
+                                child: Text('Cancelled', style: TextStyle(fontSize: 12))
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(left: 290, top: 45),
+                                child: Text('${formatRp.format(items['total_harga'])}', style: TextStyle(fontSize: 12))
                               )
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(left: 125, top: 45),
-                              child: Text('Vihara Kulor')
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(top: 25, left: 45),
-                              child: Text('04 Okt 2024', style: TextStyle(fontSize: 12))
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(left: 120, top: 90),
-                              child: Icon(Icons.cancel, size: 20)
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(left: 140, top: 90),
-                              child: Text('Pending', style: TextStyle(fontSize: 12))
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(left: 290, top: 45),
-                              child: Text('Rp5.000.000', style: TextStyle(fontSize: 12))
-                            )
-                          
-                          ]
+                            
+                            ]
+                          ),
                         );
                       }).toList(),
-                    ) : SizedBox(
+                    ) 
+                    : SizedBox(
                     height: 100,
                     width: 100,
                     child: Center(
@@ -542,7 +596,6 @@ class _KontenMenu2 extends State<IsiMenu2> {
                 )
               )
             )
-          
           ]
         )
       )

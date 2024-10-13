@@ -1,0 +1,24 @@
+Understanding the Container and Positioned Widget Behavior
+The reason why your first Container with the BoxDecoration color white is acting like the parent is because of how the Stack widget works in Flutter.
+
+When you use a Stack widget, it creates a new coordinate system for its children. The Stack widget itself does not have a size, but its children can be positioned relative to each other or to the Stack widget's bounds.
+
+In your case, the first Container with the BoxDecoration color white is the first child of the Stack widget. Since it has a specific height and width, it becomes the reference point for the other children of the Stack widget, including the Positioned widget.
+
+When you put the Positioned widget outside the Container and set its top value to a value greater than the height of the Container, it won't be visible because it's positioned outside the bounds of the Stack widget.
+
+However, when you set the top value of the Positioned widget to 100, it will overlap with the Container because the Positioned widget is now within the bounds of the Stack widget.
+
+Here's an illustration to help you understand the behavior:
+
+Stack (
+  Container (height: 200, width: 300, color: white), // Reference point
+  Positioned (top: 250, child: ...), // Outside the bounds, not visible
+  Positioned (top: 100, child: ...), // Within the bounds, overlaps with Container
+)
+
+In this example, the Container has a height of 200, and the Positioned widget with top: 250 is outside the bounds of the Stack widget, so it's not visible. The Positioned widget with top: 100 is within the bounds, so it overlaps with the Container.
+
+To achieve the desired behavior, you can adjust the top value of the Positioned widget relative to the Container or use a different layout strategy.
+
+Let me know if you have any further questions or need more assistance!

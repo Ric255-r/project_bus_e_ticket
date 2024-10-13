@@ -377,7 +377,11 @@ class _regis extends State<IsiRegister> {
                               alignment: Alignment.center,
                               child: ElevatedButton(
                                 onPressed: () {
-                                  buatRegis(context);
+                                  if(username.text.isNotEmpty && email.text.isNotEmpty 
+                                    && passwd.text.isNotEmpty && repeatPassWd.text.isNotEmpty){
+                                    
+                                    buatRegis(context);
+                                  }
                                 }, 
                                 child: Text("Daftar")
                               ),
