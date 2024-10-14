@@ -7,6 +7,7 @@ import 'package:bus_hub/main.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 
 
 class Menu2 extends StatelessWidget {
@@ -46,7 +47,7 @@ class _KontenMenu2 extends State<IsiMenu2> {
     decimalDigits: 0
   );
 
-  List<dynamic> listPending = [];
+  List<dynamic> listData = [];
   var dio = Dio();
   var storage = FlutterSecureStorage();
   bool isLoading = true;
@@ -67,7 +68,7 @@ class _KontenMenu2 extends State<IsiMenu2> {
         // Check if response data is not null
         if (response.data != null) {
           setState(() {
-            listPending = response.data;
+            listData = response.data;
           });
         } else {
           print("Response data is null");
@@ -84,7 +85,7 @@ class _KontenMenu2 extends State<IsiMenu2> {
         });
       }
 
-      print(listPending);
+      print(listData);
 
     } catch (e) {
       print("Ada Error $e");
@@ -106,7 +107,7 @@ class _KontenMenu2 extends State<IsiMenu2> {
 
     return SingleChildScrollView(
       child: SizedBox(
-        height: screenHeight - 200 + 50 * listPending.length,
+        height: screenHeight - 200 + 50 * listData.length,
         child: Stack(
           children: [
             // Bagian Carousel
@@ -223,7 +224,7 @@ class _KontenMenu2 extends State<IsiMenu2> {
               left: 20,
               right: 20,
               child: Visibility(
-                visible: isPending, // ini buat isPending
+                visible: isPending, // ini buat menu isPending
                 child: Container(
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -237,7 +238,7 @@ class _KontenMenu2 extends State<IsiMenu2> {
                       )
                     ]
                   ),
-                  height: (listPending.isNotEmpty) ? 120 + (150.0 * listPending.length) : 400,
+                  height: (listData.isNotEmpty) ? 120 + (150.0 * listData.length) : 400,
                   width: MediaQuery.of(context).size.width,
                   child: (isLoading) 
                   ? SizedBox(
@@ -247,12 +248,12 @@ class _KontenMenu2 extends State<IsiMenu2> {
                       child: CircularProgressIndicator(),
                     ),
                   )
-                  : (listPending.isNotEmpty) ?  
+                  : (listData.isNotEmpty) ?  
                     ListView( //ganti column dgn listview biar g error
                       // NeverScrollableScrollPhysics.
                       // you will disable scrolling on the ListView, but still allow clicking on its items
                       physics: NeverScrollableScrollPhysics(),
-                      children: listPending.map((items){
+                      children: listData.map((items){
                         return InkWell(
                           onTap: () {
                             Navigator.push(
@@ -297,14 +298,40 @@ class _KontenMenu2 extends State<IsiMenu2> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text("${items['id_rute'].substring(0,3)} -> ${items['id_rute'].substring(3, 6)}"),
+                                    if(items['nama_paket'] != null)
+                                    AutoSizeText(
+                                      items['nama_paket'],
+                                      maxLines: 1,
+                                      minFontSize: 8,
+                                      maxFontSize: 12,
+                                    ),
+
+                                    AutoSizeText(
+                                      "${items['id_rute'].substring(0,3)} -> ${items['id_rute'].substring(3, 6)}",
+                                      maxLines: 1,
+                                      minFontSize: 8,
+                                      maxFontSize: 12,
+                                    ),
+                                    
                                     Text(
                                       (items['tgl_balik'] == items['tgl_pergi']) 
                                       ? "${items['tgl_pergi']}"
                                       : "${items['tgl_pergi']} -> ${items['tgl_balik']}",
                                       style: TextStyle(
-                                        fontSize: 12
+                                        fontSize: 11
                                       ),
+                                    ),
+                                    SizedBox(height: 3,),
+
+                                    Row(
+                                      children: [
+                                        Flexible(
+                                          child: Icon(Icons.pending_actions, size: 20)
+                                        ),
+                                        Expanded(
+                                          child: Text('Pending', style: TextStyle(fontSize: 12)),
+                                        )
+                                      ],
                                     )
                                   ],
                                 )
@@ -316,16 +343,9 @@ class _KontenMenu2 extends State<IsiMenu2> {
                                   style: TextStyle(fontSize: 12)
                                 )
                               ),
+
                               Padding(
-                                padding: EdgeInsets.only(left: 120, top: 90),
-                                child: Icon(Icons.pending_actions, size: 20)
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(left: 140, top: 90),
-                                child: Text('Pending', style: TextStyle(fontSize: 12))
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(left: 290, top: 45),
+                                padding: EdgeInsets.only(left: 285, top: 45),
                                 child: Text('${formatRp.format(items['total_harga'])}', style: TextStyle(fontSize: 12))
                               )
                             
@@ -363,7 +383,7 @@ class _KontenMenu2 extends State<IsiMenu2> {
                       )
                     ]
                   ),
-                  height: (listPending.isNotEmpty) ? 200 + (150.0 * listPending.length) : 400,
+                  height: (listData.isNotEmpty) ? 200 + (150.0 * listData.length) : 400,
                   width: MediaQuery.of(context).size.width,
                   child: (isLoading)
                     ? SizedBox(
@@ -373,12 +393,12 @@ class _KontenMenu2 extends State<IsiMenu2> {
                         child: CircularProgressIndicator(),
                       ),
                     )
-                    : (listPending.isNotEmpty) ?  
+                    : (listData.isNotEmpty) ?  
                     ListView( //ganti column dgn listview biar g error
                       // NeverScrollableScrollPhysics.
                       // you will disable scrolling on the ListView, but still allow clicking on its items
                       physics: NeverScrollableScrollPhysics(),
-                      children: listPending.map((items){
+                      children: listData.map((items){
                         return InkWell(
                           onTap: () {
                             Navigator.push(
@@ -423,14 +443,40 @@ class _KontenMenu2 extends State<IsiMenu2> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text("${items['id_rute'].substring(0,3)} -> ${items['id_rute'].substring(3, 6)}"),
+                                    if(items['nama_paket'] != null)
+                                    AutoSizeText(
+                                      items['nama_paket'],
+                                      maxLines: 1,
+                                      minFontSize: 8,
+                                      maxFontSize: 12,
+                                    ),
+
+                                    AutoSizeText(
+                                      "${items['id_rute'].substring(0,3)} -> ${items['id_rute'].substring(3, 6)}",
+                                      maxLines: 1,
+                                      minFontSize: 8,
+                                      maxFontSize: 12,
+                                    ),
+                                    
                                     Text(
                                       (items['tgl_balik'] == items['tgl_pergi']) 
                                       ? "${items['tgl_pergi']}"
                                       : "${items['tgl_pergi']} -> ${items['tgl_balik']}",
                                       style: TextStyle(
-                                        fontSize: 12
+                                        fontSize: 11
                                       ),
+                                    ),
+                                    SizedBox(height: 3,),
+
+                                    Row(
+                                      children: [
+                                        Flexible(
+                                          child: Icon(Icons.check, size: 20)
+                                        ),
+                                        Expanded(
+                                          child: Text('Completed', style: TextStyle(fontSize: 12)),
+                                        )
+                                      ],
                                     )
                                   ],
                                 )
@@ -442,16 +488,9 @@ class _KontenMenu2 extends State<IsiMenu2> {
                                   style: TextStyle(fontSize: 12)
                                 )
                               ),
+
                               Padding(
-                                padding: EdgeInsets.only(left: 120, top: 90),
-                                child: Icon(Icons.check, size: 20)
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(left: 140, top: 90),
-                                child: Text('Completed', style: TextStyle(fontSize: 12))
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(left: 290, top: 45),
+                                padding: EdgeInsets.only(left: 285, top: 45),
                                 child: Text('${formatRp.format(items['total_harga'])}', style: TextStyle(fontSize: 12))
                               )
                             
@@ -489,7 +528,7 @@ class _KontenMenu2 extends State<IsiMenu2> {
                       )
                     ]
                   ),
-                  height: (listPending.isNotEmpty) ? 200 + (150.0 * listPending.length) : 400,
+                  height: (listData.isNotEmpty) ? 200 + (150.0 * listData.length) : 400,
                   width: MediaQuery.of(context).size.width,
                   child: (isLoading) ? 
                     SizedBox(
@@ -499,12 +538,12 @@ class _KontenMenu2 extends State<IsiMenu2> {
                         child: CircularProgressIndicator(),
                       ),
                     ) 
-                    : (listPending.isNotEmpty) ? 
+                    : (listData.isNotEmpty) ? 
                     ListView( //ganti column dgn listview biar g error
                       // NeverScrollableScrollPhysics.
                       // you will disable scrolling on the ListView, but still allow clicking on its items
                       physics: NeverScrollableScrollPhysics(),
-                      children: listPending.map((items){
+                      children: listData.map((items){
                         return InkWell(
                           onTap: () {
                             Navigator.push(
@@ -549,14 +588,40 @@ class _KontenMenu2 extends State<IsiMenu2> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text("${items['id_rute'].substring(0,3)} -> ${items['id_rute'].substring(3, 6)}"),
+                                    if(items['nama_paket'] != null)
+                                    AutoSizeText(
+                                      items['nama_paket'],
+                                      maxLines: 1,
+                                      minFontSize: 8,
+                                      maxFontSize: 12,
+                                    ),
+
+                                    AutoSizeText(
+                                      "${items['id_rute'].substring(0,3)} -> ${items['id_rute'].substring(3, 6)}",
+                                      maxLines: 1,
+                                      minFontSize: 8,
+                                      maxFontSize: 12,
+                                    ),
+                                    
                                     Text(
                                       (items['tgl_balik'] == items['tgl_pergi']) 
                                       ? "${items['tgl_pergi']}"
                                       : "${items['tgl_pergi']} -> ${items['tgl_balik']}",
                                       style: TextStyle(
-                                        fontSize: 12
+                                        fontSize: 11
                                       ),
+                                    ),
+                                    SizedBox(height: 3,),
+
+                                    Row(
+                                      children: [
+                                        Flexible(
+                                          child: Icon(Icons.cancel, size: 20)
+                                        ),
+                                        Expanded(
+                                          child: Text('Cancelled', style: TextStyle(fontSize: 12)),
+                                        )
+                                      ],
                                     )
                                   ],
                                 )
@@ -569,15 +634,7 @@ class _KontenMenu2 extends State<IsiMenu2> {
                                 )
                               ),
                               Padding(
-                                padding: EdgeInsets.only(left: 120, top: 90),
-                                child: Icon(Icons.cancel, size: 20)
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(left: 140, top: 90),
-                                child: Text('Cancelled', style: TextStyle(fontSize: 12))
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(left: 290, top: 45),
+                                padding: EdgeInsets.only(left: 285, top: 45),
                                 child: Text('${formatRp.format(items['total_harga'])}', style: TextStyle(fontSize: 12))
                               )
                             

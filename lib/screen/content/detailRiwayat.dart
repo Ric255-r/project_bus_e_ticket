@@ -179,7 +179,9 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                         children: [
                           Expanded(
                             child: Text(
-                              (responseData['metode_byr'] == "cash" && responseData['status_trans'] == "PENDING") ? "Harap Menunjukkan QR kepada Jasa Travel ${responseData['jasa_travel']}" : "Diteruskan kepada Jasa Travel ${responseData['jasa_travel']}", 
+                              (responseData['metode_byr'] == "cash" && responseData['status_trans'] == "PENDING") 
+                                ? "Harap Menunjukkan QR kepada Jasa Travel ${responseData['jasa_travel']}" 
+                                : "Diteruskan kepada Jasa Travel ${responseData['jasa_travel']}", 
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontWeight: FontWeight.w300,
@@ -510,7 +512,7 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                                 alignment: Alignment.centerRight,
                                 child: AutoSizeText( // ini plugin. update pubspec.yaml
                                   //"${txtTglBrkt.text} / ${txtTglBalik.text}",
-                                  "${responseData['harga']}",
+                                  formatRp.format(responseData['harga']),
                                   maxLines: 1,
                                   minFontSize: 5,
                                   maxFontSize: 12,
@@ -569,6 +571,36 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                                 child: AutoSizeText( // ini plugin. update pubspec.yaml
                                   //"${txtTglBrkt.text} / ${txtTglBalik.text}",
                                   (responseData['tgl_pergi'] == responseData['tgl_balik']) ? "${responseData['tgl_pergi']}" : "${responseData['tgl_pergi']} -> ${responseData['tgl_balik']}",
+                                  maxLines: 1,
+                                  minFontSize: 5,
+                                  maxFontSize: 12,
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+
+                        SizedBox(height: 2,),
+
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              flex: 1,
+                              child:  AutoSizeText(
+                                "Jam Berangkat",
+                                maxLines: 1,
+                                minFontSize: 7,
+                                maxFontSize: 12,
+                              )
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: Align(
+                                alignment: Alignment.centerRight,
+                                child: AutoSizeText( // ini plugin. update pubspec.yaml
+                                  //"${txtTglBrkt.text} / ${txtTglBalik.text}",
+                                  "${responseData['waktu_berangkat']} => ${responseData['waktu_sampai']}",
                                   maxLines: 1,
                                   minFontSize: 5,
                                   maxFontSize: 12,
@@ -674,7 +706,7 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                     "Berikut Ini Tiket Anda", 
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 20
+                      fontSize: 17
                     ),
                   ),
 
@@ -686,6 +718,36 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Center(
+                                child: const Image(
+                                  image: AssetImage('assets/images/Ticket.png'),
+                                  height: 150,
+                                  width: 150,
+                                ),
+                              )
+                            )
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Center(
+                                child: AutoSizeText(
+                                  "Nomor Tiket : T-0101",
+                                  maxLines: 1,
+                                  minFontSize: 15,
+                                  maxFontSize: 17,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold
+                                  ),
+                                ),
+                              )
+                            )
+                          ],
+                        )
                         // const Row(
                         //   // spacebetweeen buat // Pushes items to both ends
                         //   mainAxisAlignment: MainAxisAlignment.spaceBetween,

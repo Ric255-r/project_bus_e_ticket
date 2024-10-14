@@ -4,6 +4,7 @@ import 'package:bus_hub/main.dart';
 import 'package:bus_hub/screen/function/ip_address.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class MenuRegister extends StatelessWidget {
   const MenuRegister({super.key});
@@ -381,6 +382,15 @@ class _regis extends State<IsiRegister> {
                                     && passwd.text.isNotEmpty && repeatPassWd.text.isNotEmpty){
                                     
                                     buatRegis(context);
+                                  }else{
+                                    Fluttertoast.showToast(
+                                      msg: "Harap Lengkapi Data sebelum Register!",
+                                      toastLength: Toast.LENGTH_LONG,
+                                      gravity: ToastGravity.BOTTOM,
+                                      timeInSecForIosWeb: 10,
+                                      textColor: Colors.white,
+                                      fontSize: 16.0
+                                    );
                                   }
                                 }, 
                                 child: Text("Daftar")
