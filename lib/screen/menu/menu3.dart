@@ -1,12 +1,15 @@
 import 'package:bus_hub/screen/content/faq.dart';
 import 'package:bus_hub/screen/content/kebijakanPrivasi.dart';
 import 'package:bus_hub/screen/content/profile.dart';
+import 'package:bus_hub/screen/function/me.dart';
 import 'package:bus_hub/screen/menu/syaratDanKet.dart';
 import 'package:bus_hub/screen/menu/ubahPassword.dart';
 import 'package:bus_hub/screen/menu/ubahProfil.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:bus_hub/main.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:dio/dio.dart';
 
 class Menu3 extends StatelessWidget{
   @override
@@ -25,7 +28,27 @@ class IsiMenu3 extends StatefulWidget {
 }
 
 class _KontenMenu3 extends State<IsiMenu3> {
+  var storage = FlutterSecureStorage();
+  Map<String, dynamic> user = {};
 
+  
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getData();
+  }
+
+  Future<void> getData() async {
+    var jwt = await storage.read(key: 'jwt');
+    var fnUser = await getMyData(jwt);
+
+    setState(() {
+      user = fnUser;
+    });
+
+    print(user);
+  }
   
   @override
   Widget build(BuildContext context) {
@@ -43,7 +66,11 @@ class _KontenMenu3 extends State<IsiMenu3> {
                 onTap: () {
                   Navigator.push(
                     context, 
-                    MaterialPageRoute(builder: (context) => SecondProfile())
+                    MaterialPageRoute(
+                      builder: (context) => SecondProfile(
+                        data: user,
+                      )
+                    )
                   );
                 },
                 child: Row(
@@ -69,7 +96,7 @@ class _KontenMenu3 extends State<IsiMenu3> {
                             padding: const EdgeInsets.only(
                               left: 20
                             ),
-                            child: Row(
+                            child: (user.isNotEmpty) ? Row(
                               children: [
                                 SizedBox(
                                   width: 80,
@@ -84,8 +111,8 @@ class _KontenMenu3 extends State<IsiMenu3> {
                                     ),
                                     child: RichText(
                                       textAlign: TextAlign.left,
-                                      text: const TextSpan(
-                                        text: 'Asep Budiman \n\nMau Ngapain Hari Ini? \n',
+                                      text: TextSpan(
+                                        text: '${user['username']} \n\nMau Ngapain Hari Ini? \n',
                                         style: TextStyle(color: Colors.black),
                                       ),
                                     ),
@@ -93,6 +120,8 @@ class _KontenMenu3 extends State<IsiMenu3> {
                                 )
 
                               ]
+                            ) : Center(
+                              child: CircularProgressIndicator(),
                             ),
                           ),
                         ),
@@ -164,7 +193,9 @@ class _KontenMenu3 extends State<IsiMenu3> {
                                     // );
                                     Navigator.push(
                                       context, 
-                                      MaterialPageRoute(builder: (context) => SecondUbahProfile())
+                                      MaterialPageRoute(
+                                        builder: (context) => SecondUbahProfile()
+                                      )
                                     );
                                   },
                                   child: const Row(

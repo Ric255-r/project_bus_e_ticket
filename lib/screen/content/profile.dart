@@ -4,13 +4,19 @@ import 'package:bus_hub/main.dart';
 
 
 class SecondProfile extends StatelessWidget {
+  Map<String, dynamic> data = {};
+
+  SecondProfile({required this.data});
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(title: Text("Profil Anda"),
         backgroundColor: Colors.blue[400],),
-        body: IsiMenuProfil(),
+        body: IsiMenuProfil(
+          dataUser: data,
+        ),
       )
     );
   }
@@ -18,11 +24,26 @@ class SecondProfile extends StatelessWidget {
 
 
 class IsiMenuProfil extends StatefulWidget {
+  Map<String, dynamic> dataUser = {};
+  IsiMenuProfil({required this.dataUser});
+
   @override
   _KontenProfil createState() => _KontenProfil();
 }
 
 class _KontenProfil extends State<IsiMenuProfil> {
+  Map<String, dynamic> dataUser = {};
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    setState(() {
+      dataUser = widget.dataUser;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
@@ -51,11 +72,11 @@ class _KontenProfil extends State<IsiMenuProfil> {
                         showDialog(
                           context: context,
                           builder: (BuildContext context) {
-                        return Dialog(
-                            child: InteractiveViewer(
-                            child: Image.asset('assets/images/profile.jpg'),
-                            ),
-                        );
+                            return Dialog(
+                              child: InteractiveViewer(
+                                child: Image.asset('assets/images/profile.jpg'),
+                              ),
+                            );
                           }
                         );
                       },
@@ -116,30 +137,30 @@ class _KontenProfil extends State<IsiMenuProfil> {
                     ),
                   
                     Container(
-                    width: MediaQuery.of(context).size.width,
-                    alignment: Alignment.centerLeft,
-                    padding: const EdgeInsets.only(left: 30, top: 20, right : 30),
-                    child: TextFormField(
-                      readOnly: true,
-                      
-                    decoration: InputDecoration(
-                      disabledBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(width: 1, color: Colors.black),
-                        borderRadius: BorderRadius.circular(15),
+                      width: MediaQuery.of(context).size.width,
+                      alignment: Alignment.centerLeft,
+                      padding: const EdgeInsets.only(left: 30, top: 20, right : 30),
+                      child: TextFormField(
+                        readOnly: true,
+                        
+                      decoration: InputDecoration(
+                        disabledBorder: OutlineInputBorder(
+                          borderSide: const BorderSide(width: 1, color: Colors.black),
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        border: const UnderlineInputBorder(),
+                        labelText: '${dataUser['username']}',
                       ),
-                      border: const UnderlineInputBorder(),
-                      labelText: 'Asep Budiman',
+                      enabled: false,
                     ),
-                    enabled: false,
-                  ),
                   ),
 
                   const Expanded(
                     child: Padding(
                       padding: EdgeInsets.only(left: 30, top: 20),
                       child: Text('No HP'),
-                      )
-                      ),
+                    )
+                  ),
 
                   Container(
                     width: MediaQuery.of(context).size.width,
@@ -154,7 +175,7 @@ class _KontenProfil extends State<IsiMenuProfil> {
                         borderRadius: BorderRadius.circular(15),
                       ),
                       border: const UnderlineInputBorder(),
-                      labelText: '-',
+                      labelText: '${dataUser['no_hp'] ?? '-'}',
                     ),
                     enabled: false,
                   ),
@@ -185,7 +206,7 @@ class _KontenProfil extends State<IsiMenuProfil> {
                         borderRadius: BorderRadius.circular(15),
                       ),
                       border: const UnderlineInputBorder(),
-                      labelText: '-',
+                      labelText: '${dataUser['email']}',
                     ),
                     enabled: false,
                   ),
@@ -193,17 +214,17 @@ class _KontenProfil extends State<IsiMenuProfil> {
 
                   const Row(
                     children: [
-                        Expanded(
-                          child: Padding(
-                            padding: EdgeInsets.only(left: 30, bottom: 20),
-                            child: Text('Jenis Kelamin'),
-                            
-                          )
+                      Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.only(left: 30, bottom: 20),
+                          child: Text('Jenis Kelamin'),
+                          
                         )
-                      ],
-                    ),
+                      )
+                    ],
+                  ),
                   
-                    Container(
+                  Container(
                     width: MediaQuery.of(context).size.width,
                     alignment: Alignment.centerLeft,
                     padding: const EdgeInsets.only(left: 30, bottom: 20,  right : 30),
@@ -220,7 +241,7 @@ class _KontenProfil extends State<IsiMenuProfil> {
                     ),
                     enabled: false,
                   ),
-                  ),
+                ),
 
 
                   const Row(
@@ -248,7 +269,7 @@ class _KontenProfil extends State<IsiMenuProfil> {
                         borderRadius: BorderRadius.circular(15),
                       ),
                       border: const UnderlineInputBorder(),
-                      labelText: '-',
+                      labelText: '${dataUser['tanggal_lahir']}',
                     ),
                     enabled: false,
                   ),
