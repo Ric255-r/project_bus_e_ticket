@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:bus_hub/main.dart';
 
+import '../function/ip_address.dart';
+
 
 class SecondProfile extends StatelessWidget {
   Map<String, dynamic> data = {};
@@ -74,28 +76,45 @@ class _KontenProfil extends State<IsiMenuProfil> {
                           builder: (BuildContext context) {
                             return Dialog(
                               child: InteractiveViewer(
-                                child: Image.asset('assets/images/profile.jpg'),
+                                child: dataUser['profile_picture'].isNotEmpty
+                                 ? Image.network('${myIpAddr()}/fotoprofile/${dataUser['profile_picture']}')
+                                 : Image.asset('assets/images/profile.jpg'),
                               ),
                             );
                           }
                         );
                       },
-                      child: Container(
-
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade100,
-                          shape: BoxShape.circle,
-                          image: const DecorationImage(image:
-                          AssetImage('assets/images/profile.jpg'), fit: BoxFit.contain),
-                          border: Border.all(
-                            color: Colors.blueGrey.shade100
-                          )
-                        ),
-                        height: 200,
-                        width: 200,
+                      child: dataUser['profile_picture'].isNotEmpty 
+                      ? Container(
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade100,
+                            shape: BoxShape.circle,
+                            image:  DecorationImage(
+                              image: NetworkImage('${myIpAddr()}/fotoprofile/${dataUser['profile_picture']}')
+                            ),
+                            border: Border.all(
+                              color: Colors.blueGrey.shade100
+                            )
+                          ),
+                          height: 200,
+                          width: 200,
+                        ) 
+                      : Container(
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade100,
+                            shape: BoxShape.circle,
+                            image: const DecorationImage(
+                              image: AssetImage('assets/images/profile.jpg'), fit: BoxFit.contain
+                            ),
+                            border: Border.all(
+                              color: Colors.blueGrey.shade100
+                            )
+                          ),
+                          height: 200,
+                          width: 200,
+                        )
                       )
                     )
-                  )
                   )
                 ]
               )
@@ -104,7 +123,7 @@ class _KontenProfil extends State<IsiMenuProfil> {
               top: 255,
               left: 20,
               right: 20,
-              bottom: 35,
+              bottom: 15,
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.white,

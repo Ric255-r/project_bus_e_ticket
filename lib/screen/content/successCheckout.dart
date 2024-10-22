@@ -342,11 +342,25 @@ class _TampilanSuksesState extends State<TampilanSukses> {
                         )
                       ),
                       Expanded(
-                        child: Text(
-                          "Click Here",
-                          textAlign: TextAlign.right,
-                          style: TextStyle(
-                            fontSize: 11,
+                        child: InkWell(
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return Dialog(
+                                  child: InteractiveViewer(
+                                    child: Image.network('${myIpAddr()}/buktiByr/${responseData!['bukti_foto']}')
+                                  ),
+                                );
+                              }
+                            );
+                          },
+                          child: Text(
+                            "Click Here",
+                            textAlign: TextAlign.right,
+                            style: TextStyle(
+                              fontSize: 12,
+                            ),
                           ),
                         )
                       )

@@ -81,7 +81,6 @@ class _paketwisata1 extends State<paketwisata1> {
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
-    print(height);
     return Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(

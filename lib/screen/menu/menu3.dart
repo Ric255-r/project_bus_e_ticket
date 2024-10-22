@@ -10,6 +10,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:bus_hub/main.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:dio/dio.dart';
+import '../function/ip_address.dart';
 
 class Menu3 extends StatelessWidget{
   @override
@@ -100,7 +101,35 @@ class _KontenMenu3 extends State<IsiMenu3> {
                               children: [
                                 SizedBox(
                                   width: 80,
-                                  child: Icon(Icons.account_circle, size: 85,),
+                                  child: user['profile_picture'].isNotEmpty 
+                                  ? Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey.shade100,
+                                        shape: BoxShape.circle,
+                                        image:  DecorationImage(
+                                          image: NetworkImage('${myIpAddr()}/fotoprofile/${user['profile_picture']}')
+                                        ),
+                                        border: Border.all(
+                                          color: Colors.blueGrey.shade100
+                                        )
+                                      ),
+                                      height: 200,
+                                      width: 200,
+                                    ) 
+                                  : Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey.shade100,
+                                        shape: BoxShape.circle,
+                                        image: const DecorationImage(
+                                          image: AssetImage('assets/images/profile.jpg'), fit: BoxFit.contain
+                                        ),
+                                        border: Border.all(
+                                          color: Colors.blueGrey.shade100
+                                        )
+                                      ),
+                                      height: 200,
+                                      width: 200,
+                                    )
                                 ),
                                 SizedBox(
                                   width: 250,

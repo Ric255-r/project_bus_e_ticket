@@ -85,7 +85,7 @@ class _KontenMenu2 extends State<IsiMenu2> {
         });
       }
 
-      print(listData);
+      // print(listData);
 
     } catch (e) {
       print("Ada Error $e");
@@ -286,8 +286,8 @@ class _KontenMenu2 extends State<IsiMenu2> {
                                   decoration: BoxDecoration(
                                     border: Border.all(color: Colors.black),
                                     image: DecorationImage(
-                                      image: AssetImage('assets/images/profile.jpg'),
-                                      fit: BoxFit.cover
+                                      image: AssetImage('assets/images/tayo.png'),
+                                      fit: BoxFit.contain
                                     ),
                                     borderRadius: BorderRadius.circular(10)
                                   ),
@@ -431,8 +431,8 @@ class _KontenMenu2 extends State<IsiMenu2> {
                                   decoration: BoxDecoration(
                                     border: Border.all(color: Colors.black),
                                     image: DecorationImage(
-                                      image: AssetImage('assets/images/profile.jpg'),
-                                      fit: BoxFit.cover
+                                      image: AssetImage('assets/images/tayo.png'),
+                                      fit: BoxFit.contain
                                     ),
                                     borderRadius: BorderRadius.circular(10)
                                   ),
@@ -576,8 +576,8 @@ class _KontenMenu2 extends State<IsiMenu2> {
                                   decoration: BoxDecoration(
                                     border: Border.all(color: Colors.black),
                                     image: DecorationImage(
-                                      image: AssetImage('assets/images/profile.jpg'),
-                                      fit: BoxFit.cover
+                                      image: AssetImage('assets/images/tayo.png'),
+                                      fit: BoxFit.contain
                                     ),
                                     borderRadius: BorderRadius.circular(10)
                                   ),

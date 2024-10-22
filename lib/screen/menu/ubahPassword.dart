@@ -1,7 +1,12 @@
 // import 'package:bus_hub/screen/menu/Profile.dart';
+import 'package:bus_hub/screen/content/screen2.dart';
+import 'package:bus_hub/screen/function/ip_address.dart';
+import 'package:bus_hub/screen/function/me.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:bus_hub/main.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 
 class SecondUbahPass extends StatelessWidget {
@@ -36,7 +41,96 @@ class IsiMenuUbahPass extends StatefulWidget {
 }
 
 class _KontenMenuUbahPass extends State<IsiMenuUbahPass> {
+  TextEditingController oldPass = TextEditingController();
+  TextEditingController newPass = TextEditingController();
+  TextEditingController confirmNewPass = TextEditingController();
+  var dio = Dio();
+  var storage = FlutterSecureStorage();
 
+  Future<void> updatePass(BuildContext context) async {
+    try {
+      if(newPass.text != confirmNewPass.text){
+        Fluttertoast.showToast(
+          msg: "Konfirmasi Password Baru Tidak Cocok",
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 10,
+          textColor: Colors.white,
+          fontSize: 16.0
+        );
+      }else{
+        if(oldPass.text.isEmpty){
+          Fluttertoast.showToast(
+            msg: "Isi Password Lama Dahulu",
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 10,
+            textColor: Colors.white,
+            fontSize: 16.0
+          );
+        }else{
+          var jwt = await storage.read(key: 'jwt');
+          var dataUser = await getMyData(jwt);
+
+          var response = await dio.put('${myIpAddr()}/changePass', 
+            data: {
+              'oldPass': oldPass.text,
+              'newPass': newPass.text
+            },
+            options: Options(
+              headers: {
+                "Authorization": "Bearer $jwt",
+                "Content-Type": "application/json"
+              }
+            )
+          );
+
+          if(response.statusCode == 200){
+            if(context.mounted){
+              // Ku Sudah terlanjur untuk rute ke screen2.
+              // untuk fetch datanya harus lapis object lagi / nested, jadi kaya ['usernya']['bla']
+              Navigator.push(
+                context, 
+                MaterialPageRoute(
+                  builder: (context) => SecondScreen(
+                    data: {
+                      "usernya": dataUser,
+                    },
+                    indexScreen: 2,
+                  )
+                )
+              );
+            }
+          }
+        }
+      }
+    } catch (e) {
+      if (e is DioException){
+        if(e.response?.statusCode == 401){
+          Fluttertoast.showToast(
+            msg: "Password Lama Tidak Cocok",
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 10,
+            textColor: Colors.white,
+            fontSize: 16.0
+          );
+        }
+      }
+
+      print(e);
+    }
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+
+    oldPass.dispose();
+    newPass.dispose();
+    confirmNewPass.dispose();
+  }
   
   @override
   Widget build(BuildContext context) {
@@ -114,6 +208,7 @@ class _KontenMenuUbahPass extends State<IsiMenuUbahPass> {
                     padding: const EdgeInsets.only(left: 30, top: 20, right: 30),
                     child: TextFormField(
                       readOnly: false,
+                      controller: oldPass,
                     decoration: InputDecoration(
                       enabledBorder: OutlineInputBorder(
                         borderSide: const BorderSide(width: 1, color: Colors.black),
@@ -143,6 +238,7 @@ class _KontenMenuUbahPass extends State<IsiMenuUbahPass> {
                     padding: const EdgeInsets.only(left: 30, right: 30, top : 10, bottom: 10),
                     child: TextFormField(
                       readOnly: false,
+                      controller: newPass,
                       
                     decoration: InputDecoration(
                       enabledBorder: OutlineInputBorder(
@@ -173,6 +269,7 @@ class _KontenMenuUbahPass extends State<IsiMenuUbahPass> {
                     padding: const EdgeInsets.only(left: 30, right: 30, bottom: 20),
                     child: TextFormField(
                       readOnly: false,
+                      controller: confirmNewPass,
                       
                     decoration: InputDecoration(
                       enabledBorder: OutlineInputBorder(
@@ -207,7 +304,7 @@ class _KontenMenuUbahPass extends State<IsiMenuUbahPass> {
                             child: MaterialButton(
                               height: 50,
                               onPressed: () {
-
+                                updatePass(context);
                               },
                               child: Text('Simpan', style: TextStyle(color: Colors.white),),
                               minWidth: 200,

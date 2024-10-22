@@ -1,13 +1,18 @@
 import 'dart:io';
 
+import 'package:bus_hub/screen/content/screen2.dart';
 import 'package:bus_hub/screen/function/ip_address.dart';
 import 'package:bus_hub/screen/function/me.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:bus_hub/main.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
+
+import 'menu3.dart';
 
 
 class SecondUbahProfile extends StatelessWidget {
@@ -51,6 +56,16 @@ class _KontenUbahProfil extends State<IsiMenuUbahProfil> {
     getData();
   }
 
+  @override
+  void dispose(){
+    nama.dispose();
+    nohp.dispose();
+    email.dispose();
+
+    super.dispose();
+
+  }
+
   Future<void> getData() async {
     var jwt = await storage.read(key: 'jwt');
     var data =  await getMyData(jwt);
@@ -59,7 +74,7 @@ class _KontenUbahProfil extends State<IsiMenuUbahProfil> {
       dataUser = data;
 
       nama.text = dataUser!['username'];
-      nohp.text = dataUser!['no_hp'] ?? "N/A";
+      nohp.text = dataUser!['no_hp'].toString();
       email.text = dataUser!['email'];
     });
   }
@@ -75,7 +90,7 @@ class _KontenUbahProfil extends State<IsiMenuUbahProfil> {
     }
   }
 
-  Future<void> updateProfile() async {
+  Future<void> updateProfile(BuildContext context) async {
     var jwt = await storage.read(key: 'jwt');
 
     try {
@@ -104,6 +119,23 @@ class _KontenUbahProfil extends State<IsiMenuUbahProfil> {
         )
       );
 
+      if(response.statusCode == 200){
+        if(context.mounted){
+          // ini ku terlanjur buat secondscreen pake nested object. 
+          // jadi manggilnya ['usernya']['blabla']
+          Navigator.push(
+            context, 
+            MaterialPageRoute(
+              builder: (context) => SecondScreen(
+                data: {
+                  "usernya": dataUser
+                },
+                indexScreen: 2,
+              )
+            )
+          );
+        }
+      }
       
     } catch (e) {
       print("Error Ubah Profile $e");
@@ -117,77 +149,130 @@ class _KontenUbahProfil extends State<IsiMenuUbahProfil> {
 
     return SingleChildScrollView(
       child: (dataUser != null) ? SizedBox(
-        height: (screenHeight <= 700) ? screenHeight + 485 : screenHeight,
+        height: (screenHeight <= 700) ? screenHeight + 405 : screenHeight,
         child: Stack(
           children: [
             // Bagian Carousel
             Container(
               color: Colors.blue[400],
               height: 300,
-              child: Row(
+              child: Column(
                 children: [
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                        top: 10,
-                        bottom: 70,
-                        left: 20,
-                        right: 20
-                      ),
-                      child: GestureDetector(
-                        onTap: () {
-                          _fnFoto();
-                          // showDialog(
-                          //   context: context,
-                          //   builder: (BuildContext context) {
-                          //     return Dialog(
-                          //       child: InteractiveViewer(
-                          //         child: Image.asset('assets/images/profile.jpg'),
-                          //       ),
-                          //     );
-                          //   }
-                          // );
-                        },
-                        child: (_imgFile == null)
-                          ? Container(
-                              decoration: BoxDecoration(
-                                color: Colors.grey.shade100,
-                                shape: BoxShape.circle,
-                                image: const DecorationImage(
-                                  image: AssetImage('assets/images/profile.jpg'), fit: BoxFit.contain
-                                ),
-                                border: Border.all(
-                                  color: Colors.blueGrey.shade100
+
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                            top: 10,
+                            bottom: 5,
+                            left: 20,
+                            right: 20
+                          ),
+                          child: GestureDetector(
+                            onTap: () {
+                              _fnFoto();
+                              // showDialog(
+                              //   context: context,
+                              //   builder: (BuildContext context) {
+                              //     return Dialog(
+                              //       child: InteractiveViewer(
+                              //         child: Image.asset('assets/images/profile.jpg'),
+                              //       ),
+                              //     );
+                              //   }
+                              // );
+                            },
+                            child: (_imgFile != null)
+                              ? Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey.shade100,
+                                    shape: BoxShape.circle,
+                                    image:  DecorationImage(
+                                      image: FileImage(_imgFile!)
+                                    ),
+                                    border: Border.all(
+                                      color: Colors.blueGrey.shade100
+                                    )
+                                  ),
+                                  height: 200,
+                                  width: 200,
                                 )
-                              ),
-                              height: 200,
-                              width: 200,
-                            )
-                          : Container(
-                              decoration: BoxDecoration(
-                                color: Colors.grey.shade100,
-                                shape: BoxShape.circle,
-                                image:  DecorationImage(
-                                  image: FileImage(_imgFile!)
-                                ),
-                                border: Border.all(
-                                  color: Colors.blueGrey.shade100
+                              : dataUser!['profile_picture'].isNotEmpty 
+                              ? Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey.shade100,
+                                    shape: BoxShape.circle,
+                                    image:  DecorationImage(
+                                      image: NetworkImage('${myIpAddr()}/fotoprofile/${dataUser!['profile_picture']}')
+                                    ),
+                                    border: Border.all(
+                                      color: Colors.blueGrey.shade100
+                                    )
+                                  ),
+                                  height: 200,
+                                  width: 200,
+                                ) 
+                              : Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey.shade100,
+                                    shape: BoxShape.circle,
+                                    image: const DecorationImage(
+                                      image: AssetImage('assets/images/profile.jpg'), fit: BoxFit.contain
+                                    ),
+                                    border: Border.all(
+                                      color: Colors.blueGrey.shade100
+                                    )
+                                  ),
+                                  height: 200,
+                                  width: 200,
                                 )
-                              ),
-                              height: 200,
-                              width: 200,
                             )
                         )
-                    )
+                      )
+                    ]
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(
+                          right: 30
+                        ),
+                        child: InkWell(
+                          onTap: () async {
+                            // Cara Load File Asset dengan rootBundle
+                            // supaya widget FileImage bisa baca di kondisi atas pas imgFile != null
+                            final byteData = await rootBundle.load('assets/images/profile.jpg');
+                            final directory = await getApplicationDocumentsDirectory();
+                            final file = File('${directory.path}/profile.jpg');
+                            await file.writeAsBytes(byteData.buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
+                            
+                            // End Cara
+
+                            setState(() {
+                              // set null dlu
+                              _imgFile = null;
+                              // set filenya
+                              _imgFile = file;
+                            });
+
+                            print(_imgFile);
+                          },
+                          child: Text("Hapus Foto?", style: TextStyle(color: Colors.white),),
+                        )
+                      )
+                    ],
                   )
-                ]
+                ],
               )
             ),
+
             Positioned(
               top: 245,
               left: 20,
               right: 20,
-              bottom: 75,
+              bottom: 180, // mainkan bottom ini klo ad anomali
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -201,7 +286,7 @@ class _KontenUbahProfil extends State<IsiMenuUbahProfil> {
                     )
                   ]
                 ),
-                height: screenHeight,
+                height: screenHeight ,
                 width: MediaQuery.of(context).size.width, 
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -268,38 +353,38 @@ class _KontenUbahProfil extends State<IsiMenuUbahProfil> {
                       ),
                     ),
 
-                    const Row(
-                      children: [
-                          Expanded(
-                            child: Padding(
-                              padding: EdgeInsets.only(left: 30, bottom: 20),
-                              child: Text('Email'),
+                  //   const Row(
+                  //     children: [
+                  //         Expanded(
+                  //           child: Padding(
+                  //             padding: EdgeInsets.only(left: 30, bottom: 20),
+                  //             child: Text('Email'),
                               
-                            )
-                          )
-                        ],
-                      ),
+                  //           )
+                  //         )
+                  //       ],
+                  //     ),
                     
-                    Container(
-                    width: MediaQuery.of(context).size.width,
-                    alignment: Alignment.centerLeft,
-                    padding: const EdgeInsets.only(left: 30, bottom:20, right : 30),
-                    child: TextFormField(
-                      readOnly: false,
-                      controller: email,
-                      decoration: InputDecoration(
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(width: 1, color: Colors.black),
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(width: 1, color: Colors.black),
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                      ),
-                      enabled: true,
-                    ),
-                  ),
+                  //   Container(
+                  //   width: MediaQuery.of(context).size.width,
+                  //   alignment: Alignment.centerLeft,
+                  //   padding: const EdgeInsets.only(left: 30, bottom:20, right : 30),
+                  //   child: TextFormField(
+                  //     readOnly: false,
+                  //     controller: email,
+                  //     decoration: InputDecoration(
+                  //       enabledBorder: OutlineInputBorder(
+                  //         borderSide: const BorderSide(width: 1, color: Colors.black),
+                  //         borderRadius: BorderRadius.circular(15),
+                  //       ),
+                  //       focusedBorder: OutlineInputBorder(
+                  //         borderSide: BorderSide(width: 1, color: Colors.black),
+                  //         borderRadius: BorderRadius.circular(15),
+                  //       ),
+                  //     ),
+                  //     enabled: true,
+                  //   ),
+                  // ),
 
                     const Row(
                       children: [
@@ -375,14 +460,14 @@ class _KontenUbahProfil extends State<IsiMenuUbahProfil> {
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.only(
-                      top: 845,
+                      top: 755,
                       left: 20,
                       right: 20
                     ),
                     child: MaterialButton(
                       height: 50,
                       onPressed: () {
-                        updateProfile();
+                        updateProfile(context);
                       },
                       child: Text('Simpan', style: TextStyle(color: Colors.white),),
                       minWidth: 200,
