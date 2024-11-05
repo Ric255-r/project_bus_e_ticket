@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:bus_hub/screen/content/screen2.dart';
@@ -41,6 +42,7 @@ class _KontenUbahProfil extends State<IsiMenuUbahProfil> {
   var storage = FlutterSecureStorage();
   File? _imgFile;
   Map<String, dynamic>? dataUser;
+  Timer? _timer;
 
   TextEditingController nama = TextEditingController();
   TextEditingController nohp = TextEditingController();
@@ -53,30 +55,42 @@ class _KontenUbahProfil extends State<IsiMenuUbahProfil> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    getData();
+
+    _timer = Timer(Duration(milliseconds: 800), () {
+      getData(); // mencegah error ngecall dispose dlu abistu initstate()
+    });
+  }
+
+  Future<void> getData() async {
+    var jwt = await storage.read(key: 'jwt');
+    
+    if (jwt != null && jwt.isNotEmpty) {  // Check if jwt is not null
+      var data = await getMyData(jwt);
+      
+      if (data != null) {  // Check if data is not null
+        if(mounted){
+          setState(() {
+            dataUser = data;
+
+            //  if dataUser terisi keys dan hasilnya not null
+            nama.text = dataUser?['username'] ?? '';
+            nohp.text = dataUser?['no_hp']?.toString() ?? '';
+            email.text = dataUser?['email'] ?? '';
+          });
+        }
+      }
+    }
   }
 
   @override
   void dispose(){
+    _timer?.cancel();
     nama.dispose();
     nohp.dispose();
     email.dispose();
 
     super.dispose();
 
-  }
-
-  Future<void> getData() async {
-    var jwt = await storage.read(key: 'jwt');
-    var data =  await getMyData(jwt);
-    
-    setState(() {
-      dataUser = data;
-
-      nama.text = dataUser!['username'];
-      nohp.text = dataUser!['no_hp'].toString();
-      email.text = dataUser!['email'];
-    });
   }
 
   Future<void> _fnFoto() async {
@@ -198,7 +212,7 @@ class _KontenUbahProfil extends State<IsiMenuUbahProfil> {
                                   height: 200,
                                   width: 200,
                                 )
-                              : dataUser!['profile_picture'].isNotEmpty 
+                              : dataUser!['profile_picture'] != null 
                               ? Container(
                                   decoration: BoxDecoration(
                                     color: Colors.grey.shade100,
@@ -403,7 +417,7 @@ class _KontenUbahProfil extends State<IsiMenuUbahProfil> {
                       padding: const EdgeInsets.only(left: 30, bottom: 20, right : 30),
                       child: TextFormField(
                         readOnly: false,
-                        initialValue: (dataUser!['jk']) ? 'Pria' : 'Wanita',
+                        initialValue: "Pria",
                         decoration: InputDecoration(
                           enabledBorder:  OutlineInputBorder(
                             borderSide: const BorderSide(width: 1, color: Colors.black),

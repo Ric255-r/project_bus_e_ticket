@@ -286,7 +286,9 @@ class _KontenMenu2 extends State<IsiMenu2> {
                                   decoration: BoxDecoration(
                                     border: Border.all(color: Colors.black),
                                     image: DecorationImage(
-                                      image: AssetImage('assets/images/tayo.png'),
+                                      image: items['id_paket'].isNotEmpty 
+                                        ? NetworkImage('${myIpAddr()}/fotoPaket/${items['gbrpaket']}')
+                                        : AssetImage('assets/images/tayo.png') ,
                                       fit: BoxFit.contain
                                     ),
                                     borderRadius: BorderRadius.circular(10)
@@ -431,7 +433,9 @@ class _KontenMenu2 extends State<IsiMenu2> {
                                   decoration: BoxDecoration(
                                     border: Border.all(color: Colors.black),
                                     image: DecorationImage(
-                                      image: AssetImage('assets/images/tayo.png'),
+                                      image: items['id_paket'].isNotEmpty 
+                                        ? NetworkImage('${myIpAddr()}/fotoPaket/${items['gbrpaket']}')
+                                        : AssetImage('assets/images/tayo.png') ,
                                       fit: BoxFit.contain
                                     ),
                                     borderRadius: BorderRadius.circular(10)
@@ -576,7 +580,9 @@ class _KontenMenu2 extends State<IsiMenu2> {
                                   decoration: BoxDecoration(
                                     border: Border.all(color: Colors.black),
                                     image: DecorationImage(
-                                      image: AssetImage('assets/images/tayo.png'),
+                                      image: items['id_paket'].isNotEmpty 
+                                        ? NetworkImage('${myIpAddr()}/fotoPaket/${items['gbrpaket']}')
+                                        : AssetImage('assets/images/tayo.png') ,
                                       fit: BoxFit.contain
                                     ),
                                     borderRadius: BorderRadius.circular(10)

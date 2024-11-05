@@ -106,6 +106,7 @@ flutter:
     - assets/images/tayo.png
     - assets/images/Ticket.png
     - assets/images/profile.jpg
+    - assets/images/loading.gif
     
     # - images/a_dot_ham.jpeg
 

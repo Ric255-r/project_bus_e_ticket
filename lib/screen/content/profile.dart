@@ -76,7 +76,7 @@ class _KontenProfil extends State<IsiMenuProfil> {
                           builder: (BuildContext context) {
                             return Dialog(
                               child: InteractiveViewer(
-                                child: dataUser['profile_picture'].isNotEmpty
+                                child: dataUser['profile_picture'] != null
                                  ? Image.network('${myIpAddr()}/fotoprofile/${dataUser['profile_picture']}')
                                  : Image.asset('assets/images/profile.jpg'),
                               ),
@@ -84,7 +84,7 @@ class _KontenProfil extends State<IsiMenuProfil> {
                           }
                         );
                       },
-                      child: dataUser['profile_picture'].isNotEmpty 
+                      child: dataUser['profile_picture'] != null 
                       ? Container(
                           decoration: BoxDecoration(
                             color: Colors.grey.shade100,

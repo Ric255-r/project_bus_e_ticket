@@ -44,9 +44,19 @@ class _KontenMenu3 extends State<IsiMenu3> {
     var jwt = await storage.read(key: 'jwt');
     var fnUser = await getMyData(jwt);
 
-    setState(() {
-      user = fnUser;
-    });
+    if (jwt != null && jwt.isNotEmpty) {  // Check if jwt is not null
+      var fnUser= await getMyData(jwt);
+      
+      if (fnUser != null) {  // Check if data is not null
+        setState(() {
+          user = fnUser;
+        });
+      }
+    }
+
+    // setState(() {
+    //   user = fnUser;
+    // });
 
     print(user);
   }
@@ -101,7 +111,7 @@ class _KontenMenu3 extends State<IsiMenu3> {
                               children: [
                                 SizedBox(
                                   width: 80,
-                                  child: user['profile_picture'].isNotEmpty 
+                                  child: user['profile_picture'] != null 
                                   ? Container(
                                       decoration: BoxDecoration(
                                         color: Colors.grey.shade100,
@@ -147,7 +157,6 @@ class _KontenMenu3 extends State<IsiMenu3> {
                                     ),
                                   ),
                                 )
-
                               ]
                             ) : Center(
                               child: CircularProgressIndicator(),
@@ -275,10 +284,10 @@ class _KontenMenu3 extends State<IsiMenu3> {
                                   },
                                   child: const Row(
                                     children: [
-                                      Icon(Icons.person, size: 50,),
+                                      Icon(Icons.lock, size: 40,),
                                       Padding(
                                         padding: EdgeInsets.only(
-                                          left: 28
+                                          left: 30
                                         ),
                                         child: Text("Ubah Password", style: TextStyle(fontSize: 15),),
                                       ),
@@ -339,10 +348,10 @@ class _KontenMenu3 extends State<IsiMenu3> {
                                   },
                                   child: const Row(
                                     children: [
-                                      Icon(Icons.person, size: 50,),
+                                      Icon(Icons.comment, size: 38,),
                                       Padding(
                                         padding: EdgeInsets.only(
-                                          left: 28
+                                          left: 35
                                         ),
                                         child: Text("FAQ", style: TextStyle(fontSize: 15),),
                                       ),
@@ -385,7 +394,7 @@ class _KontenMenu3 extends State<IsiMenu3> {
                                   },
                                   child: const Row(
                                     children: [
-                                      Icon(Icons.person, size: 50,),
+                                      Icon(Icons.theater_comedy_sharp, size: 45,),
                                       Padding(
                                         padding: EdgeInsets.only(
                                           left: 28
@@ -439,10 +448,10 @@ class _KontenMenu3 extends State<IsiMenu3> {
                                   },
                                   child: const Row(
                                     children: [
-                                      Icon(Icons.person, size: 50,),
+                                      Icon(Icons.privacy_tip, size: 35,),
                                       Padding(
                                         padding: EdgeInsets.only(
-                                          left: 28
+                                          left: 35
                                         ),
                                         child: Text("Kebijakan Privasi", style: TextStyle(fontSize: 15),),
                                       ),

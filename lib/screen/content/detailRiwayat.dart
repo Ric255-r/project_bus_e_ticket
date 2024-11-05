@@ -128,7 +128,7 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
             left: 20,
             right: 20,
             child: Container(
-              height: 390,
+              height: 415,
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(10)
@@ -301,6 +301,33 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                         ],
                       ),
 
+                      if(responseData['status_trans'] == "CANCELLED")
+                      SizedBox(height: 5,),
+
+                      if(responseData['status_trans'] == "CANCELLED")
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          const Expanded(
+                            child: Text(
+                              "Alasan Ditolak",
+                              style: TextStyle(
+                                fontSize: 12
+                              ),
+                            )
+                          ),
+                          Expanded(
+                            child: Text(
+                              "${responseData['alasan_tolak']}",
+                              textAlign: TextAlign.right,
+                              style: TextStyle(
+                                fontSize: 12,
+                              ),
+                            )
+                          )
+                        ],
+                      ),
+
 
                       SizedBox(height: 5,),
                       Row(
@@ -412,7 +439,7 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
 
           if(responseData.isNotEmpty)
           Positioned(
-            top: (responseData['status_trans'] == "COMPLETED") ? 740 : 440,
+            top: (responseData['status_trans'] == "COMPLETED") ? 740 : 455,
             left: 20,
             right: 20,
             child: Container(
@@ -694,7 +721,7 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
         
           if(responseData.isNotEmpty && responseData['status_trans'] == "COMPLETED")
           Positioned(
-            top: (responseData['status_trans'] == "COMPLETED") ? 440 : 740,  //440
+            top: (responseData['status_trans'] == "COMPLETED") ? 453 : 740,  //440
             left: 20,
             right: 20,
             child: Container(

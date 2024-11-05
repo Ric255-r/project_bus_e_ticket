@@ -156,17 +156,19 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
       List<dynamic> responseBis = respBis.data;
       List<dynamic> responseData = response.data;
 
-      List<String> arrIdKota = [];
+      // List<String> arrIdKota = [];
       List<String> arrNamaKota = [];
 
       for(var kota in responseData){
-        arrIdKota.add(kota['id_kota']);
+        // arrIdKota.add(kota['id_kota']);
         arrNamaKota.add(kota['nama_kota']);
       }
 
+      // print(respBis.data);
+
       setState(() {
         kota = arrNamaKota;
-        idKota = arrIdKota;
+        // idKota = arrIdKota;
         arrayRespBis = responseBis;
       });
     } catch (e) {
@@ -174,7 +176,7 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
       
       setState(() {
         kota = [];
-        idKota = [];
+        // idKota = [];
         arrayRespBis = [];
       });
     }
@@ -574,6 +576,7 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                                 Container(
                                   child: TextField(
                                     controller: txtKlsBis,
+                                    readOnly: true,
                                     decoration: const InputDecoration(
                                       hintText: 'Economy/Executive',
                                       hintStyle: TextStyle(

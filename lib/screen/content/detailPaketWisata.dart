@@ -1,7 +1,9 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, avoid_unnecessary_containers
 // file rio
 import 'dart:ffi';
+import 'dart:convert';
 
+import 'package:bus_hub/screen/function/ip_address.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:intl/intl.dart';
@@ -39,6 +41,14 @@ class _paketsingkawang extends State<paketsingkawang> {
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
 
+    // Harus di konversi dlu, krna key jsonnya pake single quotes bkn double quotes
+    var detailBenefit = widget.data['detailpaket'];
+
+    detailBenefit = detailBenefit.replaceAll("'", '"');
+
+    // Now decode the JSON
+    List<dynamic> jsonData = jsonDecode(detailBenefit);
+
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -59,8 +69,8 @@ class _paketsingkawang extends State<paketsingkawang> {
                         padding: EdgeInsets.only(top: 0, left: 0),
                         child: AspectRatio(
                           aspectRatio: 4 / 5,
-                          child: Image.asset(
-                            'assets/images/pekkongril.png',
+                          child: Image.network(
+                            '${myIpAddr()}/fotoPaket/${widget.data['gbrpaket']}',
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -92,7 +102,7 @@ class _paketsingkawang extends State<paketsingkawang> {
                     Container(
                       padding: EdgeInsets.only(top: 60, left: 20),
                       child: Text(
-                        '${widget.data['subjudulpaket']} hanya ${formatRp.format(widget.data['harga_paket'])}',
+                        '${widget.data['subjudulpaket']} hanya ${formatRp.format(double.parse(widget.data['harga_paket']))}',
                         style: TextStyle(color: Colors.grey),
                       ),
                     ),
@@ -111,7 +121,7 @@ class _paketsingkawang extends State<paketsingkawang> {
                       padding: EdgeInsets.only(top: 110),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: widget.data['detailpaket'].map<Widget>((items) {
+                        children: jsonData.map<Widget>((items) {
                           return Align(
                             alignment: Alignment.centerLeft,
                             child: Row(

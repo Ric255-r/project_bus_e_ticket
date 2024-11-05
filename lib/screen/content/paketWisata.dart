@@ -1,7 +1,10 @@
 //file rio
 // ignore_for_file: camel_case_types, refer_const_constructors, prefer_interpolation_to_compose_strings, avoid_print, use_key_in_widget_constructors, prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers
+import 'dart:async';
+
 import 'package:bus_hub/screen/function/ip_address.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'checkout.dart';
 import 'detailPaketWisata.dart';
 import 'package:dio/dio.dart';
@@ -43,6 +46,7 @@ class _paketwisata1 extends State<paketwisata1> {
   //   });
   // }
   var dio = Dio();
+  // note, format hanya menerima bentuk angka, bukan bentuk string. jd harus konversi dlu string ke angka
   var formatRp = NumberFormat.currency(
     locale: "id_ID",
     decimalDigits: 0,
@@ -50,6 +54,8 @@ class _paketwisata1 extends State<paketwisata1> {
   );
 
   List<dynamic>? isiData;
+  Timer? _timer;
+  var isLoadingImage = true;
 
 
   Future<void> tarikPaketWisata() async {
@@ -60,19 +66,36 @@ class _paketwisata1 extends State<paketwisata1> {
         isiData = response.data;
       });
 
-      print(isiData);
-
     } catch (e) {
       print('Error di $e');
     }
   }
+
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
 
-    tarikPaketWisata();
+    // underscore buat void, kita g ambil callback
+    tarikPaketWisata().then((_) => {
+
+      // NetworkImage ga bs langsung load. mau ksh jeda sedikit
+      _timer = Timer(Duration(milliseconds: 350), () {
+        setState(() {
+          isLoadingImage = false;
+        });
+      })
+    });
+
+
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _timer?.cancel();
+    super.dispose();
   }
 
 
@@ -189,7 +212,7 @@ class _paketwisata1 extends State<paketwisata1> {
                                         )
                                       );
                                     },
-                                    child: Container(
+                                    child:Container(
                                       child: Hero(
                                         tag: 'idhero${items['id_paket']}',
                                         child: Container(
@@ -201,8 +224,9 @@ class _paketwisata1 extends State<paketwisata1> {
                                                 Radius.circular(10)),
                                             border: Border.all(width: 1),
                                             image: DecorationImage(
-                                                image: AssetImage(
-                                                    'assets/images/pekkongril.png'),
+                                                image: isLoadingImage 
+                                                  ? AssetImage('assets/images/loading.gif')
+                                                  : NetworkImage('${myIpAddr()}/fotoPaket/${items['gbrpaket']}'),
                                                 fit: BoxFit.cover
                                               )
                                             ),
@@ -213,7 +237,7 @@ class _paketwisata1 extends State<paketwisata1> {
                                 ),
                                 Container(
                                   padding: EdgeInsets.only(top: 20, left: 140),
-                                  child: Text('${items['nama_paket']}',
+                                  child: Text('${items!['nama_paket']}',
                                       style: TextStyle(
                                           color: Colors.black,
                                           fontWeight: FontWeight.bold,
@@ -221,7 +245,7 @@ class _paketwisata1 extends State<paketwisata1> {
                                 Container(
                                   padding: EdgeInsets.only(top: 43, left: 140),
                                   child: Text(
-                                    items['subjudulpaket'],
+                                    items!['subjudulpaket'],
                                     style: TextStyle(
                                       color: Colors.black, fontSize: 14
                                     )
@@ -242,12 +266,12 @@ class _paketwisata1 extends State<paketwisata1> {
                                             builder: (builder) => MenuCheckout(
                                             // yg total_biaya ak jadikan array yg terdiri dari String Formatted di index 0, sama value real di index 1
                                             // ak malas mw buat parameter lg.
-                                              totalBiaya: [formatRp.format(items['harga_paket']), items['harga_paket']],
+                                              totalBiaya: [formatRp.format(double.parse(items['harga_paket'])), double.parse(items['harga_paket'])],
                                               id_bis: items['id_bis'],
                                               tgl_pergi: items['tgl_brkt'],
                                               tgl_balik: items['tgl_balik'],
                                               jlh_penumpang: items['jlhpenumpang'],
-                                              hrg_tiket_perorg: items['harga_paket'] / items['jlhpenumpang'],
+                                              hrg_tiket_perorg: double.parse(items['harga_paket']) / int.parse(items['jlhpenumpang']),
                                               id_paket: items['id_paket']
                                             )
                                           )
@@ -262,7 +286,7 @@ class _paketwisata1 extends State<paketwisata1> {
                                 ),
                                 Container(
                                   padding: EdgeInsets.only(top: 75, left: 260),
-                                  child: Text(formatRp.format(items['harga_paket']))
+                                  child: Text(formatRp.format(double.parse(items['harga_paket'])))
                                 )
                               ]
                             )
