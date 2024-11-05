@@ -50,6 +50,9 @@ class _KontenUbahProfil extends State<IsiMenuUbahProfil> {
   // TextEditingController jk = TextEditingController();
   // TextEditingController tg
 
+  List<String> jk = ['Pria', 'Wanita'];
+  var selectedJk;
+
 
   @override
   void initState() {
@@ -67,17 +70,20 @@ class _KontenUbahProfil extends State<IsiMenuUbahProfil> {
     if (jwt != null && jwt.isNotEmpty) {  // Check if jwt is not null
       var data = await getMyData(jwt);
       
-      if (data != null) {  // Check if data is not null
-        if(mounted){
-          setState(() {
-            dataUser = data;
+      // CEK UDH KE MOUNTED ATAU BLM
+      if(mounted){
+        setState(() {
+          dataUser = data;
 
-            //  if dataUser terisi keys dan hasilnya not null
-            nama.text = dataUser?['username'] ?? '';
-            nohp.text = dataUser?['no_hp']?.toString() ?? '';
-            email.text = dataUser?['email'] ?? '';
-          });
-        }
+          //  if dataUser terisi keys dan hasilnya not null
+          nama.text = dataUser?['username'] ?? '';
+          nohp.text = dataUser?['no_hp']?.toString() ?? '';
+          email.text = dataUser?['email'] ?? '';
+
+          if(dataUser?['jk'] != null){
+            selectedJk = dataUser?['jk'] ? 'Pria' : 'Wanita';
+          }
+        });
       }
     }
   }
@@ -110,11 +116,36 @@ class _KontenUbahProfil extends State<IsiMenuUbahProfil> {
     try {
       FormData? formData;
 
+      // Buat Tambah Key & Value lain di formdata map
+      Map<String, dynamic> mapAnotherValue = {};
+      if(selectedJk != null){
+        bool? buatJk;
+
+        switch (selectedJk) {
+          case 'Pria':
+            setState(() {
+              buatJk = true;
+            });
+            break;
+          case 'Wanita':
+            setState(() {
+              buatJk = false;
+            });
+            break;
+        }
+
+        mapAnotherValue['jk'] = buatJk;
+      }
+      // End Tambah Value
+
       formData = FormData.fromMap({
         'username': nama.text,
         'email': email.text,
-        'nohp': nohp.text
+        'nohp': nohp.text,
+        ...mapAnotherValue
       });
+
+      
 
       if(_imgFile != null){
         String fileName = _imgFile!.path.split("/").last;
@@ -415,11 +446,11 @@ class _KontenUbahProfil extends State<IsiMenuUbahProfil> {
                       width: MediaQuery.of(context).size.width,
                       alignment: Alignment.centerLeft,
                       padding: const EdgeInsets.only(left: 30, bottom: 20, right : 30),
-                      child: TextFormField(
-                        readOnly: false,
-                        initialValue: "Pria",
+                      child: DropdownButtonFormField<String>(
+                        value: selectedJk,
+                        hint: Text('Pilih Jenis Kelamin'),
                         decoration: InputDecoration(
-                          enabledBorder:  OutlineInputBorder(
+                          enabledBorder: OutlineInputBorder(
                             borderSide: const BorderSide(width: 1, color: Colors.black),
                             borderRadius: BorderRadius.circular(15),
                           ),
@@ -427,9 +458,29 @@ class _KontenUbahProfil extends State<IsiMenuUbahProfil> {
                             borderSide: BorderSide(width: 1, color: Colors.black),
                             borderRadius: BorderRadius.circular(15),
                           ),
+                          prefixIcon: selectedJk == "Wanita" 
+                            ? Icon(Icons.woman) 
+                            : Icon(Icons.man_2),
+                          contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10), // Adjust padding as needed
                         ),
-                        enabled: true,
+                        items: jk.map((String isiData) {
+                          return DropdownMenuItem<String>(
+                            value: isiData,
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                top: 3
+                              ),
+                              child: Text(isiData),
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            selectedJk = newValue;
+                          });
+                        },
                       ),
+                      
                     ),
 
 

@@ -107,6 +107,7 @@ flutter:
     - assets/images/Ticket.png
     - assets/images/profile.jpg
     - assets/images/loading.gif
+    - assets/images/nologo.png
     
     # - images/a_dot_ham.jpeg
 

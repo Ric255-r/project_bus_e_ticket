@@ -256,7 +256,11 @@ class _KontenProfil extends State<IsiMenuProfil> {
                         borderRadius: BorderRadius.circular(15),
                       ),
                       border: const UnderlineInputBorder(),
-                      labelText: '-',
+                      labelText: dataUser['jk'] == null 
+                        ? '-'
+                        : dataUser['jk'] 
+                          ? 'Pria' 
+                          : 'Wanita',
                     ),
                     enabled: false,
                   ),

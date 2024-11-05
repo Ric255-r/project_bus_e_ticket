@@ -412,10 +412,10 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                               controller: busPilihan,
                               decoration: InputDecoration(
                                 hintText: (showBisPilihan != null) ? "Pilih Jadwal": "Bus Pilihan",
-                                hintStyle: TextStyle(
+                                hintStyle: const TextStyle(
                                   fontWeight: FontWeight.w200
                                 ),
-                                prefixIcon: Icon(
+                                prefixIcon: const Icon(
                                   Icons.location_city,
                                   size: 28.0,
                                 ),
@@ -430,9 +430,9 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                       AnimatedOpacity(
                         opacity: showErrorText ? 1.0 : 0.0, 
                         duration: Duration(milliseconds: 200),
-                        child: Padding(
+                        child: const Padding(
                           padding: EdgeInsets.only(bottom: 20),
-                          child: const Text(
+                          child: Text(
                             "Kota Asal / Kota Tujuan Tidak Boleh Kosong!",
                             style: TextStyle(color: Colors.red),
                           ),
@@ -536,7 +536,7 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                               children: [
                                 Text("Penumpang"),
                                 Padding(
-                                  padding: EdgeInsets.only(
+                                  padding: const EdgeInsets.only(
                                     right: 10
                                   ),
                                   child: Container(
@@ -637,9 +637,9 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                       AnimatedOpacity(
                         opacity: showErrorDetailHarga ? 1.0 : 0.0, 
                         duration: Duration(milliseconds: 200),
-                        child: Padding(
+                        child: const Padding(
                           padding: EdgeInsets.only(bottom: 20),
-                          child: const Text(
+                          child: Text(
                             "Harap Mengisi Semua data sebelum di Check Harga",
                             style: TextStyle(color: Colors.red),
                           ),
@@ -679,7 +679,7 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                   children: [
                     SizedBox(height: 20,),
 
-                    Text(
+                    const Text(
                       "Detail Pemesanan", 
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
@@ -700,7 +700,7 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
                             children: [
-                              Expanded(
+                              const Expanded(
                                 flex: 1,
                                 child: Text("Jenis & Kelas Bis")
                               ),
@@ -722,7 +722,7 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Expanded(
+                              const Expanded(
                                 flex: 1,
                                 child: Text("Rute")
                               ),
@@ -744,7 +744,7 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Expanded(
+                              const Expanded(
                                 flex: 1,
                                 child: Text("Biaya Bis")
                               ),
@@ -762,7 +762,7 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Expanded(
+                              const Expanded(
                                 flex: 1,
                                 child: Text("Penumpang")
                               ),
@@ -780,7 +780,7 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Expanded(
+                              const Expanded(
                                 flex: 1,
                                 child: Text("Tanggal Booking")
                               ),
@@ -828,7 +828,7 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Expanded(
+                              const Expanded(
                                 flex: 1,
                                 child: Text("Total Biaya", style: TextStyle(fontWeight: FontWeight.bold),)
                               ),
@@ -1047,7 +1047,7 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
       var dio = Dio();
 
       try {
-        var response = await dio.get('${myIpAddr()}/listbis/${txtBusPilihan}');
+        var response = await dio.get('${myIpAddr()}/listbis/$txtBusPilihan');
 
         setState(() {
           arrWhereBisLike = response.data;
@@ -1137,6 +1137,7 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                                         waktu_berangkat: item['waktu_berangkat'],
                                         waktu_sampai: item['waktu_sampai'],
                                         nama_bis: item['nama_bis'],
+                                        logojasatravel: item['logojasatravel'],
                                       ),
                                     ),
                                   );
@@ -1202,6 +1203,7 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                                         waktu_berangkat: item['waktu_berangkat'],
                                         waktu_sampai: item['waktu_sampai'],
                                         nama_bis: item['nama_bis'],
+                                        logojasatravel: item['logojasatravel']
                                       ),
                                     ),
                                   );
@@ -1329,17 +1331,19 @@ class IsiModalBis extends StatefulWidget {
   var lama_tempuh;
   var nama_bis;
   var kapasitas_penumpang;
+  var logojasatravel;
 
 
   IsiModalBis({
-      super.key, 
-      this.kotaAsal, 
-      this.kotaTujuan, 
-      this.harga, 
-      this.waktu_berangkat,
-      this.waktu_sampai,
-      this.lama_tempuh,
-      this.nama_bis,
+    super.key, 
+    this.kotaAsal, 
+    this.kotaTujuan, 
+    this.harga, 
+    this.waktu_berangkat,
+    this.waktu_sampai,
+    this.lama_tempuh,
+    this.nama_bis,
+    this.logojasatravel
   });
 
   @override
@@ -1365,17 +1369,24 @@ class _IsiModalBisState extends State<IsiModalBis> {
                 Expanded(
                   child: Padding(
                     padding: EdgeInsets.only(bottom: 1),
-                    child: Image.asset(
-                      'assets/images/damrilogo.png',
-                      height: 50,
-                      width: 100,
-                      alignment: Alignment.centerLeft,
+                    child: widget.logojasatravel == null 
+                    ? Image.asset(
+                        'assets/images/nologo.png',
+                        height: 50,
+                        width: 100,
+                        alignment: Alignment.centerLeft,
+                    ) 
+                    : Image.network(
+                      '${myIpAddr()}/fotoLogoBis/${widget.logojasatravel}',
+                        height: 50,
+                        width: 100,
+                        alignment: Alignment.centerLeft,
                     ),
                   ),
                 ),
                 Expanded(
                   child: Padding(
-                    padding: EdgeInsets.only(
+                    padding: const EdgeInsets.only(
                       bottom: 10,
                       right: 5
                     ),
