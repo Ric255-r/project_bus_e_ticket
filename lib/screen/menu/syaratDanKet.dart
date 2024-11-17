@@ -31,8 +31,8 @@ class _KontenSK extends State<IsiMenuSK> {
   ];
 
   List<String> teks2 = [
-    'Pengguna dapat mengubah atau membatalkan pemesanan sesuai dengan kebijakan yang berlaku.',
-    'Biaya tambahan mungkin dikenakan untuk perubahan atau pembatalan tiket.'
+    'Pengguna dapat membatalkan pembelian atau pemesanan dan akan mendapatkan pengembalian dana secara penuh apabila waktu keberangkatan belum dalam jangka 1 minggu sebelum keberangkatan.',
+    'Pengguna dapat menghubungi Kontak CS untuk Pembatalan pada riwayat transaksi. Biaya tambahan mungkin dikenakan untuk perubahan atau pembatalan tiket.'
   ];
 
   List<String> teks3 = [
@@ -62,7 +62,7 @@ class _KontenSK extends State<IsiMenuSK> {
 
     return SingleChildScrollView(
       child: SizedBox(
-        height: (screenHeight <= 700) ? screenHeight + 200 : screenHeight + 200,
+        height: screenHeight + 300,
         child: Stack(
           children: [
             // Bagian Carousel
@@ -102,7 +102,7 @@ class _KontenSK extends State<IsiMenuSK> {
                     )
                   ]
                 ),
-                height: screenHeight + 190,
+                height: screenHeight + 250,
                 width: MediaQuery.of(context).size.width,
                 child : Padding(
                   padding: EdgeInsets.only(

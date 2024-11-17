@@ -1,3 +1,4 @@
+import 'package:bus_hub/screen/content/screen2.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:bus_hub/main.dart';
@@ -16,9 +17,28 @@ class SecondProfile extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(title: Text("Profil Anda"),
         backgroundColor: Colors.blue[400],),
-        body: IsiMenuProfil(
-          dataUser: data,
-        ),
+        body: WillPopScope(
+          onWillPop: () async {
+            // Untuk balik ke SecondScreen. harus nested pake ['usernya']['blabla']
+            // krn sudah terlanjur
+            Navigator.pushReplacement(
+              context, 
+              MaterialPageRoute(
+                builder: (context) => SecondScreen(
+                  data: {
+                    "usernya": data
+                  },
+                  indexScreen: 2,
+                )
+              )
+            );
+
+            return false;
+          },
+          child: IsiMenuProfil(
+            dataUser: data,
+          ),
+        )
       )
     );
   }
@@ -213,22 +233,22 @@ class _KontenProfil extends State<IsiMenuProfil> {
                     ),
                   
                     Container(
-                    width: MediaQuery.of(context).size.width,
-                    alignment: Alignment.centerLeft,
-                    padding: const EdgeInsets.only(left: 30, bottom: 20,  right : 30),
-                    child: TextFormField(
-                      readOnly: true,
-                      
-                    decoration: InputDecoration(
-                      disabledBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(width: 1, color: Colors.black),
-                        borderRadius: BorderRadius.circular(15),
+                      width: MediaQuery.of(context).size.width,
+                      alignment: Alignment.centerLeft,
+                      padding: const EdgeInsets.only(left: 30, bottom: 20,  right : 30),
+                      child: TextFormField(
+                        readOnly: true,
+                        
+                      decoration: InputDecoration(
+                        disabledBorder: OutlineInputBorder(
+                          borderSide: const BorderSide(width: 1, color: Colors.black),
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        border: const UnderlineInputBorder(),
+                        labelText: '${dataUser['email']}',
                       ),
-                      border: const UnderlineInputBorder(),
-                      labelText: '${dataUser['email']}',
+                      enabled: false,
                     ),
-                    enabled: false,
-                  ),
                   ),
 
                   const Row(

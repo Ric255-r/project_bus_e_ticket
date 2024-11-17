@@ -11,10 +11,11 @@ import 'package:auto_size_text/auto_size_text.dart';
 
 
 class Menu2 extends StatelessWidget {
+  Menu2();
 
-  final Map<String, dynamic> getDataNya;
+  // final Map<String, dynamic> getDataNya;
 
-  Menu2({required this.getDataNya});
+  // Menu2({required this.getDataNya});
 
   @override
   Widget build(BuildContext context) {
@@ -110,7 +111,6 @@ class _KontenMenu2 extends State<IsiMenu2> {
         height: screenHeight - 200 + 50 * listData.length,
         child: Stack(
           children: [
-            // Bagian Carousel
             Container(
               color: Colors.blue[400],
               height: 300,
@@ -147,11 +147,13 @@ class _KontenMenu2 extends State<IsiMenu2> {
                 onTap: () async {
                   await getData('pending');
 
-                  setState(() {
-                    isPending = true;
-                    isCancelled = false;
-                    isCompleted = false;
-                  });
+                  if(mounted){
+                    setState(() {
+                      isPending = true;
+                      isCancelled = false;
+                      isCompleted = false;
+                    });
+                  }
 
                 },
                 child: Text('Pending', style: TextStyle(color: Colors.white))
@@ -177,12 +179,13 @@ class _KontenMenu2 extends State<IsiMenu2> {
                   onTap: () async{
                     await getData('completed');
 
-                    setState(() {
-                      isPending = false;
-                      isCancelled = false;
-                      isCompleted = true;
-                    });
-
+                    if(mounted){
+                      setState(() {
+                        isPending = false;
+                        isCancelled = false;
+                        isCompleted = true;
+                      });
+                    }
                   },
                   child: Text('Completed', style: TextStyle(color: Colors.white))
                 )
@@ -207,11 +210,13 @@ class _KontenMenu2 extends State<IsiMenu2> {
                 onTap: () async{
                   await getData("cancelled");
 
-                  setState(() {
-                    isPending = false;
-                    isCancelled = true;
-                    isCompleted = false;
-                  });
+                  if(mounted){
+                    setState(() {
+                      isPending = false;
+                      isCancelled = true;
+                      isCompleted = false;
+                    });
+                  }
 
                 },
                 child: Text('Cancelled', style: TextStyle(color: Colors.white),)

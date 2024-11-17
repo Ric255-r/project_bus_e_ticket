@@ -56,8 +56,6 @@ class _KontenMenu3 extends State<IsiMenu3> {
     // setState(() {
     //   user = fnUser;
     // });
-
-    print(user);
   }
   
   @override

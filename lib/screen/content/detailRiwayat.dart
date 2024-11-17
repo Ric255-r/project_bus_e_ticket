@@ -1,13 +1,16 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:bus_hub/screen/function/ip_address.dart';
+import 'package:bus_hub/screen/menu/menu2.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-
+import 'package:url_launcher/url_launcher.dart';
+import '../function/me.dart';
+import 'screen2.dart';
 
 class DetailRiwayatStless extends StatelessWidget {
   var idTrans;
@@ -19,6 +22,15 @@ class DetailRiwayatStless extends StatelessWidget {
       child: Scaffold(
         backgroundColor: Colors.blue[400],
         appBar: AppBar(
+          title: Align(
+            alignment: Alignment.center,
+            child: Padding(
+              padding: const EdgeInsets.only(
+                right: 50
+              ),
+              child: Text("Transaksi"),
+            ),
+          ),
           backgroundColor: Colors.white,
         ),
         body: DetailRiwayat(
@@ -81,7 +93,6 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
 
         datePart = splitDate[0];
         timePart = splitDate[1].substring(0, 8);
-
       });
 
       if(response.data['status_trans'] == "PENDING"){
@@ -102,6 +113,59 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
     } catch (e) {
       print("Ada error $e");
     }
+  }
+
+  TextEditingController alasanTolak = TextEditingController();
+
+  Future<void> cancelTransaksi(String idTrans, BuildContext context) async {
+    try {
+      var response = await dio.put('${myIpAddr()}/dataTrans/$idTrans', 
+        data: {
+          "status_trans": "CANCELLED",
+          "alasan_tolak": "${alasanTolak.text}"
+        }
+      );
+
+      var myJwt = await storage.read(key: 'jwt');
+
+      // Tarik Datanya kek gini. supaya bs balik ke screen2.dart. terlanjur
+      Map<String, dynamic> data = {
+        "usernya": await getMyData(myJwt)
+      };
+
+      // ini buat cegah biru2 pas di context 
+      if(context.mounted){
+        // Navigate ke main menu
+        Navigator.pushAndRemoveUntil(
+          context, 
+          MaterialPageRoute(
+            builder: (context) => SecondScreen(data: data, indexScreen: 1,) 
+          ), 
+          (Route<dynamic> route) => false
+        );
+      }
+
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  void launchWhatsapp(String number) async {
+    var url = 'whatsapp://send?phone=$number';
+
+    if(await canLaunch(url)){
+      await launch(url);
+    }else{
+      print("Whatsapp Ga Keinstall");
+    }
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+
+    alasanTolak.dispose();
   }
 
 
@@ -128,7 +192,9 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
             left: 20,
             right: 20,
             child: Container(
-              height: 415,
+              height: (responseData['metode_byr'] == "cash" && responseData['status_trans'] == "PENDING") 
+                ? 500
+                : 415,
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(10)
@@ -152,7 +218,7 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                                 child: QrImageView(
                                   data: responseData['id_trans'],
                                   version: QrVersions.auto,
-                                  size: 100,
+                                  size: 200,
                                 ),
                               )
                             : Icon(Icons.money, size: 100,),
@@ -181,7 +247,9 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                             child: Text(
                               (responseData['metode_byr'] == "cash" && responseData['status_trans'] == "PENDING") 
                                 ? "Harap Menunjukkan QR kepada Jasa Travel ${responseData['jasa_travel']}" 
-                                : "Diteruskan kepada Jasa Travel ${responseData['jasa_travel']}", 
+                                : (responseData['status_trans'] == "CANCELLED" )
+                                  ? "Transaksi Anda Sudah Dibatalkan"
+                                  : "Diteruskan kepada Jasa Travel ${responseData['jasa_travel']}",
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontWeight: FontWeight.w300,
@@ -189,6 +257,144 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                               ),
                             ),
                           )
+                        ],
+                      ),
+
+                      if(responseData['status_trans'] == "PENDING")
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          InkWell(
+                            onTap: () {
+                              showDialog(
+                                context: context, 
+                                builder: (BuildContext context){
+                                  return AlertDialog(
+                                    scrollable: true,
+                                    title: Text(
+                                      "Bantuan Pembatalan",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold
+                                      ),
+                                    ),
+                                    content: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: SingleChildScrollView(
+                                        child: Column(
+                                          children: [
+                                            // Awal. Ubah ide. user gbs cancel
+                                            // Row(
+                                            //   children: [
+                                            //     Expanded(
+                                            //       child: TextField(
+                                            //         controller: alasanTolak,
+                                            //         decoration: const InputDecoration(
+                                            //           hintText: 'Input Alasan batal',
+                                            //           hintStyle: TextStyle(
+                                            //             fontWeight: FontWeight.w200
+                                            //           ),
+                                            //           prefixIcon: Icon(
+                                            //             Icons.comment,
+                                            //             size: 28.0,
+                                            //           ),
+                                            //         ),
+                                            //         onChanged: (String? value) {
+
+                                            //         },
+                                            //       ),
+                                            //     )
+                                            //   ],
+                                            // ),
+                                            // SizedBox(height: 10,),
+                                            // Row(
+                                            //   mainAxisAlignment: MainAxisAlignment.center,
+                                            //   children: [
+                                            //     ElevatedButton(
+                                            //       onPressed: () {
+                                            //         cancelTransaksi(responseData['id_trans'], context);
+                                            //       },
+                                            //       child: Text("Submit"),
+                                            //     )
+                                            //   ],
+                                            // )
+                                          
+                                            // New. Tembak Ke Whatsapp
+                                            Row(
+                                              children: [
+                                                Expanded(
+                                                  child: TextField(
+                                                    readOnly: true,
+                                                    onTap: () {
+                                                      launchWhatsapp('+6285650826414');
+                                                    },
+                                                    decoration: const InputDecoration(
+                                                      hintText: '1. Klik untuk Hubungi CS Whatsapp Kami',
+                                                      hintStyle: TextStyle(
+                                                        fontWeight: FontWeight.w200,
+                                                        fontSize: 12
+                                                      ),
+                                                      prefixIcon: Icon(
+                                                        Icons.phone,
+                                                        size: 28.0,
+                                                      ),
+                                                    ),
+                                                    onChanged: (String? value) {
+
+                                                    },
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                            SizedBox(height: 10,),
+
+                                            Row(
+                                              children: [
+                                                Expanded(
+                                                  child: TextField(
+                                                    readOnly: true,
+                                                    decoration: const InputDecoration(
+                                                      hintText: '2. Datang Ke Loket Bis',
+                                                      hintStyle: TextStyle(
+                                                        fontWeight: FontWeight.w200,
+                                                        fontSize: 12
+                                                      ),
+                                                      prefixIcon: Icon(
+                                                        Icons.person_pin_circle_outlined,
+                                                        size: 28.0,
+                                                      ),
+                                                    ),
+                                                    onChanged: (String? value) {
+
+                                                    },
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+
+
+                                          ],
+                                        ),
+                                      )
+                                    ),
+                                  );
+                                }
+                              );
+                            },
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                top: 12
+                              ),
+                              child: Text(
+                                "Batalkan Pesanan?",
+                                textAlign: TextAlign.right,
+                                style: TextStyle(
+                                  fontSize: 11, fontWeight: FontWeight.bold,      
+                                ),
+                              ),
+                            ),
+                          ),
                         ],
                       ),
 
@@ -439,7 +645,9 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
 
           if(responseData.isNotEmpty)
           Positioned(
-            top: (responseData['status_trans'] == "COMPLETED") ? 740 : 455,
+            top: (responseData['metode_byr'] == "cash" && responseData['status_trans'] == "PENDING") 
+              ? 550
+              : (responseData['status_trans'] == "COMPLETED") ? 740 : 455,
             left: 20,
             right: 20,
             child: Container(

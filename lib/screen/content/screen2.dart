@@ -599,7 +599,8 @@ class _KontenNavbar extends State<IsiNavbar> {
 
     _children = [
       IsiBody(dataPassing: dataIsiNavbar),
-      Menu2(getDataNya: dataIsiNavbar),
+      Menu2(),
+      // Menu2(getDataNya: dataIsiNavbar),
       Menu3()
     ];
   }

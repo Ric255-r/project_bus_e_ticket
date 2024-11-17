@@ -235,8 +235,6 @@ class _FirstScreen extends State<MyTextField> {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
 
-    print(width);
-
     return WillPopScope(
       onWillPop: () async => await showPopUpExit(context),
       child: Container(
@@ -336,25 +334,41 @@ class _FirstScreen extends State<MyTextField> {
                           top: 255,
                           left: 20,
                           right: 20,
-                          child: SizedBox(
-                            width: width - 100,
-                            child: TextField(
-                              controller: tfnum2,
-                              obscureText: true,
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
+                          child: Column(
+                            children: [
+                              SizedBox(
+                                width: width - 100,
+                                child: TextField(
+                                  controller: tfnum2,
+                                  obscureText: true,
+                                  decoration: InputDecoration(
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    labelText: 'Password',
+                                  ),
                                 ),
-                                labelText: 'Password',
                               ),
-                            ),
+
+                              SizedBox(height: 8,),
+
+                              SizedBox(
+                                width: width - 100,
+                                child: Text(
+                                  "Forgot Password?",
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                  ),
+                                  textAlign: TextAlign.right,
+                                ),
+                              ),
+                            ]
                           ),
                         ),
 
-
                         // Submit
                         Positioned(
-                          top: 310,
+                          top: 315,
                           left: 0,
                           right: 0,
                           child: Container(
@@ -372,7 +386,7 @@ class _FirstScreen extends State<MyTextField> {
 
                         // Sudah Punya Akun? Text
                         Positioned(
-                          top: 380,
+                          top: 385,
                           left: 40,
                           child: SizedBox(
                             height: 20,

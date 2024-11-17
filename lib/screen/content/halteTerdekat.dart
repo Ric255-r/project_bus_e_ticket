@@ -452,6 +452,10 @@ class UiBottomSheet extends StatelessWidget {
                       color: Colors.black12,
                       height: 110,
                       width: 110,
+                      child: Image.asset(
+                        'assets/images/damrilogo.png',
+                        fit: BoxFit.contain, // Adjust the image fit as needed
+                      ),
                     ),
                   ),
                 ),
@@ -508,7 +512,87 @@ class UiBottomSheet extends StatelessWidget {
                     SizedBox(height: 50)
                   ],
                 )
+              
+              
               ],
+
+            ),
+            Row(
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(
+                    bottom: 35
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(15.0),
+                    child: Container(
+                      color: Colors.black12,
+                      height: 110,
+                      width: 110,
+                      child: Image.asset(
+                        'assets/images/atslogo.png',
+                        fit: BoxFit.contain, // Adjust the image fit as needed
+                      ),
+                    ),
+                  ),
+                ),
+
+                SizedBox(width: 10,),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "ATS Executive", 
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500
+                      ),
+                    ),
+                    SizedBox(height: 5,),
+                    Text(
+                      "Sekitar 11km"
+                    ),
+                    SizedBox(height: 5,),
+                    MaterialButton(
+                      color: Colors.blue,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                          context, 
+                          MaterialPageRoute(
+                            builder: (context) => Pesantiket(existsHalte: "ATS")
+                          )
+                        );
+                      },
+                      child: Text("Pergi Ke Sini"),
+                    ),
+
+                    // ClipRRect(
+                    //   borderRadius: BorderRadius.circular(15.0),
+                    //   child: Container(
+                    //     color: Colors.black12,
+                    //     height: 20,
+                    //     width: 240,
+                    //   ),
+                    // ),
+                    // SizedBox(height: 5,),
+                    // ClipRRect(
+                    //   borderRadius: BorderRadius.circular(15.0),
+                    //   child: Container(
+                    //     color: Colors.black12,
+                    //     height: 20,
+                    //     width: 180,
+                    //   ),
+                    // ),
+                    SizedBox(height: 50)
+                  ],
+                )
+              
+              
+              ],
+
             ),
             SizedBox(height: 10)
           ],

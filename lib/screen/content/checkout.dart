@@ -3,10 +3,14 @@
 import 'dart:io';
 import 'package:bus_hub/screen/content/successCheckout.dart';
 import 'package:bus_hub/screen/function/ip_address.dart';
+import 'package:bus_hub/screen/menu/syaratDanKet.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class MenuCheckout extends StatelessWidget {
   // Declare Variable utk Parameter/argument
@@ -176,6 +180,8 @@ class _StfulMenuCheckoutState extends State<StfulMenuCheckout> {
     }
   }
 
+
+  bool agreePayment = false;
 
   @override
   Widget build(BuildContext context) {
@@ -348,7 +354,6 @@ class _StfulMenuCheckoutState extends State<StfulMenuCheckout> {
                                   setState(() {
                                     paymentMethod = value!;
 
-                                    print(paymentMethod);
                                   });
                                 }
                               ),
@@ -387,7 +392,6 @@ class _StfulMenuCheckoutState extends State<StfulMenuCheckout> {
                                   setState(() {
                                     paymentMethod = value!;
 
-                                    print(paymentMethod);
                                   });
                                 }
                               ),
@@ -410,7 +414,7 @@ class _StfulMenuCheckoutState extends State<StfulMenuCheckout> {
                   left: 20.0, right: 20.0
                 ),
                 width: MediaQuery.of(context).size.width - 40,
-                height: (_imgFile != null && paymentMethod == "transfer") ? 350 : 270,
+                height: (_imgFile != null && paymentMethod == "transfer") ? 375 : 300,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10)
@@ -451,7 +455,7 @@ class _StfulMenuCheckoutState extends State<StfulMenuCheckout> {
                           children: [
                             Expanded(
                               child: Text(
-                                "Untuk pembayaran silakan ditransfer ke rekening BCA 7345112979 an BENGKEL TEKNOLOGI INDONESIA. Harap melampirkan bukti transfer ya",
+                                "Untuk pembayaran silakan ditransfer ke rekening BCA 7345112979 an CV. BIS BERSATU INDONESIA. Harap melampirkan bukti transfer ya",
                                 style: TextStyle(
                                   fontSize: 15,
                                   //fontWeight: FontWeight.bold
@@ -510,6 +514,56 @@ class _StfulMenuCheckoutState extends State<StfulMenuCheckout> {
                         ),
                       ),
 
+                      ListTile(
+                        leading: SizedBox(
+                          height: 15,
+                          width: 15,
+                          child: Checkbox(
+                            value: agreePayment, 
+                            onChanged: (bool? val) {
+                              setState(() {
+                                agreePayment = val!;
+                              });
+                            }
+                          ),
+                        ),
+                        title: RichText(
+                          text: TextSpan(
+                            children: [
+                              const TextSpan(
+                                text: "Saya Sudah Membaca ",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 10
+                                )
+                              ),
+                              TextSpan(
+                                text: "Syarat dan Ketentuan ",
+                                style: TextStyle(
+                                  color: Colors.blue,
+                                  fontSize: 10
+                                ),
+                                // ini Buat ontap yg textspan. modelnya ky gini
+                                recognizer: TapGestureRecognizer()..onTap = () {
+                                  Navigator.push(
+                                    context, 
+                                    MaterialPageRoute(builder: (context) => SecondSK())
+                                  );
+                                }
+                              ),
+                              const TextSpan(
+                                text: "Pembayaran ",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 10
+                                )
+                              ),
+                            ]
+                          ),
+                          maxLines: 1,
+                        ),
+                      ),
+
                       if(paymentMethod == "cash")
                       Row(
                         children: [
@@ -517,10 +571,17 @@ class _StfulMenuCheckoutState extends State<StfulMenuCheckout> {
                             child: IgnorePointer(
                               ignoring: isSubmitted,
                               child: ElevatedButton(
-                              
-                              onPressed: () {
+                              onPressed: agreePayment ? () {
                                 _submitBukti(context, mode: "cash");
-                                
+                              } : () {
+                                Fluttertoast.showToast(
+                                  msg: "Harap Menyetujui Syarat dan Ketentuan",
+                                  toastLength: Toast.LENGTH_LONG,
+                                  gravity: ToastGravity.BOTTOM,
+                                  timeInSecForIosWeb: 10,
+                                  textColor: Colors.white,
+                                  fontSize: 14.0
+                                );
                               },
                               child: isSubmitted 
                                 ? SizedBox(
@@ -570,15 +631,18 @@ class _StfulMenuCheckoutState extends State<StfulMenuCheckout> {
                             ignoring: isSubmitted,
                             child: ElevatedButton(
                             
-                            onPressed: () {
+                            onPressed: agreePayment ? () {
                               _submitBukti(context);
                               
-                              // Navigator.push(
-                              //   context, 
-                              //   MaterialPageRoute(
-                              //     builder: (context) => MenuSuccess(totalHarga: widget.totalBiaya[0],)
-                              //   )
-                              // );
+                            } : () {
+                              Fluttertoast.showToast(
+                                msg: "Harap Menyetujui Syarat dan Ketentuan",
+                                toastLength: Toast.LENGTH_LONG,
+                                gravity: ToastGravity.BOTTOM,
+                                timeInSecForIosWeb: 10,
+                                textColor: Colors.white,
+                                fontSize: 14.0
+                              );
                             },
                             child: isSubmitted 
                               ? SizedBox(
@@ -586,7 +650,7 @@ class _StfulMenuCheckoutState extends State<StfulMenuCheckout> {
                                   width: 20,
                                   child: CircularProgressIndicator(),
                                 )
-                              : Text("Konfirmasi Pembayaran ->"),
+                              : Text("Submit Pembayaran ->"),
                             ),
                           ),
                         ),

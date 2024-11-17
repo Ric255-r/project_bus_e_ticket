@@ -58,6 +58,7 @@ dev_dependencies:
   auto_size_text: ^3.0.0
   image_picker: ^0.8.5+3 # pakai versi yang ini
   qr_flutter: ^4.1.0
+  url_launcher: ^6.0.20
   # image_picker: ^1.1.2
 
 # For information on the generic Dart part of this file, see the
@@ -108,7 +109,8 @@ flutter:
     - assets/images/profile.jpg
     - assets/images/loading.gif
     - assets/images/nologo.png
-    
+    - assets/images/atslogo.png
+
     # - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

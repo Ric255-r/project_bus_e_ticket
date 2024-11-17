@@ -61,6 +61,8 @@ class _TampilanSuksesState extends State<TampilanSukses> {
         )
       );
 
+      print(response);
+
       setState(() {
         responseData = response.data;
         
@@ -179,9 +181,9 @@ class _TampilanSuksesState extends State<TampilanSukses> {
                         child: Text(
                           (widget.mode == "cash") 
                             ? "Silahkan menunjukkan QR Code ini ke Kasir"
-                            : "Diteruskan kepada Ekspedisi Damriku", 
+                            : "Diteruskan kepada Jasa ${responseData!['jasa_travel']}", 
                           textAlign: TextAlign.center,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontWeight: FontWeight.w300,
                             fontSize: 12
                           ),

@@ -164,6 +164,8 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
         arrNamaKota.add(kota['nama_kota']);
       }
 
+      print(responseBis);
+
       // print(respBis.data);
 
       setState(() {
