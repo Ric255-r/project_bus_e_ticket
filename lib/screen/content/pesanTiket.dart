@@ -109,6 +109,7 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
   List<String> kota = [];
   List<String> idKota = [];
   List<dynamic> arrayRespBis = [];
+  List<dynamic> arrStokTiket = [];
 
   @override
   void initState() {
@@ -151,10 +152,12 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
     try {
       var response = await dio.get("${myIpAddr()}/kota");
       var respBis = await dio.get("${myIpAddr()}/listbis");
+      var respStokTiket = await dio.get("${myIpAddr()}/stoktiket");
 
       //krn select * return dlm array, maka declare dlu dlm bentuk array
       List<dynamic> responseBis = respBis.data;
       List<dynamic> responseData = response.data;
+      List<dynamic> responseTiket = respStokTiket.data;
 
       // List<String> arrIdKota = [];
       List<String> arrNamaKota = [];
@@ -172,6 +175,7 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
         kota = arrNamaKota;
         // idKota = arrIdKota;
         arrayRespBis = responseBis;
+        arrStokTiket = responseTiket;
       });
     } catch (e) {
       print(e);
@@ -179,6 +183,7 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
       setState(() {
         kota = [];
         // idKota = [];
+        arrStokTiket = [];
         arrayRespBis = [];
       });
     }
@@ -207,7 +212,19 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
     }
   }
 
-  
+  // Fungsi cek kapasitas Penumpang
+  int cekKapasitas(String idBis){
+    if (arrStokTiket.isNotEmpty) {
+      // Iterate isi List
+      for(var i in arrStokTiket){
+        if(i['id_bis'] == idBis){
+          return i['tiket_tersedia'];
+        }
+      }
+    }
+    return 0;
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
@@ -1140,6 +1157,8 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                                         waktu_sampai: item['waktu_sampai'],
                                         nama_bis: item['nama_bis'],
                                         logojasatravel: item['logojasatravel'],
+                                        kapasitas_penumpang: cekKapasitas(item['id_bis']),
+                                        
                                       ),
                                     ),
                                   );
@@ -1205,7 +1224,9 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                                         waktu_berangkat: item['waktu_berangkat'],
                                         waktu_sampai: item['waktu_sampai'],
                                         nama_bis: item['nama_bis'],
-                                        logojasatravel: item['logojasatravel']
+                                        logojasatravel: item['logojasatravel'],
+                                        kapasitas_penumpang: cekKapasitas(item['id_bis']),
+
                                       ),
                                     ),
                                   );
@@ -1345,7 +1366,8 @@ class IsiModalBis extends StatefulWidget {
     this.waktu_sampai,
     this.lama_tempuh,
     this.nama_bis,
-    this.logojasatravel
+    this.logojasatravel,
+    this.kapasitas_penumpang
   });
 
   @override
@@ -1513,7 +1535,7 @@ class _IsiModalBisState extends State<IsiModalBis> {
                     child: Column(
                       children: [
                         Text("${widget.nama_bis}", style: TextStyle(fontWeight: FontWeight.bold)),
-                        Text("40 Kursi Tersedia", style: TextStyle(fontWeight: FontWeight.w200))
+                        Text("${widget.kapasitas_penumpang} Kursi Tersedia", style: TextStyle(fontWeight: FontWeight.w200))
                       ],
                     ),
                   ),

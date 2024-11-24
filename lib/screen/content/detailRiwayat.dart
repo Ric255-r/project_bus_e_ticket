@@ -743,6 +743,8 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                         ),
                         SizedBox(height: 3,),
 
+                        // Cek string length id_paket, cek apakah kosong atau nd
+                        if(responseData['id_paket'].length == 0)
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -770,6 +772,38 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                             )
                           ],
                         ),
+                        
+                        if(responseData['id_paket'].length > 0)
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              flex: 1,
+                              child:  AutoSizeText(
+                                "Biaya Paket Bis",
+                                maxLines: 1,
+                                minFontSize: 7,
+                                maxFontSize: 12,
+                              )
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: Align(
+                                alignment: Alignment.centerRight,
+                                child: AutoSizeText( // ini plugin. update pubspec.yaml
+                                  //"${txtTglBrkt.text} / ${txtTglBalik.text}",
+                                  formatRp.format(responseData['total_harga']),
+                                  maxLines: 1,
+                                  minFontSize: 5,
+                                  maxFontSize: 12,
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                        
+                        
+                        
                         SizedBox(height: 3,),
 
                         Row(
@@ -985,7 +1019,7 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                             Expanded(
                               child: Center(
                                 child: AutoSizeText(
-                                  "Nomor Tiket : T-0101",
+                                  "Nomor Tiket : ${responseData['generated_ticket']}",
                                   maxLines: 1,
                                   minFontSize: 15,
                                   maxFontSize: 17,

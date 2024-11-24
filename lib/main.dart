@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:bus_hub/forgotpass.dart';
 import 'package:bus_hub/register.dart';
 import 'package:bus_hub/screen/function/ip_address.dart';
 import 'package:flutter/material.dart';
@@ -354,12 +355,20 @@ class _FirstScreen extends State<MyTextField> {
 
                               SizedBox(
                                 width: width - 100,
-                                child: Text(
-                                  "Forgot Password?",
-                                  style: TextStyle(
-                                    fontSize: 10,
+                                child: InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context, 
+                                      MaterialPageRoute(builder: (context) => const forgetpassword(title: 'title'))
+                                    );
+                                  },
+                                  child: const Text(
+                                    "Forgot Password?",
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                    ),
+                                    textAlign: TextAlign.right,
                                   ),
-                                  textAlign: TextAlign.right,
                                 ),
                               ),
                             ]

@@ -66,6 +66,8 @@ class _paketwisata1 extends State<paketwisata1> {
         isiData = response.data;
       });
 
+      print(response.data);
+
     } catch (e) {
       print('Error di $e');
     }
