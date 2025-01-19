@@ -6,19 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-class MenuRegister extends StatelessWidget {
-  const MenuRegister({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        home: IsiRegister(),
-      )
-    );
-  }
-}
 
 class IsiRegister extends StatefulWidget {
   const IsiRegister({super.key});
@@ -173,6 +160,9 @@ class _regis extends State<IsiRegister> {
     // print(height);
 
     return Container(
+      padding: const EdgeInsets.only(
+        top: 50,
+      ),
       decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
@@ -190,7 +180,7 @@ class _regis extends State<IsiRegister> {
                 padding: EdgeInsets.only(top: 130),
                 child: Container(
                   width: width - 100,
-                  height: height - 300,
+                  height: height - 370,
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(10),

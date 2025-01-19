@@ -10,17 +10,14 @@ class Halteterdekat extends StatelessWidget {
     //   child: IsiMap(),
     // ); 
 
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        body: DraggableBottomSheet(
-          anak: Column(
-            children: [
-              UiBottomSheet(),
+    return Scaffold(
+      body: DraggableBottomSheet(
+        anak: Column(
+          children: [
+            UiBottomSheet(),
 
-            ],
-          )
-        ),
+          ],
+        )
       ),
     );
   }

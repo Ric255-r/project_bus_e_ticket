@@ -10,8 +10,18 @@ class SecondSK extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(title: Text("Syarat Dan Ketentuan"),
-        backgroundColor: Colors.blue[400],),
+        appBar: AppBar(
+          title: Padding(
+            padding: const EdgeInsets.only(
+              left: 40
+            ),
+            child: Text(
+              "Syarat Dan Ketentuan"
+            ),
+          ),
+          backgroundColor: Colors.blue[400],
+          foregroundColor: Colors.white,
+        ),
         body: IsiMenuSK(),
       )
     );
@@ -26,7 +36,7 @@ class IsiMenuSK extends StatefulWidget {
 
 class _KontenSK extends State<IsiMenuSK> {
   List<String> teks1 = [
-    'Pemesanan tiket dapat dilakukan maksimal 3 bulan hingga hari-H sebelum tanggal keberangkatan, tergantung pada kebijakan dan ketersediaan tiket dari vendor',
+    'Pemesanan tiket dapat dilakukan maksimal 1 bulan hingga hari-H sebelum tanggal keberangkatan, tergantung pada kebijakan dan ketersediaan tiket dari vendor',
     'Pembayaran harus dilakukan melalui metode yang tersedia di aplikasi.'
   ];
 
@@ -36,22 +46,23 @@ class _KontenSK extends State<IsiMenuSK> {
   ];
 
   List<String> teks3 = [
-    'Data pribadi pengguna akan digunakan sesuai dengan kebijakan privasi yang berlaku.',
-    'Pengguna setuju untuk memberikan informasi yang akurat dan lengkap saat melakukan pemesanan.'
-  ];
-
-  List<String> teks4 = [
+    'Pihak Bus_hub mempunyai kewenangan untuk melakukan pemblokiran akun terhadap pengguna yang sengaja melakukan transaksi bersifat spam, jahil, maupun palsu.',
     'Pengguna bertanggung jawab atas semua aktivitas yang dilakukan melalui akun mereka.',
     'Pengguna harus menjaga kerahasiaan informasi akun mereka dan segera melaporkan jika terjadi penyalahgunaan.'
   ];
 
+  List<String> teks4 = [
+    'Data pribadi pengguna akan digunakan sesuai dengan kebijakan privasi yang berlaku.',
+    'Pengguna setuju untuk memberikan informasi yang akurat dan lengkap saat melakukan pemesanan.'
+  ];
+
   List<String> teks5 = [
-    'Penyedia layanan tidak bertanggung jawab atas kerugian atau kerusakan yang timbul akibat penggunaan aplikasi.',
-    'Penyedia layanan berhak untuk mengubah syarat dan ketentuan ini kapan saja tanpa pemberitahuan sebelumnya.'
+    'bus_hub tidak bertanggung jawab atas kerugian yang dialami oleh pengguna dikarenakan bertransaksi diluar aplikasi.',
+    'bus_hub berhak untuk mengubah syarat dan ketentuan ini kapan saja tanpa pemberitahuan sebelumnya.'
   ];
 
   List<String> teks6 = [
-    'Syarat dan ketentuan ini diatur oleh hukum yang berlaku di negara tempat penyedia layanan beroperasi.',
+    'Syarat dan ketentuan ini diatur oleh hukum yang berlaku di negara tempat bus_hub beroperasi.',
     'Segala sengketa yang timbul akan diselesaikan melalui jalur hukum yang berlaku.'
   ];
 
@@ -62,7 +73,7 @@ class _KontenSK extends State<IsiMenuSK> {
 
     return SingleChildScrollView(
       child: SizedBox(
-        height: screenHeight + 300,
+        height: screenHeight + 400,
         child: Stack(
           children: [
             // Bagian Carousel
@@ -86,7 +97,7 @@ class _KontenSK extends State<IsiMenuSK> {
 
             ),
              Positioned(
-              top:0,
+              top:20,
               left: 20,
               right: 20,
               child: Container(
@@ -102,7 +113,7 @@ class _KontenSK extends State<IsiMenuSK> {
                     )
                   ]
                 ),
-                height: screenHeight + 250,
+                height: screenHeight + 360,
                 width: MediaQuery.of(context).size.width,
                 child : Padding(
                   padding: EdgeInsets.only(
@@ -167,9 +178,10 @@ class _KontenSK extends State<IsiMenuSK> {
                           
                         ),
                         SizedBox(height: 20,),
+
                         Align(
                           alignment: Alignment.centerLeft,
-                          child: Text("3. Penggunaan Data Pribadi \n", textAlign: TextAlign.left,),  
+                          child: Text("3. Tanggung Jawab Pengguna \n", textAlign: TextAlign.left,),  
                         ),
                         
                         Column(
@@ -193,10 +205,11 @@ class _KontenSK extends State<IsiMenuSK> {
                           }).toList(),
                           
                         ),
+                        
                          SizedBox(height: 20,),
                         Align(
                           alignment: Alignment.centerLeft,
-                          child: Text("4. Tanggung Jawab Pengguna \n", textAlign: TextAlign.left,),  
+                          child: Text("4. Penggunaan Data Pribadi \n", textAlign: TextAlign.left,),  
                         ),
                         
                         Column(
@@ -220,6 +233,8 @@ class _KontenSK extends State<IsiMenuSK> {
                           }).toList(),
                           
                         ),
+
+                        
                         SizedBox(height: 20,),
                         Align(
                           alignment: Alignment.centerLeft,

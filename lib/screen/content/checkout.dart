@@ -1,6 +1,8 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'dart:async';
 import 'dart:io';
+import 'package:bus_hub/screen/content/screen2.dart';
 import 'package:bus_hub/screen/content/successCheckout.dart';
 import 'package:bus_hub/screen/function/ip_address.dart';
 import 'package:bus_hub/screen/menu/syaratDanKet.dart';
@@ -12,6 +14,9 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
+import '../function/me.dart';
+
+// ignore: must_be_immutable
 class MenuCheckout extends StatelessWidget {
   // Declare Variable utk Parameter/argument
   var totalBiaya;
@@ -28,6 +33,7 @@ class MenuCheckout extends StatelessWidget {
     this.hrg_tiket_perorg,
     this.id_paket
   });
+
 
   @override
   Widget build(BuildContext context) {
@@ -61,6 +67,7 @@ class MenuCheckout extends StatelessWidget {
   }
 }
 
+// ignore: must_be_immutable
 class StfulMenuCheckout extends StatefulWidget {
   var totalBiaya;
   var idBis, tglPergi, tglBalik, jlhPenumpang, hrgTiketPerOrg, id_paket;
@@ -85,10 +92,10 @@ class _StfulMenuCheckoutState extends State<StfulMenuCheckout> {
 
   // buat enable disable button buat ke successCheckout.dart
   var isSubmitted = false;
+  var storage = new FlutterSecureStorage();
+  var dio = Dio();
 
   Future<void> _submitBukti(BuildContext context, {String? mode}) async {
-    var dio = Dio();
-    var storage = new FlutterSecureStorage();
 
     var jwt = await storage.read(key: "jwt");
 
@@ -165,7 +172,35 @@ class _StfulMenuCheckoutState extends State<StfulMenuCheckout> {
       }
 
     } catch (e) {
-      print("Error $e");
+      if(e is DioException){
+
+        if(e.response!.statusCode == 503){
+          showDialog(
+            context: context, 
+            builder: (BuildContext context){
+              return AlertDialog(
+                title: Text("Gagal", textAlign: TextAlign.center,),
+                content: Text("Stok Tiket Tidak Mencukupi. Harap Ganti Layanan Bis"),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+
+                      setState(() {
+                        isSubmitted = false;
+                      });
+                    }, 
+
+                    child: Text("OK")
+                  )
+                ],
+              );
+            }
+          );
+        }
+      }
+
+      print("Error di fn _submitBukti:  $e");
     }
   }
 
@@ -183,10 +218,90 @@ class _StfulMenuCheckoutState extends State<StfulMenuCheckout> {
 
   bool agreePayment = false;
 
+  // Fungsi CountDown
+  @override
+  void initState() {
+    super.initState();
+    _startCountdown();
+
+  }
+
+  @override
+  void dispose(){
+    super.dispose();
+    _timerCountdown!.cancel();
+  }
+  
+  Timer? _timerCountdown;
+  int _countDown = 7200; //24 jam bentuk detik = 86400
+
+  void _startCountdown() {
+    _timerCountdown = Timer.periodic(Duration(seconds: 1), (timer) {
+      if(_countDown <= 0){
+        _timerCountdown!.cancel();
+        _showDialogTimeout();
+
+      }else{
+        if(mounted){
+          setState(() {
+            _countDown--;
+          });
+        }
+      }
+    });
+  }
+
+  void _showDialogTimeout() {
+    showDialog(
+      context: context, 
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Timeout"),
+          content: Text("Waktu Payment Sudah Habis"),
+          actions: [
+            TextButton(
+              onPressed: () async {
+
+                Navigator.of(context).pop();
+
+                var jwt = await storage.read(key: "jwt");
+                Map<String, dynamic> data = {
+                  "usernya": await getMyData(jwt)
+                };
+
+                if(mounted){
+                  Navigator.push(
+                    context, 
+                    MaterialPageRoute(builder: (context) => SecondScreen(data: data, indexScreen: 0,))
+                  );
+                }
+
+
+              }, 
+              child: Text("OK")
+            )
+          ],
+        );
+      }
+    );
+  }
+
+  String _formatTime(int detik){
+    int hours = (detik ~/ 3600);
+    int minutes = (detik % 3600) ~/ 60;
+    int seconds = detik % 60;
+
+    return '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+  }
+
+  // End Fungsi Countdown
+
   @override
   Widget build(BuildContext context) {
     var tinggi =  MediaQuery.of(context).size.height;
     var lebar = MediaQuery.of(context).size.width;
+
+    String formattedTime = _formatTime(_countDown);
 
     return SingleChildScrollView(
       child: Container(
@@ -250,7 +365,7 @@ class _StfulMenuCheckoutState extends State<StfulMenuCheckout> {
                                   ),
                                   textAlign: TextAlign.left,
                                 ),
-                                Text("28 Desember 2024"),
+                                Text(formattedTime),
                               ],
                             ),
                           )

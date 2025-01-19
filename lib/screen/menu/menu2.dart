@@ -65,6 +65,8 @@ class _KontenMenu2 extends State<IsiMenu2> {
         )
       );
 
+      // print(jwt);
+
       if (response.statusCode == 200) {
         // Check if response data is not null
         if (response.data != null) {
@@ -283,6 +285,7 @@ class _KontenMenu2 extends State<IsiMenu2> {
                                   ),
                                 )
                               ),
+                              
                               Padding(
                                 padding: EdgeInsets.only(top: 45, left: 40),
                                 child: Container(
@@ -290,15 +293,28 @@ class _KontenMenu2 extends State<IsiMenu2> {
                                   height: 80,
                                   decoration: BoxDecoration(
                                     border: Border.all(color: Colors.black),
-                                    image: DecorationImage(
-                                      image: items['id_paket'].isNotEmpty 
-                                        ? NetworkImage('${myIpAddr()}/fotoPaket/${items['gbrpaket']}')
-                                        : AssetImage('assets/images/tayo.png') ,
-                                      fit: BoxFit.contain
-                                    ),
-                                    borderRadius: BorderRadius.circular(10)
+                                    borderRadius: BorderRadius.circular(10),
                                   ),
-                                )
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: items['gbrpaket'] == null || items['id_paket'] == ""
+                                      ? Image.asset('assets/images/tayo.png', fit: BoxFit.contain)
+                                      : Image.network(
+                                        '${myIpAddr()}/fotoPaket/${items['gbrpaket']}',
+                                        fit: BoxFit.contain,
+                                        errorBuilder: (context, error, stackTrace) {
+                                          return Image.asset('assets/images/loading.gif'); // Fallback image on error
+                                        },
+                                        // Smpe sini ak nd tau dah, ini dibantu AI. tanpa ini error kodingan
+                                        loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                                          if (loadingProgress == null) return child;
+                                          return Center(
+                                            child: CircularProgressIndicator(),
+                                          );
+                                        },
+                                      ),
+                                  ),
+                                ),
                               ),
                               Padding(
                                 padding: EdgeInsets.only(left: 125, top: 45),
@@ -307,7 +323,7 @@ class _KontenMenu2 extends State<IsiMenu2> {
                                   children: [
                                     if(items['nama_paket'] != null)
                                     AutoSizeText(
-                                      items['nama_paket'],
+                                      items!['nama_paket'],
                                       maxLines: 1,
                                       minFontSize: 8,
                                       maxFontSize: 12,
@@ -437,15 +453,28 @@ class _KontenMenu2 extends State<IsiMenu2> {
                                   height: 80,
                                   decoration: BoxDecoration(
                                     border: Border.all(color: Colors.black),
-                                    image: DecorationImage(
-                                      image: items['id_paket'].isNotEmpty 
-                                        ? NetworkImage('${myIpAddr()}/fotoPaket/${items['gbrpaket']}')
-                                        : AssetImage('assets/images/tayo.png') ,
-                                      fit: BoxFit.contain
-                                    ),
-                                    borderRadius: BorderRadius.circular(10)
+                                    borderRadius: BorderRadius.circular(10),
                                   ),
-                                )
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: items['gbrpaket'] == null || items['id_paket'] == ""
+                                      ? Image.asset('assets/images/tayo.png', fit: BoxFit.contain)
+                                      : Image.network(
+                                        '${myIpAddr()}/fotoPaket/${items['gbrpaket']}',
+                                        fit: BoxFit.contain,
+                                        errorBuilder: (context, error, stackTrace) {
+                                          return Image.asset('assets/images/loading.gif'); // Fallback image on error
+                                        },
+                                        // Smpe sini ak nd tau dah, ini dibantu AI. tanpa ini error kodingan
+                                        loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                                          if (loadingProgress == null) return child;
+                                          return Center(
+                                            child: CircularProgressIndicator(),
+                                          );
+                                        },
+                                      ),
+                                  ),
+                                ),
                               ),
                               Padding(
                                 padding: EdgeInsets.only(left: 125, top: 45),
@@ -550,7 +579,8 @@ class _KontenMenu2 extends State<IsiMenu2> {
                     : (listData.isNotEmpty) ? 
                     ListView( //ganti column dgn listview biar g error
                       // NeverScrollableScrollPhysics.
-                      // you will disable scrolling on the ListView, but still allow clicking on its items
+                      // you will disable scrolling on the ListView, 
+                      // but still allow clicking on its items
                       physics: NeverScrollableScrollPhysics(),
                       children: listData.map((items){
                         return InkWell(
@@ -584,15 +614,38 @@ class _KontenMenu2 extends State<IsiMenu2> {
                                   height: 80,
                                   decoration: BoxDecoration(
                                     border: Border.all(color: Colors.black),
-                                    image: DecorationImage(
-                                      image: items['id_paket'].isNotEmpty 
-                                        ? NetworkImage('${myIpAddr()}/fotoPaket/${items['gbrpaket']}')
-                                        : AssetImage('assets/images/tayo.png') ,
-                                      fit: BoxFit.contain
-                                    ),
-                                    borderRadius: BorderRadius.circular(10)
+                                    borderRadius: BorderRadius.circular(10),
                                   ),
-                                )
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: items['gbrpaket'] == null || items['id_paket'] == ""
+                                      ? Image.asset('assets/images/tayo.png', fit: BoxFit.contain)
+                                      : Image.network(
+                                        '${myIpAddr()}/fotoPaket/${items['gbrpaket']}',
+                                        fit: BoxFit.contain,
+                                        errorBuilder: (context, error, stackTrace) {
+                                          return Image.asset('assets/images/loading.gif'); // Fallback image on error
+                                        },
+                                        // Smpe sini ak nd tau dah, ini dibantu AI. tanpa ini error kodingan
+                                        loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                                          if (loadingProgress == null) return child;
+                                          // // Original
+                                          // return Center(
+                                          //   child: CircularProgressIndicator(
+                                          //     value: loadingProgress.expectedTotalBytes != null
+                                          //       ? loadingProgress.cumulativeBytesLoaded / (loadingProgress.expectedTotalBytes ?? 1)
+                                          //       : null,
+                                          //   ),
+                                          // );
+
+                                          // //  Versi Simple
+                                          return Center(
+                                            child: CircularProgressIndicator(),
+                                          );
+                                        },
+                                      ),
+                                  ),
+                                ),
                               ),
                               Padding(
                                 padding: EdgeInsets.only(left: 125, top: 45),

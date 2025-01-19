@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:bus_hub/forgotpass.dart';
 import 'package:bus_hub/register.dart';
 import 'package:bus_hub/screen/function/ip_address.dart';
 import 'package:flutter/material.dart';
@@ -17,19 +18,32 @@ import 'package:flutter/services.dart';
 // https://gedetikapermana.medium.com/flutter-membuat-bottom-navigation-bar-9c6fadde865a
 // https://medium.com/@azizndao/mastering-http-requests-in-flutter-with-dio-package-975b75002911
 void main() {
+  // kunci orientasi
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown
   ]).then((_) {
+    FlutterError.onError = (FlutterErrorDetails details) {
+      // Log error but prevent debugger from pausing.
+      FlutterError.dumpErrorToConsole(details);
+    };
+
     runApp(MyApp());
 
   });
 }
 
+// gaboleh pake banyak materialapp, cukup satu di main.dart. ntr dia bkl kereplace
+// The issue you're experiencing is likely due to the way you're navigating between screens in your Flutter application. 
+//When you navigate to DetailWisata, it seems that the MaterialApp widget is being recreated, which can cause the navigation stack to reset.
+// Remove the MaterialApp from DetailWisata: You should not wrap your DetailWisata widget with a MaterialApp again. 
+//The MaterialApp should only be at the root of your application (usually in main.dart). Instead, just return a Scaffold or any other widget directly.
+
 // Alurnya Adalah 
 // StatelessWidget -> StatefulWidget yang berisi createState _konten -> _konten extends State 
 
+// ignore: must_be_immutable
 class MyApp extends StatelessWidget {
   var isNewRegister;
 
@@ -354,12 +368,20 @@ class _FirstScreen extends State<MyTextField> {
 
                               SizedBox(
                                 width: width - 100,
-                                child: Text(
-                                  "Forgot Password?",
-                                  style: TextStyle(
-                                    fontSize: 10,
+                                child: InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context, 
+                                      MaterialPageRoute(builder: (context) => const forgetpassword(title: 'title'))
+                                    );
+                                  },
+                                  child: const Text(
+                                    "Forgot Password?",
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                    ),
+                                    textAlign: TextAlign.right,
                                   ),
-                                  textAlign: TextAlign.right,
                                 ),
                               ),
                             ]
@@ -398,7 +420,7 @@ class _FirstScreen extends State<MyTextField> {
                                   onTap: () {
                                     Navigator.push(
                                       context, 
-                                      MaterialPageRoute(builder: (context) => MenuRegister())
+                                      MaterialPageRoute(builder: (context) => IsiRegister())
                                     );
                                   },
                                   child: Text(

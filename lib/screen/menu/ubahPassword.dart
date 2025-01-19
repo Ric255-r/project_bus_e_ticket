@@ -171,7 +171,7 @@ class _KontenMenuUbahPass extends State<IsiMenuUbahPass> {
               top: 255,
               left: 20,
               right: 20,
-              bottom: 120,
+              bottom: 140,
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
