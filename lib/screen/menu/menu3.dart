@@ -46,7 +46,7 @@ class _KontenMenu3 extends State<IsiMenu3> {
     if (jwt != null && jwt.isNotEmpty) {  // Check if jwt is not null
       var fnUser= await getMyData(jwt);
       
-      if (fnUser != null) {  // Check if data is not null
+      if (mounted) {  // Check supaya ga error setstate called after dispose
         setState(() {
           user = fnUser;
         });
@@ -64,7 +64,7 @@ class _KontenMenu3 extends State<IsiMenu3> {
 
     return SingleChildScrollView(
       child: SizedBox(
-        height: (screenHeight <= 700) ? screenHeight + 400 : screenHeight +150,
+        height: (screenHeight <= 700) ? screenHeight + 400 : screenHeight ,
         // ksh willpopscope biar nyegah die nd nyangkut akun lain
         child: WillPopScope(
           onWillPop: () async {
@@ -197,7 +197,7 @@ class _KontenMenu3 extends State<IsiMenu3> {
                       )
                     ]
                   ),
-                  height: screenHeight,
+                  height: screenHeight - 320,
                   width: MediaQuery.of(context).size.width, 
                   child: Column(
                     children: [
@@ -205,8 +205,13 @@ class _KontenMenu3 extends State<IsiMenu3> {
                         children: [
                           Expanded(
                             child: Padding(
-                              padding: EdgeInsets.only(left: 30, top: 40),
-                              child: Text('Pengaturan Akun'),
+                              padding: EdgeInsets.only(left: 30, top: 20, bottom: 10),
+                              child: Text(
+                                'Pengaturan Akun',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
                             )
                           )
                         ],
@@ -226,7 +231,7 @@ class _KontenMenu3 extends State<IsiMenu3> {
                                 // padding ini buat isi teks
                                 child: Padding(
                                   padding: const EdgeInsets.only(
-                                    left: 8,
+                                    left: 3,
                                     top: 10,
                                     bottom: 10
                                   ),
@@ -252,7 +257,7 @@ class _KontenMenu3 extends State<IsiMenu3> {
                                         Icon(Icons.person, size: 50,),
                                         Padding(
                                           padding: EdgeInsets.only(
-                                            left: 28
+                                            left: 25
                                           ),
                                           child: Text("Ubah Profile", style: TextStyle(fontSize: 15),),
                                         ),
@@ -318,7 +323,12 @@ class _KontenMenu3 extends State<IsiMenu3> {
                           Expanded(
                             child: Padding(
                               padding: EdgeInsets.only(left: 30, top: 20),
-                              child: Text('Tentang'),
+                              child: Text(
+                                'Tentang',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600
+                                ),
+                              ),
                             )
                           )
                         ],

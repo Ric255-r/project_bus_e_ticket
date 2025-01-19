@@ -6,14 +6,7 @@ class panduan extends StatelessWidget {
 
     @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter',
-      theme: ThemeData(
-      colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightBlue),
-        useMaterial3: true,
-      ),
-      home: Panduanbepergian(title: "title"),
-    );
+    return Panduanbepergian(title: "title");
   }
 }
 
@@ -39,14 +32,14 @@ class _Panduanbepergian extends State<Panduanbepergian> {
             Row(
               children: [
                 Container(
-                  margin: EdgeInsets.only(top: 100, left: 27, right: 10),
+                  margin: EdgeInsets.only(top: 65, left: 27, right: 10),
                   width: width -50,
                   height: (height <= 700)? height-330 : height-850 ,
                    decoration: BoxDecoration(
                    color: Colors.white,
                   borderRadius: BorderRadius.circular(8),
             ),
-            child: Center(child: Text('Panduan Bepergian Bersama BUSHUB', style:TextStyle(fontWeight: FontWeight.bold, fontSize: 15))
+            child: Center(child: Text('Panduan Berpergian Bersama BusHub', style:TextStyle(fontWeight: FontWeight.bold, fontSize: 15))
             ),
                   
                   

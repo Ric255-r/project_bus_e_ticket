@@ -1,5 +1,4 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
-
 import 'package:bus_hub/screen/function/ip_address.dart';
 import 'package:bus_hub/screen/menu/menu2.dart';
 import 'package:flutter/material.dart';
@@ -150,8 +149,19 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
     }
   }
 
-  void launchWhatsapp(String number) async {
-    var url = 'whatsapp://send?phone=$number';
+  void launchWhatsapp(String number, Map<String, dynamic> resData) async {
+    // String Concate dgn Newline Character: The \n character is used to indicate a new line.
+    // %20 = spasi. %0A = enter. kalo diurl httpget pake ini. klo d flutter g perlu(auto detect).
+    var text = "Halo%20Admin!%20\n"
+              "Saya%20Ingin%20Membatalkan%20Pesanan!\n\n"
+              "*Form%20Pembatalan*\n"
+              "Id_Transaksi: ${resData['id_trans']}\n"
+              "Email: ${resData['email_cust']}\n"
+              "Tgl_Transaksi: ${resData['tgl_trans'].split("T")[0]}\n\n"
+              "Alasan Pembatalan: \n\n"
+              "Mohon%20diproses.%20Terimakasih!";
+
+    var url = 'whatsapp://send?phone=$number&text=$text';
 
     if(await canLaunch(url)){
       await launch(url);
@@ -260,7 +270,7 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                         ],
                       ),
 
-                      if(responseData['status_trans'] == "PENDING")
+                      if(responseData['status_trans'] == "PENDING" || responseData['status_trans'] == "COMPLETED")
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
@@ -327,7 +337,7 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                                                   child: TextField(
                                                     readOnly: true,
                                                     onTap: () {
-                                                      launchWhatsapp('+6285650826414');
+                                                      launchWhatsapp('+6285650826414', responseData);
                                                     },
                                                     decoration: const InputDecoration(
                                                       hintText: '1. Klik untuk Hubungi CS Whatsapp Kami',

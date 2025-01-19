@@ -12,7 +12,7 @@ analyzer:
     depend_on_referenced_packages: ignore
     library_private_types_in_public_api: ignore
     unused_import: ignore
-include: package:flutter_lints/flutter.yaml
+# include: package:flutter_lints/flutter.yaml
 
 linter:
   # The lint rules applied to this project can be customized in the

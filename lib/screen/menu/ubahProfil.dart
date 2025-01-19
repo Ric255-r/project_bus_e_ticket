@@ -12,7 +12,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
-
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
+import 'package:intl/src/intl/date_format.dart';
 import 'menu3.dart';
 
 
@@ -47,6 +48,8 @@ class _KontenUbahProfil extends State<IsiMenuUbahProfil> {
   TextEditingController nama = TextEditingController();
   TextEditingController nohp = TextEditingController();
   TextEditingController email = TextEditingController();
+  TextEditingController txtTglLahir = TextEditingController();
+
   // TextEditingController jk = TextEditingController();
   // TextEditingController tg
 
@@ -79,6 +82,11 @@ class _KontenUbahProfil extends State<IsiMenuUbahProfil> {
           nama.text = dataUser?['username'] ?? '';
           nohp.text = dataUser?['no_hp']?.toString() ?? '';
           email.text = dataUser?['email'] ?? '';
+          txtTglLahir.text = dataUser?['tanggal_lahir'].length > 0 ? 
+            DateFormat("dd-MM-yyyy").format(
+              // Parse dlu ke datetime krna dr API return tgllahir sbg string
+              DateTime.parse(dataUser?['tanggal_lahir'])
+            ) : '';
 
           if(dataUser?['jk'] != null){
             selectedJk = dataUser?['jk'] ? 'Pria' : 'Wanita';
@@ -109,6 +117,8 @@ class _KontenUbahProfil extends State<IsiMenuUbahProfil> {
       });
     }
   }
+
+  DateTime? selectedTgl;
 
   Future<void> updateProfile(BuildContext context) async {
     var jwt = await storage.read(key: 'jwt');
@@ -142,6 +152,7 @@ class _KontenUbahProfil extends State<IsiMenuUbahProfil> {
         'username': nama.text,
         'email': email.text,
         'nohp': nohp.text,
+        'tanggal_lahir': txtTglLahir.text,
         ...mapAnotherValue
       });
 
@@ -185,6 +196,66 @@ class _KontenUbahProfil extends State<IsiMenuUbahProfil> {
     } catch (e) {
       print("Error Ubah Profile $e");
     }
+  }
+
+
+  Future<void> showTglLahirDialog() async {
+
+    return showDialog(
+      context: context, 
+      builder: (BuildContext context){
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          title: Center(
+            child: Column(
+              children: [
+                Text("Pilih Tanggal Lahir Anda", style: TextStyle(fontSize: 15),),
+
+                SizedBox(height: 15,),
+
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(
+                        color: Colors.black,
+                        width: 0.5
+                      )
+                    )
+                  ),
+                )
+              ],
+            ),
+          ),
+          content: Container(
+            width: 300,
+            height: 400,
+            child: SfDateRangePicker(
+              headerHeight: 50,
+              showNavigationArrow: true,
+              backgroundColor: Colors.white,
+              headerStyle: const DateRangePickerHeaderStyle(
+                backgroundColor: Colors.white,
+                textAlign: TextAlign.center,
+                textStyle: TextStyle(
+                  fontStyle: FontStyle.normal,
+                  fontSize: 20,
+                  letterSpacing: 1,
+                  color: Colors.black,
+                )
+              ),
+              onSelectionChanged: (DateRangePickerSelectionChangedArgs args){
+                selectedTgl = args.value;
+                var formattedDate = DateFormat('dd-MM-yyyy').format(selectedTgl!);
+
+                txtTglLahir.text = formattedDate;
+
+                Navigator.of(context).pop();
+              },
+            ),
+          ),
+        );
+      }
+    );
   }
 
 
@@ -317,7 +388,7 @@ class _KontenUbahProfil extends State<IsiMenuUbahProfil> {
               top: 245,
               left: 20,
               right: 20,
-              bottom: 180, // mainkan bottom ini klo ad anomali
+              bottom: 210, // mainkan bottom ini klo ad anomali
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -501,8 +572,9 @@ class _KontenUbahProfil extends State<IsiMenuUbahProfil> {
                       alignment: Alignment.centerLeft,
                       padding: const EdgeInsets.only(left: 30, bottom: 20, right : 30),
                       child: TextFormField(
-                        readOnly: false,
-                        initialValue: dataUser!['tanggal_lahir'],
+                        readOnly: true,
+                        onTap: showTglLahirDialog,
+                        controller: txtTglLahir,
                         decoration: InputDecoration(
                           enabledBorder: OutlineInputBorder(
                             borderSide: const BorderSide(width: 1, color: Colors.black),

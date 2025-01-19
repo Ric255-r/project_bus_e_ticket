@@ -90,7 +90,7 @@ class _Kontennya extends State<IsiBody> {
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
-    // print(screenHeight);
+    print(screenHeight);
 
     // return Center(
     //   child: Text('Selamat Datang Di ${widget.dataPassing}'),
@@ -106,7 +106,7 @@ class _Kontennya extends State<IsiBody> {
 
     return SingleChildScrollView(
       child: SizedBox(
-        height: (screenHeight <= 700) ? screenHeight + 200 : screenHeight,
+        height: (screenHeight <= 700) ? screenHeight + 200 : screenHeight - 180,
         child: Stack(
           children: [
             // Bagian Carousel
@@ -206,7 +206,10 @@ class _Kontennya extends State<IsiBody> {
                               textAlign: TextAlign.left,
                               text: const TextSpan(
                                 text: 'Mau Ngapain Hari Ini? \n',
-                                style: TextStyle(color: Colors.black),
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w600
+                                ),
                               ),
                             ),
                           ),
@@ -440,6 +443,8 @@ class _Kontennya extends State<IsiBody> {
                         ],
                       ),
                     ),
+
+
                     // Row(
                     //   mainAxisAlignment: MainAxisAlignment.center,
                     //   children: List.generate(
@@ -458,105 +463,42 @@ class _Kontennya extends State<IsiBody> {
                     // Tambah Spasi Manual
                     RichText(text: const TextSpan(text: '')),
                     // // End Tambah Spasi.
-                    // Row(
-                    //   children: [
-                    //     Expanded(                
-                    //       child: Padding(
-                    //         padding: const EdgeInsets.only(
-                    //           left: 20,
-                    //           right: 10
-                    //         ),
-                    //         child: GestureDetector(
-                    //           onTap: () {
-                    //             Fluttertoast.showToast(
-                    //               msg: "This is a Toast Kiri",
-                    //               toastLength: Toast.LENGTH_SHORT,
-                    //               gravity: ToastGravity.BOTTOM,
-                    //               timeInSecForIosWeb: 1,
-                    //               textColor: Colors.white,
-                    //               fontSize: 16.0
-                    //             );
-                    //           },
-                    //           child: Container(
-                    //             height: Tinggi,
-                    //             decoration: BoxDecoration(
-                    //               color: Colors.grey.shade300,
-                    //               borderRadius: BorderRadius.circular(10),
-                    //               border: Border.all(
-                    //                 color: Colors.red
-                    //               ),
-                    //             ),
-                    //             child: const Column(
-                    //               mainAxisAlignment: MainAxisAlignment.center,
-                    //               children: [
-                    //                 Image(
-                    //                   image: AssetImage('assets/images/tayo.png'),
-                    //                   height: 100,
-                    //                   width: 100,
-                    //                 ),
-                    //                 Text(
-                    //                   'Your Text Here',
-                    //                   style: TextStyle(fontSize: 16, color: Colors.black),
-                    //                 ),
-                    //               ],
-                    //             ),
-                    //           ),
-                    //         )
-                    //       )
-                    //     ),
-                    //     Expanded(                
-                    //       child: Padding(
-                    //         padding: const EdgeInsets.only(
-                    //           left: 10,
-                    //           right: 20
-                    //         ),
-                    //         child: GestureDetector(
-                    //           onTap: () {
-                    //             Fluttertoast.showToast(
-                    //               msg: "This is a Toast message Gesture",
-                    //               toastLength: Toast.LENGTH_SHORT,
-                    //               gravity: ToastGravity.BOTTOM,
-                    //               timeInSecForIosWeb: 1,
-                    //               textColor: Colors.white,
-                    //               fontSize: 16.0
-                    //             );
-                    //           },
-                    //           child: Container(
-                    //             height: Tinggi,
-                    //             decoration: BoxDecoration(
-                    //               color: Colors.grey.shade300,
-                    //               borderRadius: BorderRadius.circular(10),
-                    //               border: Border.all(
-                    //                 color: Colors.red
-                    //               ),
-                    //             ),
-                    //             child: const Column(
-                    //               mainAxisAlignment: MainAxisAlignment.center,
-                    //               children: [
-                    //                 Image(
-                    //                   image: AssetImage('assets/images/tayo.png'),
-                    //                   height: 100,
-                    //                   width: 100,
-                    //                 ),
-                    //                 Text(
-                    //                   'Your Text Here',
-                    //                   style: TextStyle(fontSize: 16, color: Colors.black),
-                    //                 ),
-                    //               ],
-                    //             ),
-                    //           ),
-                    //         )
-                    //       )
-                    //     ),
-                    //   ],
-                    // ),
-                    // // Tambah Spasi Manual
-                    // RichText(text: const TextSpan(text: '')),
-                    // End Tambah Spasi.
+
                   ],
                 ),
               )
             ),
+
+            Positioned(
+              top: 455,
+              left: 20,
+              right: 20,
+              child: Column(
+                children: [
+                  Text(
+                    "Point Of Interests",
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600
+                    ),
+                  ),
+                  SizedBox(height: 10,),
+                  Image.asset(
+                    'assets/images/WIP.png',
+                    height: 200,
+                  ),
+                  SizedBox(height: 10,),
+
+                  Text(
+                    "Work In Progress",
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600
+                    ),
+                  ),
+                ],
+              )
+            )
+          
+
           ],
         ),
       )

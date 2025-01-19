@@ -117,7 +117,7 @@ class _paketwisata1 extends State<paketwisata1> {
                   child: Padding(
                     padding: EdgeInsets.only(top: 0),
                     child: Container(
-                      height: height - 740,
+                      height: height - 760,
                       decoration: BoxDecoration(
                         color: Colors.blue[400],
                       ),
@@ -168,11 +168,11 @@ class _paketwisata1 extends State<paketwisata1> {
                       Container(
                         child: Padding(
                           padding: EdgeInsets.only(
-                            top: 20, left: 20, right: 20, bottom: 10
+                            top: 10, left: 20, right: 20, bottom: 10
                           ),
                           child: Container(
                             width: width - 40,
-                            height: height - 750,
+                            height: height - 800,
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.all(Radius.circular(10)),

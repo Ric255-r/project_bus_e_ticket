@@ -16,6 +16,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 import '../function/me.dart';
 
+// ignore: must_be_immutable
 class MenuCheckout extends StatelessWidget {
   // Declare Variable utk Parameter/argument
   var totalBiaya;
@@ -66,6 +67,7 @@ class MenuCheckout extends StatelessWidget {
   }
 }
 
+// ignore: must_be_immutable
 class StfulMenuCheckout extends StatefulWidget {
   var totalBiaya;
   var idBis, tglPergi, tglBalik, jlhPenumpang, hrgTiketPerOrg, id_paket;
@@ -170,7 +172,35 @@ class _StfulMenuCheckoutState extends State<StfulMenuCheckout> {
       }
 
     } catch (e) {
-      print("Error $e");
+      if(e is DioException){
+
+        if(e.response!.statusCode == 503){
+          showDialog(
+            context: context, 
+            builder: (BuildContext context){
+              return AlertDialog(
+                title: Text("Gagal", textAlign: TextAlign.center,),
+                content: Text("Stok Tiket Tidak Mencukupi. Harap Ganti Layanan Bis"),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+
+                      setState(() {
+                        isSubmitted = false;
+                      });
+                    }, 
+
+                    child: Text("OK")
+                  )
+                ],
+              );
+            }
+          );
+        }
+      }
+
+      print("Error di fn _submitBukti:  $e");
     }
   }
 
