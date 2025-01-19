@@ -9,18 +9,18 @@ import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 
-class SecondUbahPass extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(title: Text("Ubah Password"),
-        backgroundColor: Colors.blue[400],),
-        body: IsiMenuUbahPass(),
-      )
-    );
-  }
-}
+// class SecondUbahPass extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return SafeArea(
+//       child: Scaffold(
+//         appBar: AppBar(title: Text("Ubah Password"),
+//         backgroundColor: Colors.blue[400],),
+//         body: IsiMenuUbahPass(),
+//       )
+//     );
+//   }
+// }
 
 
 
@@ -29,6 +29,8 @@ class MenuUbahPassword extends StatelessWidget{
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        appBar: AppBar(title: Text("Ubah Password"),
+        backgroundColor: Colors.blue[400],),
         body: IsiMenuUbahPass(),
       )
     );
@@ -97,6 +99,8 @@ class _KontenMenuUbahPass extends State<IsiMenuUbahPass> {
                       "usernya": dataUser,
                     },
                     indexScreen: 2,
+                    alertMessage: "Password Berhasil Diganti",
+                    
                   )
                 )
               );
@@ -208,6 +212,7 @@ class _KontenMenuUbahPass extends State<IsiMenuUbahPass> {
                     padding: const EdgeInsets.only(left: 30, top: 20, right: 30),
                     child: TextFormField(
                       readOnly: false,
+                      obscureText: true,
                       controller: oldPass,
                     decoration: InputDecoration(
                       enabledBorder: OutlineInputBorder(
@@ -239,6 +244,7 @@ class _KontenMenuUbahPass extends State<IsiMenuUbahPass> {
                     child: TextFormField(
                       readOnly: false,
                       controller: newPass,
+                      obscureText: true,
                       
                     decoration: InputDecoration(
                       enabledBorder: OutlineInputBorder(
@@ -269,6 +275,7 @@ class _KontenMenuUbahPass extends State<IsiMenuUbahPass> {
                     padding: const EdgeInsets.only(left: 30, right: 30, bottom: 20),
                     child: TextFormField(
                       readOnly: false,
+                      obscureText: true,
                       controller: confirmNewPass,
                       
                     decoration: InputDecoration(

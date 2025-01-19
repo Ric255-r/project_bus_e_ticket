@@ -296,6 +296,7 @@ class _regis extends State<IsiRegister> {
                           width: width - 100,
                           child: TextField(
                             controller: passwd,
+                            obscureText: true,
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
@@ -315,6 +316,7 @@ class _regis extends State<IsiRegister> {
                           width: width - 100,
                           child: TextField(
                             controller: repeatPassWd,
+                            obscureText: true,
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),

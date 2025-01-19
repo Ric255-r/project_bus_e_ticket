@@ -20,14 +20,30 @@ class SecondScreen extends StatelessWidget {
   // harus define sebagai Map. supaya bisa get data kek data['a']['b']
   final Map<String, dynamic> data;
   final int? indexScreen; // buat set halaaman
+
+  String? alertMessage; // buat notif kalo ubah profil atau passwd
   // Ambil parameter dari main.dart
-  SecondScreen({required this.data, this.indexScreen});
+  SecondScreen({required this.data, this.indexScreen, this.alertMessage});
   // end ambil data main.dart
 
   // anggapannya class ini class pertamakali onload.
   // lalu pas pencet navbar. class ini kena replace kaya innerHTML.
   @override
   Widget build(BuildContext context) {
+    if(alertMessage != null){
+      // Widgetbinding ini macam DOMContentLoaded di JS / Onload.
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Fluttertoast.showToast(
+          msg: alertMessage!,
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+      });
+    }
+
     return SafeArea(
       child: indexScreen != null 
         ? IsiNavbar(isiData: data, indexScreen: indexScreen,)

@@ -162,7 +162,7 @@ class _KontenProfil extends State<IsiMenuProfil> {
               top: 255,
               left: 20,
               right: 20,
-              bottom: 15,
+              bottom: 45,
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.white,

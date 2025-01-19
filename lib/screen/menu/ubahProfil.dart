@@ -187,6 +187,7 @@ class _KontenUbahProfil extends State<IsiMenuUbahProfil> {
                   "usernya": dataUser
                 },
                 indexScreen: 2,
+                alertMessage: "Profile Berhasil Diganti",
               )
             )
           );

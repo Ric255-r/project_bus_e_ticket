@@ -295,7 +295,7 @@ class _KontenMenu3 extends State<IsiMenu3> {
                                     onTap: () {
                                       Navigator.push(
                                         context, 
-                                        MaterialPageRoute(builder: (context) => SecondUbahPass())
+                                        MaterialPageRoute(builder: (context) => MenuUbahPassword())
                                       );
                                     },
                                     child: const Row(
@@ -520,12 +520,12 @@ class _KontenMenu3 extends State<IsiMenu3> {
                                 onPressed: () async {
                                   await storage.delete(key: 'jwt');
 
-                                  Navigator.pushReplacement(
+                                  Navigator.pushAndRemoveUntil(
                                     context, 
                                     MaterialPageRoute(
                                       builder: (context) =>  MyApp()
                                     ),
-                                    // (Route<dynamic> route) => false
+                                    (Route<dynamic> route) => false // This removes all previous routes
                                   );
                                 },
                                 child: Text('Logout', style: TextStyle(color: Colors.white),),
