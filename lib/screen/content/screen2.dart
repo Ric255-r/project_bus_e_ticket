@@ -342,7 +342,7 @@ class _Kontennya extends State<IsiBody> {
                                         const SizedBox(height: 5), // Add some spacing between image and text
                                         
                                         Text(
-                                          "Halte Terdekat", 
+                                          "Loket Terdekat", 
                                           style: TextStyle(
                                             fontSize: 12,
                                           ),

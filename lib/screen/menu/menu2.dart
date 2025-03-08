@@ -1,6 +1,10 @@
 // ignore_for_file: prefer_const_constructors
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:bus_hub/screen/content/detailRiwayat.dart';
 import 'package:bus_hub/screen/function/ip_address.dart';
+import 'package:bus_hub/screen/function/me.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:bus_hub/main.dart';
@@ -8,6 +12,9 @@ import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:web_socket_channel/io.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 
 class Menu2 extends StatelessWidget {
@@ -38,10 +45,6 @@ class _KontenMenu2 extends State<IsiMenu2> {
   bool isCompleted = false;
   bool isCancelled = false;
 
-  bool kontenPending = true;
-  bool kontenCompleted = false;
-  bool kontenCancelled = false;
-
   var formatRp = NumberFormat.currency(
     locale: "id_ID",
     symbol: "Rp. ",
@@ -52,11 +55,15 @@ class _KontenMenu2 extends State<IsiMenu2> {
   var dio = Dio();
   var storage = FlutterSecureStorage();
   bool isLoading = true;
+  var jwtUser = "";
 
   Future<void> getData(String mode) async {
-    try {
-      var jwt = await storage.read(key: "jwt");
+    var jwt = await storage.read(key: "jwt");
+    setState(() {
+      jwtUser = jwt!; // store jwt ke variabel global
+    });
 
+    try {
       var response = await dio.get('${myIpAddr()}/checkout?status=$mode', 
         options: Options(
           headers: {
@@ -65,26 +72,17 @@ class _KontenMenu2 extends State<IsiMenu2> {
         )
       );
 
-      // print(jwt);
+      print(response);
 
-      if (response.statusCode == 200) {
-        // Check if response data is not null
-        if (response.data != null) {
-          setState(() {
-            listData = response.data;
-          });
-        } else {
-          print("Response data is null");
-        }
-
+      if (response.statusCode == 200 && response.data != null) {
         setState(() {
-          isLoading = false;
+          listData = response.data; // Update listData with new data
+          isLoading = false; // Set loading to false
         });
       } else {
         print("Error: ${response.statusCode} - ${response.statusMessage}");
-
         setState(() {
-          isLoading = false;
+          isLoading = false; // Set loading to false even if there's an error
         });
       }
 
@@ -92,7 +90,76 @@ class _KontenMenu2 extends State<IsiMenu2> {
 
     } catch (e) {
       print("Ada Error $e");
-    }
+    } 
+  }
+
+  // Websocket channel
+  late WebSocketChannel _channel;
+  Timer? _timerStatus;
+
+  void _connectToWebSocket(){
+    // mesti replace dari http ke ws. krn myIpAddr ini ada http.
+    var originalUrl = myIpAddr();
+    var replacedUrl = originalUrl.replaceAll("http", "ws");
+
+    var wsUri = Uri.parse("$replacedUrl/ws-transaksi");
+
+    // buat koneksi websocket
+    _channel = IOWebSocketChannel.connect(wsUri);
+
+    // ambil pesan dari server
+    _channel.stream.listen((message) async {
+      // parse message yg akan datang. asumsinya json.
+      final data = jsonDecode(message);
+      print(data);
+
+      // get data user
+      var thisUser = await getMyData(jwtUser);
+
+      // Utk Cek apakah useryg login skrg sama dgn data email cust yang diwebsocket
+      // klo misal admin update utk beda user, jd ga perlu update data websocket.
+      if(thisUser['email'] == data['email_cust']){
+        switch (data['status_trans']) {
+          case 'COMPLETED':
+            setState(() {
+              isLoading = true;
+            });
+
+            _timerStatus = Timer(Duration(milliseconds: 1500), ()  {
+              getData("completed").then((_) {
+                setState(() {
+                  isLoading = false;
+                  isPending = false;
+                  isCancelled = false;
+                  isCompleted = true;
+                });
+              });
+            });
+
+            break;
+          case 'CANCELLED':
+            setState(() {
+              isLoading = true;
+            });
+
+            _timerStatus = Timer(Duration(milliseconds: 1500), () {
+              getData("cancelled").then((_) {
+                setState(() {
+                  isLoading = false;
+                  isPending = false;
+                  isCancelled = true;
+                  isCompleted = false;
+                });
+              });
+            });
+            break;
+        }
+      }
+    }, onError: (err) {
+      print("Websocket error: $err");
+    }, onDone: () {
+      print("Websocket Closed");
+    });
   }
 
   @override
@@ -100,6 +167,17 @@ class _KontenMenu2 extends State<IsiMenu2> {
     // TODO: implement initState
     super.initState();
     getData('pending');
+    _connectToWebSocket();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    // Matikan koneksi websocket ketika menu ini diclose
+    _channel.sink.close();
+    _timerStatus?.cancel();
+    super.dispose();
+
   }
 
 

@@ -21,7 +21,7 @@ Future<Map<String, dynamic>> getMyData(jwt) async {
     return responseData;
   } catch (e) {
     return {
-      "Error": e
+      "Error Bagian User": e
     };
   }
 }

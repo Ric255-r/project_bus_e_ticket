@@ -435,7 +435,7 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                                   fontWeight: FontWeight.w200
                                 ),
                                 prefixIcon: const Icon(
-                                  Icons.location_city,
+                                  Icons.bus_alert,
                                   size: 28.0,
                                 ),
                               )
@@ -488,7 +488,7 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                                   fontWeight: FontWeight.w200,
                                 ),
                                 prefixIcon: const Icon(
-                                  Icons.account_box,
+                                  Icons.date_range,
                                   size: 28.0,
                                 ),
                                 suffixIcon: Padding(
@@ -518,7 +518,7 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                       if(!ppSwitch)
                       Wrap(
                         children: [
-                          Text("Input Tanggal Balik"),
+                          Text("Tanggal Balik"),
                           Container(
                             child: TextField(
                               controller: txtTglBalik,
@@ -536,7 +536,7 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                                   fontWeight: FontWeight.w200
                                 ),
                                 prefixIcon:  Icon(
-                                  Icons.account_box,
+                                  Icons.date_range,
                                   size: 28.0,
                                 ),
                               )
@@ -602,7 +602,7 @@ class _BodyPesanTiketState extends State<BodyPesanTiket> {
                                         fontWeight: FontWeight.w200
                                       ),
                                       prefixIcon: Icon(
-                                        Icons.account_box,
+                                        Icons.nature_people_outlined,
                                         size: 28.0,
                                       ),
                                     )
@@ -1395,16 +1395,15 @@ class _IsiModalBisState extends State<IsiModalBis> {
                     padding: EdgeInsets.only(bottom: 1),
                     child: widget.logojasatravel == null 
                     ? Image.asset(
-                        'assets/images/nologo.png',
-                        height: 50,
-                        width: 100,
-                        alignment: Alignment.centerLeft,
-                    ) 
-                    : Image.network(
+                      'assets/images/nologo.png',
+                      height: 50,
+                      width: 100,
+                      alignment: Alignment.centerLeft,
+                    ) : Image.network(
                       '${myIpAddr()}/fotoLogoBis/${widget.logojasatravel}',
-                        height: 50,
-                        width: 100,
-                        alignment: Alignment.centerLeft,
+                      height: 50,
+                      width: 100,
+                      alignment: Alignment.centerLeft,
                     ),
                   ),
                 ),
@@ -1575,13 +1574,17 @@ class _IsiModalBisState extends State<IsiModalBis> {
                 Expanded(
                   child: Align(
                     alignment: Alignment.centerLeft,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(15),
-                      child: Image.asset(
-                        'assets/images/bisdamri1.jpeg',
-                        width: double.infinity,
-                        height: 120,
-                        
+                    child: Padding(
+                      padding: const EdgeInsets.all(2.0),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(15),
+                        child: Image.asset(
+                          'assets/images/bisdamri1.jpeg',
+                          width: double.infinity,
+                          height: 120,
+                          fit: BoxFit.cover,
+                          
+                        ),
                       ),
                     )
                   ),
@@ -1589,13 +1592,17 @@ class _IsiModalBisState extends State<IsiModalBis> {
                 Expanded(
                   child: Align(
                     alignment: Alignment.centerLeft,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(15),
-                      child: Image.asset(
-                        'assets/images/bisdamri2.jpeg',
-                        width: double.infinity,
-                        height: 130,
-                        
+                    child: Padding(
+                      padding: const EdgeInsets.all(2.0),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(15),
+                        child: Image.asset(
+                          'assets/images/bisdamri2.jpeg',
+                          width: double.infinity,
+                          height: 120,
+                          fit: BoxFit.cover,
+                          
+                        ),
                       ),
                     )
                   ),
@@ -1603,13 +1610,18 @@ class _IsiModalBisState extends State<IsiModalBis> {
                 Expanded(
                   child: Align(
                     alignment: Alignment.centerLeft,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(15),
-                      child: Image.asset(
-                        'assets/images/bisdamri3.jpg',
-                        width: double.infinity,
-                        height: 120,
-                        
+                    child: Padding(
+                      padding: const EdgeInsets.all(2.0),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(15),
+                        child: Image.asset(
+                          'assets/images/bisdamri3.jpg',
+                          width: double.infinity,
+                          height: 120,
+                          fit: BoxFit.cover,
+                      
+                          
+                        ),
                       ),
                     )
                   ),
