@@ -4,7 +4,7 @@ import 'package:bus_hub/main.dart';
 import 'package:bus_hub/screen/function/ip_address.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+// import 'package:fluttertoast/fluttertoast.dart';
 
 
 class IsiRegister extends StatefulWidget {
@@ -375,13 +375,18 @@ class _regis extends State<IsiRegister> {
                                     
                                     buatRegis(context);
                                   }else{
-                                    Fluttertoast.showToast(
-                                      msg: "Harap Lengkapi Data sebelum Register!",
-                                      toastLength: Toast.LENGTH_LONG,
-                                      gravity: ToastGravity.BOTTOM,
-                                      timeInSecForIosWeb: 10,
-                                      textColor: Colors.white,
-                                      fontSize: 16.0
+                                    // Fluttertoast.showToast(
+                                    //   msg: "",
+                                    //   toastLength: Toast.LENGTH_LONG,
+                                    //   gravity: ToastGravity.BOTTOM,
+                                    //   timeInSecForIosWeb: 10,
+                                    //   textColor: Colors.white,
+                                    //   fontSize: 16.0
+                                    // );
+
+
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text("Harap Lengkapi Data sebelum Register!"))
                                     );
                                   }
                                 }, 

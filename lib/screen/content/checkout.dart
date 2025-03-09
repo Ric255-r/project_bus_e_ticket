@@ -12,7 +12,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+// import 'package:fluttertoast/fluttertoast.dart';
 
 import '../function/me.dart';
 
@@ -689,13 +689,19 @@ class _StfulMenuCheckoutState extends State<StfulMenuCheckout> {
                               onPressed: agreePayment ? () {
                                 _submitBukti(context, mode: "cash");
                               } : () {
-                                Fluttertoast.showToast(
-                                  msg: "Harap Menyetujui Syarat dan Ketentuan",
-                                  toastLength: Toast.LENGTH_LONG,
-                                  gravity: ToastGravity.BOTTOM,
-                                  timeInSecForIosWeb: 10,
-                                  textColor: Colors.white,
-                                  fontSize: 14.0
+                                // Fluttertoast.showToast(
+                                //   msg: "Harap Menyetujui Syarat dan Ketentuan",
+                                //   toastLength: Toast.LENGTH_LONG,
+                                //   gravity: ToastGravity.BOTTOM,
+                                //   timeInSecForIosWeb: 10,
+                                //   textColor: Colors.white,
+                                //   fontSize: 14.0
+                                // );
+
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text("Harap Menyetujui Syarat dan Ketentuan")
+                                  )
                                 );
                               },
                               child: isSubmitted 
@@ -750,13 +756,19 @@ class _StfulMenuCheckoutState extends State<StfulMenuCheckout> {
                               _submitBukti(context);
                               
                             } : () {
-                              Fluttertoast.showToast(
-                                msg: "Harap Menyetujui Syarat dan Ketentuan",
-                                toastLength: Toast.LENGTH_LONG,
-                                gravity: ToastGravity.BOTTOM,
-                                timeInSecForIosWeb: 10,
-                                textColor: Colors.white,
-                                fontSize: 14.0
+                              // Fluttertoast.showToast(
+                              //   msg: "Harap Menyetujui Syarat dan Ketentuan",
+                              //   toastLength: Toast.LENGTH_LONG,
+                              //   gravity: ToastGravity.BOTTOM,
+                              //   timeInSecForIosWeb: 10,
+                              //   textColor: Colors.white,
+                              //   fontSize: 14.0
+                              // );
+
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text("Harap Menyetujui Syarat dan Ketentuan")
+                                )
                               );
                             },
                             child: isSubmitted 

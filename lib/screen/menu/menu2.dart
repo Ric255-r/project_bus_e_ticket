@@ -6,7 +6,6 @@ import 'package:bus_hub/screen/content/detailRiwayat.dart';
 import 'package:bus_hub/screen/function/ip_address.dart';
 import 'package:bus_hub/screen/function/me.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:bus_hub/main.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -14,28 +13,59 @@ import 'package:intl/intl.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:web_socket_channel/io.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 
 class Menu2 extends StatelessWidget {
-  Menu2();
+  String? status;
+
+  Menu2({this.status});
 
   // final Map<String, dynamic> getDataNya;
-
   // Menu2({required this.getDataNya});
+
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: IsiMenu2(),
-      )
-    );
+    // return data status ini isinya Sukses, Ditolak, dan Pending. 
+    // Hasil Translate dari triggerNotif Websocket Screen2.dart
+    if(status != null ){
+      switch (status) {
+        case "Sukses":
+          return SafeArea(
+            child: Scaffold(
+              body:  IsiMenu2(status: "completed",),
+            )
+          );
+        case "Ditolak":
+          return SafeArea(
+            child: Scaffold(
+              body:  IsiMenu2(status: "cancelled",),
+            )
+          );
+        default:
+          return SafeArea(
+            child: Scaffold(
+              body:  IsiMenu2(status: "pending",),
+            )
+          );
+      }
+    }else{
+      return SafeArea(
+        child: Scaffold(
+          body: IsiMenu2(status: "pending",),
+        )
+      );
+    }
+
   }
 }
 
 
 class IsiMenu2 extends StatefulWidget {
+  final String status;
+
+  IsiMenu2({required this.status});
+
   @override
   _KontenMenu2 createState() => _KontenMenu2();
 }
@@ -93,89 +123,123 @@ class _KontenMenu2 extends State<IsiMenu2> {
     } 
   }
 
-  // Websocket channel
-  late WebSocketChannel _channel;
-  Timer? _timerStatus;
+  // // Websocket channel
+  // late WebSocketChannel _channel;
+  // Timer? _timerStatus;
 
-  void _connectToWebSocket(){
-    // mesti replace dari http ke ws. krn myIpAddr ini ada http.
-    var originalUrl = myIpAddr();
-    var replacedUrl = originalUrl.replaceAll("http", "ws");
+  // void _connectToWebSocket(){
+  //   // mesti replace dari http ke ws. krn myIpAddr ini ada http.
+  //   var originalUrl = myIpAddr();
+  //   var replacedUrl = originalUrl.replaceAll("http", "ws");
 
-    var wsUri = Uri.parse("$replacedUrl/ws-transaksi");
+  //   // ambil endpoint route websocket yg udh dibuat
+  //   var wsUri = Uri.parse("$replacedUrl/ws-transaksi");
 
-    // buat koneksi websocket
-    _channel = IOWebSocketChannel.connect(wsUri);
+  //   // buat koneksi websocket
+  //   _channel = IOWebSocketChannel.connect(wsUri);
 
-    // ambil pesan dari server
-    _channel.stream.listen((message) async {
-      // parse message yg akan datang. asumsinya json.
-      final data = jsonDecode(message);
-      print(data);
+  //   // ambil pesan dari server
+  //   _channel.stream.listen((message) async {
+  //     // parse message yg akan datang. asumsinya json.
+  //     final data = jsonDecode(message);
+  //     print(data);
 
-      // get data user
-      var thisUser = await getMyData(jwtUser);
+  //     // get data user
+  //     var thisUser = await getMyData(jwtUser);
 
-      // Utk Cek apakah useryg login skrg sama dgn data email cust yang diwebsocket
-      // klo misal admin update utk beda user, jd ga perlu update data websocket.
-      if(thisUser['email'] == data['email_cust']){
-        switch (data['status_trans']) {
-          case 'COMPLETED':
-            setState(() {
-              isLoading = true;
-            });
+  //     // Utk Cek apakah useryg login skrg sama dgn data email cust yang diwebsocket
+  //     // klo misal admin update utk beda user, jd ga perlu update data websocket.
+  //     if(thisUser['email'] == data['email_cust']){
+  //       switch (data['status_trans']) {
+  //         case 'COMPLETED':
+  //           setState(() {
+  //             isLoading = true;
+  //           });
 
-            _timerStatus = Timer(Duration(milliseconds: 1500), ()  {
-              getData("completed").then((_) {
-                setState(() {
-                  isLoading = false;
-                  isPending = false;
-                  isCancelled = false;
-                  isCompleted = true;
-                });
-              });
-            });
+  //           _timerStatus = Timer(Duration(milliseconds: 1500), ()  {
+  //             getData("completed").then((_) {
+  //               setState(() {
+  //                 isLoading = false;
+  //                 isPending = false;
+  //                 isCancelled = false;
+  //                 isCompleted = true;
+  //               });
+  //             });
+  //           });
 
-            break;
-          case 'CANCELLED':
-            setState(() {
-              isLoading = true;
-            });
+  //           break;
+  //         case 'CANCELLED':
+  //           setState(() {
+  //             isLoading = true;
+  //           });
 
-            _timerStatus = Timer(Duration(milliseconds: 1500), () {
-              getData("cancelled").then((_) {
-                setState(() {
-                  isLoading = false;
-                  isPending = false;
-                  isCancelled = true;
-                  isCompleted = false;
-                });
-              });
-            });
-            break;
-        }
-      }
-    }, onError: (err) {
-      print("Websocket error: $err");
-    }, onDone: () {
-      print("Websocket Closed");
-    });
-  }
+  //           _timerStatus = Timer(Duration(milliseconds: 1500), () {
+  //             getData("cancelled").then((_) {
+  //               setState(() {
+  //                 isLoading = false;
+  //                 isPending = false;
+  //                 isCancelled = true;
+  //                 isCompleted = false;
+  //               });
+  //             });
+  //           });
+  //           break;
+  //       }
+  //     }
+  //   }, onError: (err) {
+  //     print("Websocket error: $err");
+  //   }, onDone: () {
+  //     print("Websocket Closed");
+  //   });
+  // }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    getData('pending');
-    _connectToWebSocket();
+
+    switch (widget.status) {
+      case "completed":
+        getData("completed").then((_) {
+          setState(() {
+            isLoading = false;
+            isPending = false;
+            isCancelled = false;
+            isCompleted = true;
+          });
+        });
+        break;
+      case "cancelled":
+        getData("cancelled").then((_) {
+          setState(() {
+            isLoading = false;
+            isPending = false;
+            isCancelled = true;
+            isCompleted = false;
+          });
+        });
+        break;
+      default:
+        getData("pending").then((_) {
+          setState(() {
+            isLoading = false;
+            isPending = true;
+            isCancelled = false;
+            isCompleted = false;
+          });
+        });
+        break;
+    }
+
+    // _connectToWebSocket();
   }
 
   @override
   void dispose() {
     // TODO: implement dispose
     // Matikan koneksi websocket ketika menu ini diclose
-    _channel.sink.close();
-    _timerStatus?.cancel();
+    // _channel.sink.close();
+    // _timerStatus?.cancel();
     super.dispose();
 
   }
@@ -214,30 +278,30 @@ class _KontenMenu2 extends State<IsiMenu2> {
               left: 60,
               top: 20,
               child: Container(
-              height: 30,
-              decoration: BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(
-                    width: (isPending) ? 3 : 0,
-                    color: const Color.fromARGB(255, 150, 251, 153)
+                height: 30,
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                      width: (isPending) ? 3 : 0,
+                      color: const Color.fromARGB(255, 150, 251, 153)
+                    )
                   )
+                ),
+                child: InkWell(
+                  onTap: () async {
+                    await getData('pending');
+
+                    if(mounted){
+                      setState(() {
+                        isPending = true;
+                        isCancelled = false;
+                        isCompleted = false;
+                      });
+                    }
+
+                  },
+                  child: Text('Pending', style: TextStyle(color: Colors.white))
                 )
-              ),
-              child: InkWell(
-                onTap: () async {
-                  await getData('pending');
-
-                  if(mounted){
-                    setState(() {
-                      isPending = true;
-                      isCancelled = false;
-                      isCompleted = false;
-                    });
-                  }
-
-                },
-                child: Text('Pending', style: TextStyle(color: Colors.white))
-              )
               ),
             ),
             
@@ -276,32 +340,32 @@ class _KontenMenu2 extends State<IsiMenu2> {
               left: 290,
               top: 20,
               child: Container(
-              height: 30,
-              decoration: BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(
-                    width: (isCancelled) ? 3 : 0,
-                    color: const Color.fromARGB(255, 150, 251, 153)
+                height: 30,
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                      width: (isCancelled) ? 3 : 0,
+                      color: const Color.fromARGB(255, 150, 251, 153)
+                    )
                   )
+                ),
+                
+                child: InkWell(
+                  onTap: () async{
+                    await getData("cancelled");
+
+                    if(mounted){
+                      setState(() {
+                        isPending = false;
+                        isCancelled = true;
+                        isCompleted = false;
+                      });
+                    }
+
+                  },
+                  child: Text('Cancelled', style: TextStyle(color: Colors.white),)
                 )
               ),
-              
-              child: InkWell(
-                onTap: () async{
-                  await getData("cancelled");
-
-                  if(mounted){
-                    setState(() {
-                      isPending = false;
-                      isCancelled = true;
-                      isCompleted = false;
-                    });
-                  }
-
-                },
-                child: Text('Cancelled', style: TextStyle(color: Colors.white),)
-              )
-            ),
             ),
 
             Positioned(

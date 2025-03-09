@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 
 class SecondScreen extends StatelessWidget {
@@ -99,14 +98,14 @@ class _Kontennya extends State<IsiBody> {
                   ),
                   child: GestureDetector(
                     onTap: () {
-                      Fluttertoast.showToast(
-                        msg: "This is a Toast Kiri",
-                        toastLength: Toast.LENGTH_SHORT,
-                        gravity: ToastGravity.BOTTOM,
-                        timeInSecForIosWeb: 1,
-                        textColor: Colors.white,
-                        fontSize: 16.0
-                      );
+                      // Fluttertoast.showToast(
+                      //   msg: "This is a Toast Kiri",
+                      //   toastLength: Toast.LENGTH_SHORT,
+                      //   gravity: ToastGravity.BOTTOM,
+                      //   timeInSecForIosWeb: 1,
+                      //   textColor: Colors.white,
+                      //   fontSize: 16.0
+                      // );
                     },
                     child: Container(
                       height: Tinggi,
@@ -143,14 +142,14 @@ class _Kontennya extends State<IsiBody> {
                   ),
                   child: GestureDetector(
                     onTap: () {
-                      Fluttertoast.showToast(
-                        msg: "This is a Toast message Gesture",
-                        toastLength: Toast.LENGTH_SHORT,
-                        gravity: ToastGravity.BOTTOM,
-                        timeInSecForIosWeb: 1,
-                        textColor: Colors.white,
-                        fontSize: 16.0
-                      );
+                      // Fluttertoast.showToast(
+                      //   msg: "This is a Toast message Gesture",
+                      //   toastLength: Toast.LENGTH_SHORT,
+                      //   gravity: ToastGravity.BOTTOM,
+                      //   timeInSecForIosWeb: 1,
+                      //   textColor: Colors.white,
+                      //   fontSize: 16.0
+                      // );
                     },
                     child: Container(
                       height: Tinggi,
@@ -194,14 +193,14 @@ class _Kontennya extends State<IsiBody> {
                   ),
                   child: GestureDetector(
                     onTap: () {
-                      Fluttertoast.showToast(
-                        msg: "This is a Toast Kiri",
-                        toastLength: Toast.LENGTH_SHORT,
-                        gravity: ToastGravity.BOTTOM,
-                        timeInSecForIosWeb: 1,
-                        textColor: Colors.white,
-                        fontSize: 16.0
-                      );
+                      // Fluttertoast.showToast(
+                      //   msg: "This is a Toast Kiri",
+                      //   toastLength: Toast.LENGTH_SHORT,
+                      //   gravity: ToastGravity.BOTTOM,
+                      //   timeInSecForIosWeb: 1,
+                      //   textColor: Colors.white,
+                      //   fontSize: 16.0
+                      // );
                     },
                     child: Container(
                       height: Tinggi,
@@ -238,14 +237,14 @@ class _Kontennya extends State<IsiBody> {
                   ),
                   child: GestureDetector(
                     onTap: () {
-                      Fluttertoast.showToast(
-                        msg: "This is a Toast message Gesture",
-                        toastLength: Toast.LENGTH_SHORT,
-                        gravity: ToastGravity.BOTTOM,
-                        timeInSecForIosWeb: 1,
-                        textColor: Colors.white,
-                        fontSize: 16.0
-                      );
+                      // Fluttertoast.showToast(
+                      //   msg: "This is a Toast message Gesture",
+                      //   toastLength: Toast.LENGTH_SHORT,
+                      //   gravity: ToastGravity.BOTTOM,
+                      //   timeInSecForIosWeb: 1,
+                      //   textColor: Colors.white,
+                      //   fontSize: 16.0
+                      // );
                     },
                     child: Container(
                       height: Tinggi,

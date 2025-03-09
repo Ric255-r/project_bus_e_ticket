@@ -2,16 +2,26 @@ import 'dart:ffi';
 
 import 'package:bus_hub/screen/content/paketWisata.dart';
 import 'package:bus_hub/screen/content/panduanBepergian.dart';
+import 'package:bus_hub/screen/function/me.dart';
 import 'package:flutter/services.dart';
+import '../function/ip_address.dart';
 import '../menu/menu3.dart';
 import 'package:flutter/material.dart' hide CarouselController;
-import 'package:fluttertoast/fluttertoast.dart';
+// import 'package:fluttertoast/fluttertoast.dart';
 import '../menu/menu2.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import '../function/confirmExit.dart';
 import './halteTerdekat.dart';
 import './pesanTiket.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:web_socket_channel/io.dart';
+import 'dart:async';
+import 'dart:convert';
+import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:cherry_toast/cherry_toast.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
 
 // referensi carousel slider
 // https://stackoverflow.com/questions/78688921/error-carouselcontroller-is-imported-from-both-package-in-flutter
@@ -33,13 +43,19 @@ class SecondScreen extends StatelessWidget {
     if(alertMessage != null){
       // Widgetbinding ini macam DOMContentLoaded di JS / Onload.
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        Fluttertoast.showToast(
-          msg: alertMessage!,
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          textColor: Colors.white,
-          fontSize: 16.0,
+        // Fluttertoast.showToast(
+        //   msg: alertMessage!,
+        //   toastLength: Toast.LENGTH_LONG,
+        //   gravity: ToastGravity.BOTTOM,
+        //   timeInSecForIosWeb: 1,
+        //   textColor: Colors.white,
+        //   fontSize: 16.0,
+        // );
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(alertMessage!)
+          )
         );
       });
     }
@@ -542,28 +558,6 @@ class _KontenNavbar extends State<IsiNavbar> {
   late List<Widget> _children;
   // End Utk Navigasi
 
-  // Harus pake tipedata ini kalo mau passing data object ke file lain
-  late Map<String, dynamic> dataIsiNavbar;
-
-  @override
-  void initState(){
-    super.initState();
-    // widget isiData diambil dari argument class SecondScreen(paling atas codeny).
-    dataIsiNavbar = widget.isiData;
-
-    if(widget.indexScreen != null){
-      _currentIndex = widget.indexScreen!;
-    }
-
-    _children = [
-      IsiBody(dataPassing: dataIsiNavbar),
-      Menu2(),
-      // Menu2(getDataNya: dataIsiNavbar),
-      Menu3()
-    ];
-  }
-  // end passing data
-
   void onBarTapped(int index){
     setState(() {
       //set index utk menu children
@@ -597,6 +591,189 @@ class _KontenNavbar extends State<IsiNavbar> {
     }
   }
   // End buat trackscroll
+
+  // Harus pake tipedata ini kalo mau passing data object ke file lain
+  late Map<String, dynamic> dataIsiNavbar;
+  // Websocket channel
+  late WebSocketChannel _channel;
+  Timer? _timerWebSocket;
+  // buat navigate ke menu 2
+  String? status;
+
+  @override
+  void initState(){
+    super.initState();
+
+    // Delay the WebSocket connection to avoid crashes
+    _timerWebSocket = Timer(Duration(milliseconds: 1300), () {
+      _connectToWebSocket();
+    });
+    
+    // widget isiData diambil dari argument class SecondScreen(paling atas codeny).
+    dataIsiNavbar = widget.isiData;
+
+    if(widget.indexScreen != null){
+      _currentIndex = widget.indexScreen!;
+    }
+
+    _children = [
+      IsiBody(dataPassing: dataIsiNavbar),
+      Menu2(status: "PENDING",),
+      // Menu2(getDataNya: dataIsiNavbar),
+      Menu3()
+    ];
+
+  }
+  // end passing data
+
+
+
+  // Fungsi WebSocket
+  var storage = FlutterSecureStorage();
+
+  Future<void> _connectToWebSocket() async {
+    // mesti replace dari http ke ws. krn myIpAddr ini ada http.
+    var originalUrl = myIpAddr();
+    var replacedUrl = originalUrl.replaceAll("http", "ws");
+
+    // ambil endpoint route websocket yg udh dibuat
+    var wsUri = Uri.parse("$replacedUrl/ws-transaksi");
+
+    // buat koneksi websocket
+    _channel = IOWebSocketChannel.connect(wsUri);
+
+    // init AwesomeNotifications
+    AwesomeNotifications().initialize(
+      null, // null for default icon
+      [
+        NotificationChannel(
+          channelKey: 'basic_channel',
+          channelName: 'Basic notifications',
+          channelDescription: 'Notification channel for basic tests',
+          defaultColor: Color(0xFF9D50DD),
+          ledColor: Colors.white,
+          importance: NotificationImportance.High, // Ensure high importance untuk event Tap
+        )
+      ],
+      debug: true
+    );
+
+    // kombinasi dari AwesomeNotifications dan cherry_toast
+    // return data status ini isinya Sukses, Ditolak, dan Pending. 
+    // Hasil Translate dari triggerNotif Websocket Screen2.dart
+    void triggerNotif(String id_trans, String status){
+      AwesomeNotifications().createNotification(
+        content: NotificationContent(
+          id: 10,
+          channelKey: 'basic_channel',
+          title: 'Transaksi ${id_trans} anda ${status}',
+          body: 'Klik Disini Untuk melihat detail transaksi anda',
+        )
+      );
+
+      // Event ketika dipencet. initialize setelah websocket jalan
+      AwesomeNotifications().setListeners(
+        onActionReceivedMethod: (ReceivedAction receivedAct) async {
+          // Handle Notif di Tap
+          if(receivedAct.id == 10){
+            // Notif dengan Id ke 10 dipencet
+            print("Notif 10 dipencet");
+
+            // Untuk pindah menu ke bagian riwayat
+            setState(() {
+              switch (status) {
+                case "Sukses":
+                  _children[1] = Menu2(status: "Sukses");
+                  break;
+                case "Ditolak":
+                  _children[1] = Menu2(status: "Ditolak");
+                  break;
+                default:
+                  _children[1] = Menu2(status: "Pending");
+                  break;
+              }
+              _currentIndex = 1;
+            });
+          }
+        }
+      );
+
+      // Ini dari cherry_toast. bukan punya awesome_notification
+      CherryToast.info(
+        title:  Text(
+          'Transaksi ${id_trans} anda ${status}', 
+          style: TextStyle(color: Colors.black)
+        ),
+        action: Text(
+          "Klik Disini Untuk Melihat Transaksi", 
+          style: TextStyle(color: Colors.black)
+        ),
+        actionHandler: (){
+          // Untuk pindah menu ke bagian riwayat
+          setState(() {
+            switch (status) {
+              case "Sukses":
+                _children[1] = Menu2(status: "Sukses");
+                break;
+              case "Ditolak":
+                _children[1] = Menu2(status: "Ditolak");
+                break;
+              default:
+                _children[1] = Menu2(status: "Pending");
+                break;
+            }
+            _currentIndex = 1;
+          });
+        },
+      ).show(context);
+    }
+
+    // ambil pesan dari server
+    _channel.stream.listen((message) async {
+      // parse message yg akan datang. asumsinya json.
+      final data = jsonDecode(message);
+      var status = "";
+      // get datauser
+      var jwt = await storage.read(key: "jwt");
+      var thisUser = await getMyData(jwt);
+
+      // Supaya dia hanya ketrigger dgn user yg login saja
+      if(thisUser['email'] == data['email_cust']){
+        switch (data['status_trans']) {
+          case 'COMPLETED':
+            setState(() {
+              status = "Sukses";
+            });
+            triggerNotif(data['id_trans'], status);
+
+            break;
+          case 'CANCELLED':
+            setState(() {
+              status = "Ditolak";
+            });
+            triggerNotif(data['id_trans'], status);
+            break;
+        }
+      }
+
+      print(data);
+      print("Hai Dari Websocket");
+
+
+    }, onError: (err) {
+      print("Websocket error: $err");
+    }, onDone: () {
+      print("Websocket Closed");
+    });
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _channel.sink.close();
+    _timerWebSocket?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

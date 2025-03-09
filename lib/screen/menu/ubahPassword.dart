@@ -3,7 +3,7 @@ import 'package:bus_hub/screen/content/screen2.dart';
 import 'package:bus_hub/screen/function/ip_address.dart';
 import 'package:bus_hub/screen/function/me.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+// import 'package:fluttertoast/fluttertoast.dart';
 import 'package:bus_hub/main.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -52,23 +52,35 @@ class _KontenMenuUbahPass extends State<IsiMenuUbahPass> {
   Future<void> updatePass(BuildContext context) async {
     try {
       if(newPass.text != confirmNewPass.text){
-        Fluttertoast.showToast(
-          msg: "Konfirmasi Password Baru Tidak Cocok",
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 10,
-          textColor: Colors.white,
-          fontSize: 16.0
+        // Fluttertoast.showToast(
+        //   msg: "",
+        //   toastLength: Toast.LENGTH_LONG,
+        //   gravity: ToastGravity.BOTTOM,
+        //   timeInSecForIosWeb: 10,
+        //   textColor: Colors.white,
+        //   fontSize: 16.0
+        // );
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Konfirmasi Password Baru Tidak Cocok")
+          )
         );
       }else{
         if(oldPass.text.isEmpty){
-          Fluttertoast.showToast(
-            msg: "Isi Password Lama Dahulu",
-            toastLength: Toast.LENGTH_LONG,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 10,
-            textColor: Colors.white,
-            fontSize: 16.0
+          // Fluttertoast.showToast(
+          //   msg: "Isi Password Lama Dahulu",
+          //   toastLength: Toast.LENGTH_LONG,
+          //   gravity: ToastGravity.BOTTOM,
+          //   timeInSecForIosWeb: 10,
+          //   textColor: Colors.white,
+          //   fontSize: 16.0
+          // );
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("Isi Password Lama Dahulu")
+            )
           );
         }else{
           var jwt = await storage.read(key: 'jwt');
@@ -111,13 +123,19 @@ class _KontenMenuUbahPass extends State<IsiMenuUbahPass> {
     } catch (e) {
       if (e is DioException){
         if(e.response?.statusCode == 401){
-          Fluttertoast.showToast(
-            msg: "Password Lama Tidak Cocok",
-            toastLength: Toast.LENGTH_LONG,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 10,
-            textColor: Colors.white,
-            fontSize: 16.0
+          // Fluttertoast.showToast(
+          //   msg: "Password Lama Tidak Cocok",
+          //   toastLength: Toast.LENGTH_LONG,
+          //   gravity: ToastGravity.BOTTOM,
+          //   timeInSecForIosWeb: 10,
+          //   textColor: Colors.white,
+          //   fontSize: 16.0
+          // );
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("Password Lama Tidak Cocok")
+            )
           );
         }
       }

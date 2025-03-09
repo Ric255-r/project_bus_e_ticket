@@ -6,7 +6,7 @@ import 'package:bus_hub/screen/function/ip_address.dart';
 import 'package:flutter/material.dart';
 import 'screen/content/screen2.dart';
 import 'package:dio/dio.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+// import 'package:fluttertoast/fluttertoast.dart';
 import './screen/function/confirmExit.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter/services.dart';
@@ -188,22 +188,38 @@ class _FirstScreen extends State<MyTextField> {
     } catch (e) {
       if(e is DioException){
         if(e.response != null){
-          Fluttertoast.showToast(
-            msg: (e.response?.statusCode == 401) ? "Error Username / Password Salah" : "Error ${e.response?.statusCode}: ${e.response?.data}",
-            toastLength: Toast.LENGTH_LONG,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 10,
-            textColor: Colors.white,
-            fontSize: 16.0
+          // Fluttertoast.showToast(
+          //   msg: (e.response?.statusCode == 401) ?  : ,
+          //   toastLength: Toast.LENGTH_LONG,
+          //   gravity: ToastGravity.BOTTOM,
+          //   timeInSecForIosWeb: 10,
+          //   textColor: Colors.white,
+          //   fontSize: 16.0
+          // );
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content:  (e.response?.statusCode == 401) ? Text(
+                "Error Username / Password Salah"
+              ) : Text(
+                "Error ${e.response?.statusCode}: ${e.response?.data}"
+              )
+            )
           );
+
+
         }else{
-          Fluttertoast.showToast(
-            msg: "Error ${e}",
-            toastLength: Toast.LENGTH_LONG,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 10,
-            textColor: Colors.white,
-            fontSize: 16.0
+          // Fluttertoast.showToast(
+          //   msg: "Error ${e}",
+          //   toastLength: Toast.LENGTH_LONG,
+          //   gravity: ToastGravity.BOTTOM,
+          //   timeInSecForIosWeb: 10,
+          //   textColor: Colors.white,
+          //   fontSize: 16.0
+          // );
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Error $e"))
           );
         }
       }
