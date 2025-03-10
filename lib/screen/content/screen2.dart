@@ -89,8 +89,6 @@ class _Kontennya extends State<IsiBody> {
   int _currentPage = 0;
   // end buat ngecek pageview
 
-  
-
   final List<String> imgList = [
     'assets/images/carousel1.jpeg',
     'assets/images/carousel2.png',
@@ -562,6 +560,11 @@ class _KontenNavbar extends State<IsiNavbar> {
     setState(() {
       //set index utk menu children
       _currentIndex = index;
+      // khusus menu2 tambah key supaya auto rebuild
+      _children[1] = Menu2(
+        key: UniqueKey(),
+        status: "PENDING",
+      );
     });
   }
 
@@ -618,7 +621,7 @@ class _KontenNavbar extends State<IsiNavbar> {
 
     _children = [
       IsiBody(dataPassing: dataIsiNavbar),
-      Menu2(status: "PENDING",),
+      Menu2(),
       // Menu2(getDataNya: dataIsiNavbar),
       Menu3()
     ];
@@ -680,16 +683,26 @@ class _KontenNavbar extends State<IsiNavbar> {
             print("Notif 10 dipencet");
 
             // Untuk pindah menu ke bagian riwayat
+            // key disini untuk force rebuild menu2. incase notif muncul, lalu user tap & posisi user di menu riwayat/history
             setState(() {
               switch (status) {
                 case "Sukses":
-                  _children[1] = Menu2(status: "Sukses");
+                  _children[1] = Menu2(
+                    key: UniqueKey(),
+                    status: "Sukses"
+                  );
                   break;
                 case "Ditolak":
-                  _children[1] = Menu2(status: "Ditolak");
+                  _children[1] = Menu2(
+                    key: UniqueKey(),
+                    status: "Ditolak"
+                  );
                   break;
                 default:
-                  _children[1] = Menu2(status: "Pending");
+                  _children[1] = Menu2(
+                    key: UniqueKey(),
+                    status: "Pending"
+                  );
                   break;
               }
               _currentIndex = 1;
@@ -710,16 +723,26 @@ class _KontenNavbar extends State<IsiNavbar> {
         ),
         actionHandler: (){
           // Untuk pindah menu ke bagian riwayat
+          // key disini untuk force rebuild menu2. incase notif muncul, lalu user tap & posisi user di menu riwayat/history
           setState(() {
             switch (status) {
               case "Sukses":
-                _children[1] = Menu2(status: "Sukses");
+                _children[1] = Menu2(
+                  key: UniqueKey(),
+                  status: "Sukses"
+                );
                 break;
               case "Ditolak":
-                _children[1] = Menu2(status: "Ditolak");
+                _children[1] = Menu2(
+                  key: UniqueKey(),
+                  status: "Ditolak"
+                );
                 break;
               default:
-                _children[1] = Menu2(status: "Pending");
+                _children[1] = Menu2(
+                  key: UniqueKey(),
+                  status: "Pending"
+                );
                 break;
             }
             _currentIndex = 1;

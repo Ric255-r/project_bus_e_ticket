@@ -17,8 +17,10 @@ import 'package:web_socket_channel/io.dart';
 
 class Menu2 extends StatelessWidget {
   String? status;
+  Key? key;
 
-  Menu2({this.status});
+  // key disini untuk force rebuild menu2. incase notif muncul, lalu user tap & posisi user di menu riwayat/history
+  Menu2({this.status, this.key});
 
   // final Map<String, dynamic> getDataNya;
   // Menu2({required this.getDataNya});
@@ -33,26 +35,38 @@ class Menu2 extends StatelessWidget {
         case "Sukses":
           return SafeArea(
             child: Scaffold(
-              body:  IsiMenu2(status: "completed",),
+              body:  IsiMenu2(
+                key: key == null ? ValueKey("Tanpa_Key") : key,
+                status: "completed",
+              ),
             )
           );
         case "Ditolak":
           return SafeArea(
             child: Scaffold(
-              body:  IsiMenu2(status: "cancelled",),
+              body:  IsiMenu2(
+                key: key == null ? ValueKey("Tanpa_Key") : key,
+                status: "cancelled",
+              ),
             )
           );
         default:
           return SafeArea(
             child: Scaffold(
-              body:  IsiMenu2(status: "pending",),
+              body:  IsiMenu2(
+                key: key == null ? ValueKey("Tanpa_Key") : key,
+                status: "pending",
+              ),
             )
           );
       }
     }else{
       return SafeArea(
         child: Scaffold(
-          body: IsiMenu2(status: "pending",),
+          body: IsiMenu2(
+            key: key == null ? ValueKey("Tanpa_Key") : key,
+            status: "pending",
+          ),
         )
       );
     }
@@ -63,8 +77,9 @@ class Menu2 extends StatelessWidget {
 
 class IsiMenu2 extends StatefulWidget {
   final String status;
+  final Key? key; // ini buat force rebuild klo misalkan notif nyala ttp di Menu2()
 
-  IsiMenu2({required this.status});
+  IsiMenu2({required this.status, this.key}) : super(key: key);
 
   @override
   _KontenMenu2 createState() => _KontenMenu2();
