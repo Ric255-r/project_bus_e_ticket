@@ -1,421 +1,414 @@
+import 'package:bus_hub/screen/function/ip_address.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
 import 'package:geolocator/geolocator.dart';
+
 import 'pesanTiket.dart';
 
-class Halteterdekat extends StatelessWidget {
+class Halteterdekat extends StatefulWidget {
+  const Halteterdekat({super.key});
+
   @override
-  Widget build(BuildContext context) {
-    // return SafeArea(
-    //   child: IsiMap(),
-    // ); 
-
-    return Scaffold(
-      body: DraggableBottomSheet(
-        anak: Column(
-          children: [
-            UiBottomSheet(),
-
-          ],
-        )
-      ),
-    );
-  }
+  State<Halteterdekat> createState() => _HalteterdekatState();
 }
 
-class IsiMap extends StatefulWidget {
-  @override
-  _KontenMap createState() => _KontenMap();
-}
-
-class _KontenMap extends State<IsiMap>{
-  // fungsi async await buat return currentposisi
-  Future<Position> _determinePosition() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-
-    if(!serviceEnabled){
-      return Future.error("Location Service Blm di Enable");
-    }
-
-    permission = await Geolocator.checkPermission();
-    if(permission == LocationPermission.denied){
-      permission = await Geolocator.requestPermission();
-
-      if(permission == LocationPermission.denied){
-        return Future.error("Location Service di TOlak");
-      }
-    }
-
-    if(permission == LocationPermission.deniedForever){
-      return Future.error("Layanan Lokasi di disable selamanya, ga bs operasi");
-    }
-
-    return await Geolocator.getCurrentPosition();
-  }
-
-  double latitudenya = 0.0;
-  double longitudenya = 0.0;
-  MapController? controller;
-  bool _isLoading = true;
-
-  Future<void> _drawUserCircle(double radiusnya) async {
-    if (controller != null && _isLoading == false) {
-      // Remove previous circle before drawing a new one
-      await controller?.removeCircle('circle0');
-
-      await controller?.drawCircle(
-        CircleOSM(
-          key: "circle0",
-          centerPoint: GeoPoint(latitude: latitudenya, longitude: longitudenya),
-          radius: radiusnya, //adjust disini
-          color: Colors.blue.withOpacity(0.3),
-          borderColor: Colors.blue,
-          strokeWidth: 0.1,
-        ),
-      );
-    }
-  }
-
-  var prevLatitude = [];
-  var prevLongitude = [];
-
-  Future<void> _determineAndSetPosition({String? isUpdated}) async {
-    try {
-      var posisi = await _determinePosition();
-
-      //if(!_isSetLocation){
-        setState(()  {
-          latitudenya = posisi.latitude;
-          longitudenya = posisi.longitude;
-
-          if(isUpdated == "ya"){
-            if (prevLatitude.isNotEmpty && prevLongitude.isNotEmpty) {
-                print("Latitude lama ${prevLatitude[0]}");
-
-              // controller!.changeLocationMarker(
-              //   oldLocation: GeoPoint(latitude: prevLatitude[0], longitude: prevLongitude[0]), 
-              //   newLocation: GeoPoint(latitude: latitudenya, longitude: longitudenya)
-              // );
-
-              controller!.removeMarker(
-                GeoPoint(latitude: prevLatitude[0], longitude: prevLongitude[0])
-              );
-
-              controller!.changeLocation(
-                GeoPoint(latitude: latitudenya, longitude: longitudenya)
-              );
-
-              // Update previous location
-              prevLatitude[0] = latitudenya;
-              prevLongitude[0] = longitudenya;
-            } else {
-              print("Previous location data is not available.");
-            }
-
-          
-          }else{
-            controller = MapController.withPosition(
-              initPosition: GeoPoint(
-                latitude: latitudenya, 
-                longitude: longitudenya
-              )
-            );
-
-            prevLatitude.add(latitudenya);
-            prevLongitude.add(longitudenya);
-          }
-
-          double radius = _calculateRadiusBasedOnLocation(latitudenya, longitudenya);
-
-          _drawUserCircle(radius);
-          
-          _isLoading = false; // loading kelar.
-          // _isSetLocation = true; //set true, biar if ini gk ke eksekusi lagi
-
-        });
-      //}
-    } catch (e) {
-      print("Error Determine Location $e");
-    }
-  }
-
-
-  // fungsi update posisi pas onload
-  @override
-  void initState(){
-    super.initState();
-
-    _determineAndSetPosition();
-
-    //fungsi yg d buat di _determinePosition.
-    // fungsi ini sudah diconvert jadi async await.
-    // _determinePosition().then((posisi) {
-    //   if(!_isSetLocation){ //buat boolean supaya cmn setLocation 1x aja, gk ush auto refresh
-    //     setState(() {
-    //       latitudenya = posisi.latitude;
-    //       longitudenya = posisi.longitude;
-
-    //       controller = MapController.withPosition(
-    //         initPosition: GeoPoint(
-    //           latitude: latitudenya, 
-    //           longitude: longitudenya
-    //         )
-    //       );
-
-    //       double radius = _calculateRadiusBasedOnLocation(latitudenya, longitudenya);
-
-    //       _drawUserCircle(radius);
-          
-    //       _isLoading = false; // loading kelar.
-    //       _isSetLocation = true; //set true, biar if ini gk ke eksekusi lagi
-
-    //     });
-    //   }
-    // }); 
-  }
-
-  double _calculateRadiusBasedOnLocation(double latitude, double longitude){
-    if (latitude > 0){
-      return 1200.0; // set a bigger radius for positive latitudes
-    }else{
-      return 800.0; //set a smaller radius for negative latitudes
-    }
-  }
-
-  bool buatEnableTracking = true;
-  bool buatUnfollowUser = false;
-  
-  // referensi ada didokumentasi flutter_osm_plugin
-  // install di pubspec.yaml : 
-  // flutter_osm_plugin: ^1.3.2
-  // geolocator: ^9.0.2
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: _isLoading ? Center(child: CircularProgressIndicator()) : SizedBox(
-        height: MediaQuery.of(context).size.height,
-        child: Stack(
-          children: [
-            if(controller != null)
-              Container(
-                child: OSMFlutter(
-                  controller: controller!,
-                  osmOption: OSMOption(
-                    userTrackingOption: UserTrackingOption(
-                      enableTracking: buatEnableTracking,
-                      unFollowUser: buatUnfollowUser,
-                      
-                    ),
-                    zoomOption:  ZoomOption(
-                      initZoom: 8,
-                      minZoomLevel: 12,
-                      maxZoomLevel: 19,
-                      stepZoom: 1.0
-                    ),
-                    // userLocationMarker: (!_isRefreshed) ? UserLocationMaker(
-                    //   personMarker: const MarkerIcon(
-                    //     icon: Icon(
-                    //         Icons.location_history_rounded,
-                    //         color: Colors.red,
-                    //         size: 48,
-                    //     ),
-                    //   ),
-                    //   directionArrowMarker: const MarkerIcon(
-                    //     icon: Icon(
-                    //         Icons.location_on,
-                    //         size: 48,
-                    //         color: Colors.blue,
-                    //     ),
-                    //   )
-                    // ) : null,
-                    roadConfiguration: RoadOption(
-                      roadColor: Colors.yellowAccent,
-                    ),
-
-                  ),
-                  onMapIsReady: (isReady) {
-                    if(isReady){
-                      double radius = _calculateRadiusBasedOnLocation(latitudenya, longitudenya);
-                      _drawUserCircle(radius);
-                    }
-                  },
-                ),
-              ),
-            //end if
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Future.delayed(const Duration(milliseconds: 800), () {
-            _isLoading = true;
-            
-
-
-            buatEnableTracking = false;
-            buatUnfollowUser = true;
-
-            _determineAndSetPosition(isUpdated: "ya");
-
-            // setState(() {
-            //   buatEnableTracking = false;
-            // });
-
-
-            // _determinePosition().then((posisi) {
-            //   setState(() {
-            //     latitudenya = posisi.latitude;
-            //     longitudenya = posisi.longitude;
-                // controller!.changeLocation(
-                //   GeoPoint(latitude: latitudenya, longitude: longitudenya)
-                // );
-
-            //     double radius = _calculateRadiusBasedOnLocation(latitudenya, longitudenya);
-
-            //     _isRefreshed = true;
-
-            //     _drawUserCircle(radius);
-            //   });
-            //});
-          });
-        },
-        child: Icon(Icons.refresh),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
-    );
-  }
-}
-
-// referensi : 
-// https://www.youtube.com/watch?v=mI3QwwwZrn4
-class DraggableBottomSheet extends StatefulWidget {
-  final Widget anak;
-  const DraggableBottomSheet({super.key, required this.anak});
-
-  @override
-  State<DraggableBottomSheet> createState() => _DraggableBottomSheetState();
-}
-
-// shortcut buat state : stful
-
-class _DraggableBottomSheetState extends State<DraggableBottomSheet> {
-  final sheet = GlobalKey();
-  final controller = DraggableScrollableController();
+class _HalteterdekatState extends State<Halteterdekat> {
+  MapController? _mapController;
+  GeoPoint? _userPoint;
+  List<Halte> _haltes = const [];
+  Halte? _selectedHalte;
+  RoadInfo? _roadInfo;
+  String? _errorMessage;
+  bool _isLoadingLocation = true;
+  bool _isDrawingRoute = false;
+  bool _mapIsReady = false;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    controller.addListener(onChanged);
+    _loadUserLocation();
   }
 
-  void onChanged(){
-    final currentSize = controller.size;
-    if(currentSize <= 0.05) collapse();
+  @override
+  void dispose() {
+    _mapController?.dispose();
+    super.dispose();
   }
 
-  void collapse() => animateSheet(getSheet.snapSizes!.first);
-  void anchor() => animateSheet(getSheet.snapSizes!.last);
-  void expand() => animateSheet(getSheet.maxChildSize);
-  void hide() => animateSheet(getSheet.minChildSize);
+  Future<Position> _determinePosition() async {
+    if (!await Geolocator.isLocationServiceEnabled()) {
+      throw Exception('Aktifkan layanan lokasi (GPS) terlebih dahulu.');
+    }
 
-  void animateSheet(double size){
-    controller.animateTo(
-      size, 
-      duration: const Duration(microseconds: 50), 
-      curve: Curves.easeInOut
+    var permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+
+    if (permission == LocationPermission.denied) {
+      throw Exception('Izin lokasi ditolak.');
+    }
+    if (permission == LocationPermission.deniedForever) {
+      throw Exception(
+        'Izin lokasi ditolak permanen. Aktifkan izin lokasi dari pengaturan aplikasi.',
+      );
+    }
+
+    return Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
     );
   }
 
-  DraggableScrollableSheet get getSheet => (sheet.currentWidget as DraggableScrollableSheet);
+  Future<void> _loadUserLocation() async {
+    if (mounted) {
+      setState(() {
+        _isLoadingLocation = true;
+        _errorMessage = null;
+      });
+    }
+
+    try {
+      final position = await _determinePosition();
+      final userPoint = GeoPoint(
+        latitude: position.latitude,
+        longitude: position.longitude,
+      );
+
+      final haltes = await _fetchNearbyHaltes(position);
+
+      if (!mounted) return;
+      setState(() {
+        _userPoint = userPoint;
+        _haltes = haltes;
+        _mapController ??= MapController.withPosition(initPosition: userPoint);
+        _isLoadingLocation = false;
+      });
+
+      if (_mapIsReady) {
+        await _showMapPoints();
+      }
+    } catch (error) {
+      if (!mounted) return;
+      setState(() {
+        _isLoadingLocation = false;
+        _errorMessage = error.toString().replaceFirst('Exception: ', '');
+      });
+    }
+  }
+
+  Future<List<Halte>> _fetchNearbyHaltes(Position position) async {
+    final response = await Dio().get(
+      '${myIpAddr()}/halte-terdekat',
+      queryParameters: {
+        'latitude': position.latitude,
+        'longitude': position.longitude,
+        'radius': 10000,
+        'limit': 20,
+      },
+      options: Options(receiveTimeout: const Duration(seconds: 30)),
+    );
+
+    final items = response.data['items'] as List<dynamic>? ?? const [];
+    return items.map((rawItem) {
+      final item = rawItem as Map<String, dynamic>;
+      final operatorName = item['operator']?.toString();
+      final name = item['name']?.toString() ?? 'Halte tanpa nama';
+      final searchableOperator = '${operatorName ?? ''} $name'.toLowerCase();
+      final ticketValue = searchableOperator.contains('damri')
+          ? 'Damri'
+          : searchableOperator.contains('ats')
+              ? 'ATS'
+              : null;
+      return Halte(
+        name: name,
+        ticketValue: ticketValue,
+        imageAsset: 'assets/images/halte.png',
+        point: GeoPoint(
+          latitude: (item['latitude'] as num).toDouble(),
+          longitude: (item['longitude'] as num).toDouble(),
+        ),
+      );
+    }).toList();
+  }
+
+  Future<void> _showMapPoints() async {
+    final controller = _mapController;
+    final userPoint = _userPoint;
+    if (controller == null || userPoint == null) return;
+
+    await controller.removeAllCircle();
+    await controller.drawCircle(
+      CircleOSM(
+        key: 'user-radius',
+        centerPoint: userPoint,
+        radius: 180,
+        color: Colors.blue.withValues(alpha: 0.12),
+        borderColor: Colors.blue,
+        strokeWidth: 1,
+      ),
+    );
+
+    for (final halte in _haltes) {
+      await controller.addMarker(
+        halte.point,
+        markerIcon: const MarkerIcon(
+          icon: Icon(Icons.directions_bus, color: Colors.red, size: 46),
+        ),
+      );
+    }
+    await controller.moveTo(userPoint, animate: true);
+    await controller.setZoom(zoomLevel: 15);
+  }
+
+  Future<void> _centerOnUser() async {
+    if (_userPoint == null) {
+      await _loadUserLocation();
+      return;
+    }
+    await _mapController?.moveTo(_userPoint!, animate: true);
+    await _mapController?.setZoom(zoomLevel: 16);
+  }
+
+  Future<void> _drawRoute(Halte halte) async {
+    final controller = _mapController;
+    final userPoint = _userPoint;
+    if (controller == null || userPoint == null || _isDrawingRoute) return;
+
+    setState(() {
+      _selectedHalte = halte;
+      _roadInfo = null;
+      _isDrawingRoute = true;
+    });
+
+    try {
+      await controller.clearAllRoads();
+      final road = await controller.drawRoad(
+        userPoint,
+        halte.point,
+        roadType: RoadType.car,
+        roadOption: const RoadOption(
+          roadColor: Colors.blue,
+          roadWidth: 10,
+          zoomInto: true,
+        ),
+      );
+      if (!mounted) return;
+      setState(() => _roadInfo = road);
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+              'Rute gagal dimuat. Periksa koneksi internet lalu coba lagi.'),
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _isDrawingRoute = false);
+    }
+  }
+
+  double _distanceTo(Halte halte) {
+    final userPoint = _userPoint;
+    if (userPoint == null) return 0;
+    return Geolocator.distanceBetween(
+          userPoint.latitude,
+          userPoint.longitude,
+          halte.point.latitude,
+          halte.point.longitude,
+        ) /
+        1000;
+  }
+
+  String _routeSummary(Halte halte) {
+    if (_selectedHalte == halte && _isDrawingRoute) return 'Menghitung rute...';
+    if (_selectedHalte == halte && _roadInfo != null) {
+      final distance = _roadInfo!.distance?.toStringAsFixed(1) ?? '-';
+      final minutes = ((_roadInfo!.duration ?? 0) / 60).ceil();
+      return '$distance km - sekitar $minutes menit';
+    }
+    return 'Sekitar ${_distanceTo(halte).toStringAsFixed(1)} km';
+  }
 
   @override
   Widget build(BuildContext context) {
-    // you can use a Stack widget. This allows you to layer widgets on top of each other
+    return Scaffold(
+      appBar: AppBar(title: const Text('Halte Terdekat')),
+      body: _buildBody(),
+      floatingActionButton: _mapController == null
+          ? null
+          : FloatingActionButton(
+              onPressed: _centerOnUser,
+              tooltip: 'Posisi saya',
+              child: const Icon(Icons.my_location),
+            ),
+    );
+  }
+
+  Widget _buildBody() {
+    if (_isLoadingLocation) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (_errorMessage != null) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.location_off, size: 56, color: Colors.red),
+              const SizedBox(height: 16),
+              Text(_errorMessage!, textAlign: TextAlign.center),
+              const SizedBox(height: 16),
+              FilledButton.icon(
+                onPressed: _loadUserLocation,
+                icon: const Icon(Icons.refresh),
+                label: const Text('Coba lagi'),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     return Stack(
       children: [
-        // buat jadikan ini background dari scrollablesheet
         Positioned.fill(
-          child: IsiMap()
+          child: OSMFlutter(
+            controller: _mapController!,
+            osmOption: OSMOption(
+              userTrackingOption: const UserTrackingOption(
+                enableTracking: true,
+                unFollowUser: false,
+              ),
+              userLocationMarker: UserLocationMaker(
+                personMarker: const MarkerIcon(
+                  icon: Icon(Icons.my_location, color: Colors.blue, size: 44),
+                ),
+                directionArrowMarker: const MarkerIcon(
+                  icon: Icon(Icons.navigation, color: Colors.blue, size: 44),
+                ),
+              ),
+              zoomOption: const ZoomOption(
+                initZoom: 15,
+                minZoomLevel: 3,
+                maxZoomLevel: 19,
+                stepZoom: 1,
+              ),
+              roadConfiguration: const RoadOption(
+                roadColor: Colors.blue,
+                roadWidth: 10,
+              ),
+              showContributorBadgeForOSM: true,
+            ),
+            onMapIsReady: (isReady) async {
+              if (!isReady) return;
+              _mapIsReady = true;
+              await _showMapPoints();
+            },
+          ),
         ),
-        LayoutBuilder(
-          builder: (builder, constraint) {
-            return DraggableScrollableSheet(
-              key: sheet,
-              initialChildSize: 0.35,
-              maxChildSize: 0.7, //ubah jd 1 klo mw cover 1 screen
-              minChildSize: 0,
-              expand: true,
-              snap: true,
-              snapSizes: [
-                60 / constraint.maxHeight,
-                0.5 
-              ],
-              builder: (BuildContext context, ScrollController scrollController){
-                return DecoratedBox(
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black,
-                        blurRadius: 10,
-                        spreadRadius: 1,
-                        offset: Offset(0, 1)
-                      )
-                    ],
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(22),
-                      topRight: Radius.circular(22)
-                    )
+        DraggableScrollableSheet(
+          initialChildSize: 0.32,
+          minChildSize: 0.14,
+          maxChildSize: 0.65,
+          snap: true,
+          builder: (context, scrollController) {
+            return DecoratedBox(
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+                boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 12)],
+              ),
+              child: ListView(
+                controller: scrollController,
+                padding: const EdgeInsets.fromLTRB(16, 10, 16, 24),
+                children: [
+                  Center(
+                    child: Container(
+                      width: 52,
+                      height: 5,
+                      decoration: BoxDecoration(
+                        color: Colors.black26,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
                   ),
-                  child: CustomScrollView(
-                    controller: scrollController,
-                    slivers: [
-                      topButtonIndicator(),
-                      SliverToBoxAdapter(
-                        child: widget.anak,
-                      )
-                    ],
+                  const SizedBox(height: 12),
+                  const Text(
+                    'Pilih halte tujuan',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                );
-              }
+                  const SizedBox(height: 8),
+                  for (final halte in _haltes) _buildHalteCard(halte),
+                ],
+              ),
             );
-          }
-        )
+          },
+        ),
       ],
     );
   }
 
-  SliverToBoxAdapter topButtonIndicator(){
-    return SliverToBoxAdapter(
-      child: Container(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+  Widget _buildHalteCard(Halte halte) {
+    final selected = _selectedHalte == halte;
+    return Card(
+      color: selected ? Colors.blue.shade50 : null,
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Row(
           children: [
-            Container(
-              child: Center(
-                child: Wrap(
-                  children: [
-                    Container(
-                      width: 100,
-                      margin: const EdgeInsets.only(
-                        top: 10, bottom: 10
-                      ),
-                      height: 5,
-                      decoration: const BoxDecoration(
-                        color: Colors.black54,
-                        shape: BoxShape.rectangle,
-                        borderRadius: BorderRadius.all(Radius.circular(8.0))
-                      ),
-                    )
-                  ],
-                ),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Container(
+                color: Colors.black12,
+                width: 76,
+                height: 76,
+                child: Image.asset(halte.imageAsset, fit: BoxFit.contain),
               ),
-            )
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    halte.name,
+                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(_routeSummary(halte)),
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      FilledButton.icon(
+                        onPressed:
+                            _isDrawingRoute ? null : () => _drawRoute(halte),
+                        icon: const Icon(Icons.directions, size: 18),
+                        label: const Text('Lihat rute'),
+                      ),
+                      if (halte.ticketValue != null)
+                        OutlinedButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => Pesantiket(
+                                  existsHalte: halte.ticketValue!,
+                                ),
+                              ),
+                            );
+                          },
+                          child: const Text('Pesan tiket'),
+                        ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
@@ -423,179 +416,16 @@ class _DraggableBottomSheetState extends State<DraggableBottomSheet> {
   }
 }
 
+class Halte {
+  const Halte({
+    required this.name,
+    this.ticketValue,
+    required this.imageAsset,
+    required this.point,
+  });
 
-class UiBottomSheet extends StatelessWidget {
-  const UiBottomSheet({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Container(
-        padding: EdgeInsets.only(
-          left: 30,
-          right: 30
-        ),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(
-                    bottom: 35
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(15.0),
-                    child: Container(
-                      color: Colors.black12,
-                      height: 110,
-                      width: 110,
-                      child: Image.asset(
-                        'assets/images/damrilogo.png',
-                        fit: BoxFit.contain, // Adjust the image fit as needed
-                      ),
-                    ),
-                  ),
-                ),
-
-                SizedBox(width: 10,),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Damri", 
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500
-                      ),
-                    ),
-                    SizedBox(height: 5,),
-                    Text(
-                      "Sekitar 10km"
-                    ),
-                    SizedBox(height: 5,),
-                    MaterialButton(
-                      color: Colors.blue,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)
-                      ),
-                      onPressed: () {
-                        Navigator.push(
-                          context, 
-                          MaterialPageRoute(
-                            builder: (context) => Pesantiket(existsHalte: "Damri")
-                          )
-                        );
-                      },
-                      child: Text("Pergi Ke Sini"),
-                    ),
-
-                    // ClipRRect(
-                    //   borderRadius: BorderRadius.circular(15.0),
-                    //   child: Container(
-                    //     color: Colors.black12,
-                    //     height: 20,
-                    //     width: 240,
-                    //   ),
-                    // ),
-                    // SizedBox(height: 5,),
-                    // ClipRRect(
-                    //   borderRadius: BorderRadius.circular(15.0),
-                    //   child: Container(
-                    //     color: Colors.black12,
-                    //     height: 20,
-                    //     width: 180,
-                    //   ),
-                    // ),
-                    SizedBox(height: 50)
-                  ],
-                )
-              
-              
-              ],
-
-            ),
-            Row(
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(
-                    bottom: 35
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(15.0),
-                    child: Container(
-                      color: Colors.black12,
-                      height: 110,
-                      width: 110,
-                      child: Image.asset(
-                        'assets/images/atslogo.png',
-                        fit: BoxFit.contain, // Adjust the image fit as needed
-                      ),
-                    ),
-                  ),
-                ),
-
-                SizedBox(width: 10,),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "ATS Executive", 
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500
-                      ),
-                    ),
-                    SizedBox(height: 5,),
-                    Text(
-                      "Sekitar 11km"
-                    ),
-                    SizedBox(height: 5,),
-                    MaterialButton(
-                      color: Colors.blue,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)
-                      ),
-                      onPressed: () {
-                        Navigator.push(
-                          context, 
-                          MaterialPageRoute(
-                            builder: (context) => Pesantiket(existsHalte: "ATS")
-                          )
-                        );
-                      },
-                      child: Text("Pergi Ke Sini"),
-                    ),
-
-                    // ClipRRect(
-                    //   borderRadius: BorderRadius.circular(15.0),
-                    //   child: Container(
-                    //     color: Colors.black12,
-                    //     height: 20,
-                    //     width: 240,
-                    //   ),
-                    // ),
-                    // SizedBox(height: 5,),
-                    // ClipRRect(
-                    //   borderRadius: BorderRadius.circular(15.0),
-                    //   child: Container(
-                    //     color: Colors.black12,
-                    //     height: 20,
-                    //     width: 180,
-                    //   ),
-                    // ),
-                    SizedBox(height: 50)
-                  ],
-                )
-              
-              
-              ],
-
-            ),
-            SizedBox(height: 10)
-          ],
-        ),
-
-      ),
-    );
-  }
+  final String name;
+  final String? ticketValue;
+  final String imageAsset;
+  final GeoPoint point;
 }
