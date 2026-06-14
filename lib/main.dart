@@ -10,6 +10,7 @@ import 'package:dio/dio.dart';
 import './screen/function/confirmExit.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter/services.dart';
+
 // referensi :
 // https://stackoverflow.com/questions/51765092/how-to-scroll-page-in-flutter
 // https://www.dhiwise.com/post/how-to-flutter-navigate-to-a-new-page-with-data-passing
@@ -20,28 +21,25 @@ import 'package:flutter/services.dart';
 void main() {
   // kunci orientasi
   WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown
-  ]).then((_) {
+  SystemChrome.setPreferredOrientations(
+      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]).then((_) {
     FlutterError.onError = (FlutterErrorDetails details) {
       // Log error but prevent debugger from pausing.
       FlutterError.dumpErrorToConsole(details);
     };
 
     runApp(MyApp());
-
   });
 }
 
 // gaboleh pake banyak materialapp, cukup satu di main.dart. ntr dia bkl kereplace
-// The issue you're experiencing is likely due to the way you're navigating between screens in your Flutter application. 
+// The issue you're experiencing is likely due to the way you're navigating between screens in your Flutter application.
 //When you navigate to DetailWisata, it seems that the MaterialApp widget is being recreated, which can cause the navigation stack to reset.
-// Remove the MaterialApp from DetailWisata: You should not wrap your DetailWisata widget with a MaterialApp again. 
+// Remove the MaterialApp from DetailWisata: You should not wrap your DetailWisata widget with a MaterialApp again.
 //The MaterialApp should only be at the root of your application (usually in main.dart). Instead, just return a Scaffold or any other widget directly.
 
-// Alurnya Adalah 
-// StatelessWidget -> StatefulWidget yang berisi createState _konten -> _konten extends State 
+// Alurnya Adalah
+// StatelessWidget -> StatefulWidget yang berisi createState _konten -> _konten extends State
 
 // ignore: must_be_immutable
 class MyApp extends StatelessWidget {
@@ -53,39 +51,40 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      // home: const MyHomePage(title: 'Popopop'),
-      home: Scaffold(
-        // appBar: AppBar(
-        //   title: const Text('Flutter Pertama Saya'),
-        //   backgroundColor: Colors.red[300],
-        // ),
-        // body: MyTextField(),
-        body: (isNewRegister && isNewRegister != null) 
-          ? MyTextField(isNewRegister: true,) 
-          : MyTextField(),
-      )
-    );
+        title: 'Flutter',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          // This is the theme of your application.
+          //
+          // TRY THIS: Try running your application with "flutter run". You'll see
+          // the application has a purple toolbar. Then, without quitting the app,
+          // try changing the seedColor in the colorScheme below to Colors.green
+          // and then invoke "hot reload" (save your changes or press the "hot
+          // reload" button in a Flutter-supported IDE, or press "r" if you used
+          // the command line to start the app).
+          //
+          // Notice that the counter didn't reset back to zero; the application
+          // state is not lost during the reload. To reset the state, use hot
+          // restart instead.
+          //
+          // This works for code too, not just values: Most code changes can be
+          // tested with just a hot reload.
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          useMaterial3: true,
+        ),
+        // home: const MyHomePage(title: 'Popopop'),
+        home: Scaffold(
+          // appBar: AppBar(
+          //   title: const Text('Flutter Pertama Saya'),
+          //   backgroundColor: Colors.red[300],
+          // ),
+          // body: MyTextField(),
+          body: (isNewRegister && isNewRegister != null)
+              ? MyTextField(
+                  isNewRegister: true,
+                )
+              : MyTextField(),
+        ));
   }
 }
 
@@ -114,7 +113,7 @@ class _FirstScreen extends State<MyTextField> {
 
   // inisiasikan state. kaya react
   @override
-  void initState(){
+  void initState() {
     super.initState();
     fnIsNewRegister();
     _loadJwt();
@@ -130,9 +129,10 @@ class _FirstScreen extends State<MyTextField> {
   // end inisiasikan state
 
   // function buat show dia keregis atau nda
-  void fnIsNewRegister(){
+  void fnIsNewRegister() {
     setState(() {
-      isNewRegister = (widget.isNewRegister != null) ? widget.isNewRegister : false;
+      isNewRegister =
+          (widget.isNewRegister != null) ? widget.isNewRegister : false;
     });
 
     // timer buat setstate ke false lg
@@ -143,8 +143,7 @@ class _FirstScreen extends State<MyTextField> {
     });
   }
 
-
-  // Cara kerja dio kaya Axios. 
+  // Cara kerja dio kaya Axios.
   Future<void> utkLogin(context) async {
     final dio = Dio();
 
@@ -152,42 +151,38 @@ class _FirstScreen extends State<MyTextField> {
       // setting php artisan kek gini
       // php artisan serve --host=192.168.150.166
       // wajib pake ip host. kalo kaga dia g jln.
-      final response = await dio.post("${myIpAddr()}/login", 
-        data: {
-          'email': tfnum1.text,
-          'passwd': tfnum2.text
-        }
-      );
+      final response = await dio.post("${myIpAddr()}/login",
+          data: {'email': tfnum1.text, 'passwd': tfnum2.text});
 
       // Parse the response data
       final Map<String, dynamic> responseData = response.data;
 
       // write jwt
       await storage.write(key: 'jwt', value: responseData['access_token']);
-      
 
       // Navigator.push(
       //   context,
       //   MaterialPageRoute(
-      //     builder: (context) => 
+      //     builder: (context) =>
       //     SecondScreen(data: responseData )
       //   )
       // );
 
       // ini biar dia ngereplace urlnya. jadi pas user back, dia nda nembak ke login lagi.
       Navigator.pushReplacement(
-        context, 
+        context,
         MaterialPageRoute(
-          builder: (context) =>  SecondScreen(data: responseData,)
-        ),
+            builder: (context) => SecondScreen(
+                  data: responseData,
+                )),
         // (Route<dynamic> route) => false
       );
 
       tfnum1.text = "";
       tfnum2.text = "";
     } catch (e) {
-      if(e is DioException){
-        if(e.response != null){
+      if (e is DioException) {
+        if (e.response != null) {
           // Fluttertoast.showToast(
           //   msg: (e.response?.statusCode == 401) ?  : ,
           //   toastLength: Toast.LENGTH_LONG,
@@ -197,18 +192,12 @@ class _FirstScreen extends State<MyTextField> {
           //   fontSize: 16.0
           // );
 
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content:  (e.response?.statusCode == 401) ? Text(
-                "Error Username / Password Salah"
-              ) : Text(
-                "Error ${e.response?.statusCode}: ${e.response?.data}"
-              )
-            )
-          );
-
-
-        }else{
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: (e.response?.statusCode == 401)
+                  ? Text("Error Username / Password Salah")
+                  : Text(
+                      "Error ${e.response?.statusCode}: ${e.response?.data}")));
+        } else {
           // Fluttertoast.showToast(
           //   msg: "Error ${e}",
           //   toastLength: Toast.LENGTH_LONG,
@@ -218,20 +207,18 @@ class _FirstScreen extends State<MyTextField> {
           //   fontSize: 16.0
           // );
 
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Error $e"))
-          );
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text("Error $e")));
         }
       }
     }
   }
 
-  
-  //Ketika menggunakan texteditingcontroller, pastikan untuk menghapus controller 
-  //ketika halaman atau widget sudah tidak digunakan. 
+  //Ketika menggunakan texteditingcontroller, pastikan untuk menghapus controller
+  //ketika halaman atau widget sudah tidak digunakan.
   //Ini bertujuan supaya tidak menimbulkan kebocoran memori (memory leak).
   @override
-  void dispose(){
+  void dispose() {
     tfnum1.dispose();
     tfnum2.dispose();
     _timerIsRegister?.cancel();
@@ -294,7 +281,9 @@ class _FirstScreen extends State<MyTextField> {
                       children: [
                         // Logo
                         Positioned(
-                          top: (isNewRegister != null && isNewRegister) ? 15 : 45,
+                          top: (isNewRegister != null && isNewRegister)
+                              ? 15
+                              : 45,
                           left: 0,
                           right: 0,
                           child: Column(
@@ -309,36 +298,33 @@ class _FirstScreen extends State<MyTextField> {
                                 child: Text(
                                   'Login',
                                   style: TextStyle(
-                                    fontSize: 25,
-                                    fontWeight: FontWeight.bold
-                                  ),
+                                      fontSize: 25,
+                                      fontWeight: FontWeight.bold),
                                 ),
                               ),
                             ],
                           ),
                         ),
 
-                        if(isNewRegister != null && isNewRegister)
-                        Positioned(
-                          top: 140,
-                          left: 20,
-                          right: 20,
-                          child: Container(
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              color: Colors.green[400],
-                              borderRadius: BorderRadius.circular(10)
-                            ),
-                            height: 35,
-                            child: Text(
-                              "Akun Berhasil Regis. Silahkan Login", 
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Colors.white,                                
-                              ),
-                            ),
-                          )
-                        ),
+                        if (isNewRegister != null && isNewRegister)
+                          Positioned(
+                              top: 140,
+                              left: 20,
+                              right: 20,
+                              child: Container(
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                    color: Colors.green[400],
+                                    borderRadius: BorderRadius.circular(10)),
+                                height: 35,
+                                child: Text(
+                                  "Akun Berhasil Regis. Silahkan Login",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              )),
 
                         // Email Field
                         Positioned(
@@ -364,44 +350,44 @@ class _FirstScreen extends State<MyTextField> {
                           top: 255,
                           left: 20,
                           right: 20,
-                          child: Column(
-                            children: [
-                              SizedBox(
-                                width: width - 100,
-                                child: TextField(
-                                  controller: tfnum2,
-                                  obscureText: true,
-                                  decoration: InputDecoration(
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    labelText: 'Password',
+                          child: Column(children: [
+                            SizedBox(
+                              width: width - 100,
+                              child: TextField(
+                                controller: tfnum2,
+                                obscureText: true,
+                                decoration: InputDecoration(
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
                                   ),
+                                  labelText: 'Password',
                                 ),
                               ),
-
-                              SizedBox(height: 8,),
-
-                              SizedBox(
-                                width: width - 100,
-                                child: InkWell(
-                                  onTap: () {
-                                    Navigator.push(
-                                      context, 
-                                      MaterialPageRoute(builder: (context) => const forgetpassword(title: 'title'))
-                                    );
-                                  },
-                                  child: const Text(
-                                    "Forgot Password?",
-                                    style: TextStyle(
-                                      fontSize: 10,
-                                    ),
-                                    textAlign: TextAlign.right,
+                            ),
+                            SizedBox(
+                              height: 8,
+                            ),
+                            SizedBox(
+                              width: width - 100,
+                              child: InkWell(
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const forgetpassword(
+                                                  title: 'title')));
+                                },
+                                child: const Text(
+                                  "Forgot Password?",
+                                  style: TextStyle(
+                                    fontSize: 10,
                                   ),
+                                  textAlign: TextAlign.right,
                                 ),
                               ),
-                            ]
-                          ),
+                            ),
+                          ]),
                         ),
 
                         // Submit
@@ -414,11 +400,10 @@ class _FirstScreen extends State<MyTextField> {
                             //width: ,
                             height: 80,
                             child: ElevatedButton(
-                              onPressed: () {
-                                utkLogin(context);
-                              }, 
-                              child: Text("Login")
-                            ),
+                                onPressed: () {
+                                  utkLogin(context);
+                                },
+                                child: Text("Login")),
                           ),
                         ),
 
@@ -431,27 +416,23 @@ class _FirstScreen extends State<MyTextField> {
                             child: Row(
                               children: [
                                 Text('Belum punya Akun?'),
-
                                 InkWell(
                                   onTap: () {
                                     Navigator.push(
-                                      context, 
-                                      MaterialPageRoute(builder: (context) => IsiRegister())
-                                    );
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                IsiRegister()));
                                   },
                                   child: Text(
                                     ' Regis Sekarang',
                                     style: TextStyle(color: Colors.blue[700]),
-                                    
                                   ),
                                 )
                               ],
                             ),
                           ),
                         ),
-                      
-
-                      
                       ],
                     ),
                   ),
@@ -460,9 +441,7 @@ class _FirstScreen extends State<MyTextField> {
             ),
           ),
         ),
-      ), 
+      ),
     );
   }
 }
-
-
