@@ -255,190 +255,196 @@ class _FirstScreen extends State<MyTextField> {
     // jadi Column -> Row -> Expanded -> Padding (Opsional).
     // inti flutter ni berlapis lapis
 
-    final height = MediaQuery.of(context).size.height;
-    final width = MediaQuery.of(context).size.width;
-
     return WillPopScope(
       onWillPop: () async => await showPopUpExit(context),
-      child: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Colors.blue, Color(0xFFD8BFD8)],
+      child: Scaffold(
+        body: Container(
+          width: double.infinity,
+          height: double.infinity,
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Colors.blue, Color(0xFFD8BFD8)],
+            ),
           ),
-        ),
-        child: Scaffold(
-          backgroundColor: Colors.transparent,
-          body: SingleChildScrollView(
-            child: Column(
-              children: [
-                Container(
-                  alignment: Alignment.center,
-                  padding: EdgeInsets.only(top: (height / 4)),
-                  child: Container(
-                    width: width - 100,
-                    height: 420,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10),
+          child: SafeArea(
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return SingleChildScrollView(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: constraints.maxHeight,
                     ),
-                    child: Stack(
-                      children: [
-                        // Logo
-                        Positioned(
-                          top: (isNewRegister != null && isNewRegister) ? 15 : 45,
-                          left: 0,
-                          right: 0,
-                          child: Column(
-                            children: [
-                              Container(
-                                alignment: Alignment.center,
-                                //width: ,
-                                height: 80,
-                                child: Image.asset('assets/images/tayo.png'),
-                              ),
-                              Center(
-                                child: Text(
-                                  'Login',
-                                  style: TextStyle(
-                                      fontSize: 25, fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        if (isNewRegister != null && isNewRegister)
-                          Positioned(
-                              top: 140,
-                              left: 20,
-                              right: 20,
-                              child: Container(
-                                alignment: Alignment.center,
-                                decoration: BoxDecoration(
-                                    color: Colors.green[400],
-                                    borderRadius: BorderRadius.circular(10)),
-                                height: 35,
-                                child: Text(
-                                  "Akun Berhasil Regis. Silahkan Login",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              )),
-
-                        // Email Field
-                        Positioned(
-                          top: 190,
-                          left: 20,
-                          right: 20,
-                          child: SizedBox(
-                            width: width - 100,
-                            child: TextField(
-                              controller: tfnum1,
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                labelText: 'Email',
-                              ),
-                            ),
-                          ),
-                        ),
-
-                        // Masukkan Pass Field
-                        Positioned(
-                          top: 255,
-                          left: 20,
-                          right: 20,
-                          child: Column(children: [
-                            SizedBox(
-                              width: width - 100,
-                              child: TextField(
-                                controller: tfnum2,
-                                obscureText: true,
-                                decoration: InputDecoration(
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  labelText: 'Password',
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              height: 8,
-                            ),
-                            SizedBox(
-                              width: width - 100,
-                              child: InkWell(
-                                onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              const forgetpassword(title: 'title')));
-                                },
-                                child: const Text(
-                                  "Forgot Password?",
-                                  style: TextStyle(
-                                    fontSize: 10,
-                                  ),
-                                  textAlign: TextAlign.right,
-                                ),
-                              ),
-                            ),
-                          ]),
-                        ),
-
-                        // Submit
-                        Positioned(
-                          top: 315,
-                          left: 0,
-                          right: 0,
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 450),
                           child: Container(
-                            alignment: Alignment.center,
-                            //width: ,
-                            height: 80,
-                            child: ElevatedButton(
-                                onPressed: () {
-                                  utkLogin(context);
-                                },
-                                child: Text("Login")),
-                          ),
-                        ),
-
-                        // Sudah Punya Akun? Text
-                        Positioned(
-                          top: 385,
-                          left: 40,
-                          child: SizedBox(
-                            height: 20,
-                            child: Row(
-                              children: [
-                                Text('Belum punya Akun?'),
-                                InkWell(
-                                  onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => IsiRegister()));
-                                  },
-                                  child: Text(
-                                    ' Regis Sekarang',
-                                    style: TextStyle(color: Colors.blue[700]),
-                                  ),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 5),
                                 )
                               ],
                             ),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 25),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const SizedBox(height: 10),
+                                  // Logo
+                                  Container(
+                                    alignment: Alignment.center,
+                                    height: 80,
+                                    child: Image.asset('assets/images/tayo.png'),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  const Center(
+                                    child: Text(
+                                      'Login',
+                                      style: TextStyle(
+                                          fontSize: 25, fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 20),
+
+                                  if (isNewRegister != null && isNewRegister) ...[
+                                    Container(
+                                      alignment: Alignment.center,
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 10, horizontal: 12),
+                                      decoration: BoxDecoration(
+                                          color: Colors.green[400],
+                                          borderRadius: BorderRadius.circular(10)),
+                                      child: const Text(
+                                        "Akun Berhasil Regis. Silahkan Login",
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 15),
+                                  ],
+
+                                  // Email Field
+                                  TextField(
+                                    controller: tfnum1,
+                                    decoration: InputDecoration(
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      labelText: 'Email',
+                                      prefixIcon: const Icon(Icons.email),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 15),
+
+                                  // Password Field
+                                  TextField(
+                                    controller: tfnum2,
+                                    obscureText: true,
+                                    decoration: InputDecoration(
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      labelText: 'Password',
+                                      prefixIcon: const Icon(Icons.lock),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+
+                                  // Forgot Password
+                                  Align(
+                                    alignment: Alignment.centerRight,
+                                    child: InkWell(
+                                      onTap: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const forgetpassword(
+                                                        title: 'title')));
+                                      },
+                                      child: const Text(
+                                        "Forgot Password?",
+                                        style: TextStyle(
+                                          fontSize: 11,
+                                          color: Colors.blue,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 25),
+
+                                  // Submit Button
+                                  SizedBox(
+                                    width: double.infinity,
+                                    height: 48,
+                                    child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.blue[600],
+                                          foregroundColor: Colors.white,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(12),
+                                          ),
+                                        ),
+                                        onPressed: () {
+                                          utkLogin(context);
+                                        },
+                                        child: const Text(
+                                          "Login",
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        )),
+                                  ),
+                                  const SizedBox(height: 20),
+
+                                  // Belum Punya Akun? Text
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      const Text('Belum punya Akun?'),
+                                      InkWell(
+                                        onTap: () {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      const IsiRegister()));
+                                        },
+                                        child: Text(
+                                          ' Regis Sekarang',
+                                          style: TextStyle(
+                                            color: Colors.blue[700],
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                  const SizedBox(height: 10),
+                                ],
+                              ),
+                            ),
                           ),
                         ),
-                      ],
+                      ),
                     ),
                   ),
-                ),
-              ],
+                );
+              },
             ),
           ),
         ),

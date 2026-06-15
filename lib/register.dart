@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 // import 'package:fluttertoast/fluttertoast.dart';
 
-
 class IsiRegister extends StatefulWidget {
   const IsiRegister({super.key});
 
@@ -27,7 +26,6 @@ class _regis extends State<IsiRegister> {
   TextEditingController passwd = TextEditingController();
   TextEditingController repeatPassWd = TextEditingController();
 
-
   bool isLoading = true;
   bool isErrorEmail = false;
   bool isErrorPass = false;
@@ -35,39 +33,31 @@ class _regis extends State<IsiRegister> {
   Timer? _timerErrorPass;
 
   Future<void> buatRegis(BuildContext context) async {
-
-    if(passwd.text != repeatPassWd.text){
+    if (passwd.text != repeatPassWd.text) {
       print("Password Tak Cocok");
       fnShowErrorPass();
 
       setState(() {
         isLoading = false;
       });
-
-    }else{
+    } else {
       try {
-        var response = await dio.post('${myIpAddr()}/register', 
-          options: Options(
-            headers: {
-              "Content-Type": "application/json"
-            }
-          ),
-          data: {
-            'username': username.text,
-            'email': email.text,
-            'passwd': passwd.text
-          }
-        );
+        var response = await dio.post('${myIpAddr()}/register',
+            options: Options(headers: {"Content-Type": "application/json"}),
+            data: {
+              'username': username.text,
+              'email': email.text,
+              'passwd': passwd.text
+            });
 
-        if(context.mounted && response.statusCode == 200){
+        if (context.mounted && response.statusCode == 200) {
           Navigator.push(
-            context, 
-            MaterialPageRoute(builder: (context) => MyApp(
-              isNewRegister: true,
-            ))
-          );
+              context,
+              MaterialPageRoute(
+                  builder: (context) => MyApp(
+                        isNewRegister: true,
+                      )));
         }
-
 
         // jangan buat status code 400 keatas di sini. dia masuk ke catch block
         // switch (response.statusCode) {
@@ -80,17 +70,16 @@ class _regis extends State<IsiRegister> {
         //   case 200:
         //     if(context.mounted){
         //       Navigator.push(
-        //         context, 
+        //         context,
         //         MaterialPageRoute(builder: (context) => MyApp())
         //       );
         //     }
         //     break;
         // }
-      } on DioException catch (e){
-        if(e.response?.statusCode == 409){
+      } on DioException catch (e) {
+        if (e.response?.statusCode == 409) {
           fnShowErrorEmail();
         }
-
       } finally {
         clearData();
 
@@ -101,8 +90,7 @@ class _regis extends State<IsiRegister> {
     }
   }
 
-  void clearData(){
-
+  void clearData() {
     username.clear();
     passwd.clear();
     repeatPassWd.clear();
@@ -111,9 +99,7 @@ class _regis extends State<IsiRegister> {
     usernameFocus.requestFocus();
   }
 
-
-
-  void fnShowErrorPass(){
+  void fnShowErrorPass() {
     clearData();
 
     setState(() {
@@ -127,8 +113,7 @@ class _regis extends State<IsiRegister> {
     });
   }
 
-  
-  void fnShowErrorEmail(){
+  void fnShowErrorEmail() {
     print("Panggil");
 
     setState(() {
@@ -153,281 +138,230 @@ class _regis extends State<IsiRegister> {
 
   @override
   Widget build(BuildContext context) {
-    var width = MediaQuery.of(context).size.width;
-    var height = MediaQuery.of(context).size.height;
-
-    // print(width);
-    // print(height);
-
-    return Container(
-      padding: const EdgeInsets.only(
-        top: 50,
-      ),
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Colors.blue, Color(0xFFD8BFD8)],
+    return Scaffold(
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Colors.blue, Color(0xFFD8BFD8)],
+          ),
         ),
-      ),
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              Container(
-                alignment: Alignment.center,
-                padding: EdgeInsets.only(top: 130),
-                child: Container(
-                  width: width - 100,
-                  height: height - 370,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
+        child: SafeArea(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              return SingleChildScrollView(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minHeight: constraints.maxHeight,
                   ),
-                  child: Stack(
-                    children: [
-                      // Logo
-                      Positioned(
-                        top: 25,
-                        left: 0,
-                        right: 0,
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 450),
                         child: Container(
-                          // width: 80,
-                          height: 80,
-                          alignment: Alignment.center,
-                          child: Image.asset('assets/images/tayo.png'),
-                        ),
-                      ),
-
-                      // Form title
-                      Positioned(
-                        top: 105,
-                        left: 0,
-                        right: 0,
-                        child: Center(
-                          child: Text(
-                            'Register',
-                            style: TextStyle(
-                              fontSize: 25,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      // Nama Lengkap Field
-                      Positioned(
-                        top: 160,
-                        left: 20,
-                        right: 20,
-                        child: SizedBox(
-                          width: width - 100,
-                          child: TextField(
-                            controller: username,
-                            focusNode: usernameFocus,
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              labelText: 'Nama Lengkap',
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      // Masukkan Email Field
-                      Positioned(
-                        top: 230,
-                        left: 20,
-                        right: 20,
-                        child: SizedBox(
-                          width: width - 100,
-                          child: Column(
-                            children: [
-                              TextField(
-                                controller: email,
-                                decoration: InputDecoration(
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  labelText: 'Masukkan Email',
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-
-                      if(isErrorEmail)
-                      Positioned(
-                        top: 290,
-                        left: 30,
-                        right: 0,
-                        child: SizedBox(
-                          width: width - 100,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              AnimatedOpacity(
-                                opacity: isErrorEmail ? 1.0 : 0.0, 
-                                duration: Duration(milliseconds: 200),
-                                child: Padding(
-                                  padding: EdgeInsets.only(bottom: 20),
-                                  child: const Text(
-                                    "Email Sudah Ada",
-                                    style: TextStyle(color: Colors.red),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-
-
-                      // Masukkan Password Field
-                      Positioned(
-                        top: (isErrorEmail) ? 330 : 300,
-                        left: 20,
-                        right: 20,
-                        child: SizedBox(
-                          width: width - 100,
-                          child: TextField(
-                            controller: passwd,
-                            obscureText: true,
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              labelText: 'Masukkan Password',
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      // Ulangi Password Field
-                      Positioned(
-                        top: isErrorEmail ? 400 : 370,
-                        left: 20,
-                        right: 20,
-                        child: SizedBox(
-                          width: width - 100,
-                          child: TextField(
-                            controller: repeatPassWd,
-                            obscureText: true,
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              labelText: 'Ulangi Password',
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      if(isErrorPass)
-                      Positioned(
-                        top: 430,
-                        left: 30,
-                        right: 0,
-                        child: SizedBox(
-                          width: width - 100,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              AnimatedOpacity(
-                                opacity: isErrorPass ? 1.0 : 0.0, 
-                                duration: Duration(milliseconds: 200),
-                                child: Padding(
-                                  padding: EdgeInsets.only(bottom: 20),
-                                  child: const Text(
-                                    "Password Tidak Cocok",
-                                    style: TextStyle(color: Colors.red),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-
-                      // Daftar Button
-                      Positioned(
-                        top: (isErrorEmail || isErrorPass) ? 470 : 440,
-                        left: 20,
-                        right: 20,
-                        child: SizedBox(
-                          width: width - 100,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              // color: Colors.blue[300],
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Align(
-                              alignment: Alignment.center,
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  if(username.text.isNotEmpty && email.text.isNotEmpty 
-                                    && passwd.text.isNotEmpty && repeatPassWd.text.isNotEmpty){
-                                    
-                                    buatRegis(context);
-                                  }else{
-                                    // Fluttertoast.showToast(
-                                    //   msg: "",
-                                    //   toastLength: Toast.LENGTH_LONG,
-                                    //   gravity: ToastGravity.BOTTOM,
-                                    //   timeInSecForIosWeb: 10,
-                                    //   textColor: Colors.white,
-                                    //   fontSize: 16.0
-                                    // );
-
-
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(content: Text("Harap Lengkapi Data sebelum Register!"))
-                                    );
-                                  }
-                                }, 
-                                child: Text("Daftar")
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      // Sudah Punya Akun? Text
-                      Positioned(
-                        top: (isErrorEmail || isErrorPass) ? 530 : 500,
-                        left: 40,
-                        child: SizedBox(
-                          height: 20,
-                          child: Row(
-                            children: [
-                              Text('Sudah punya Akun?'),
-
-                              InkWell(
-                                onTap: () {
-                                  Navigator.push(
-                                    context, 
-                                    MaterialPageRoute(builder: (context) => MyApp())
-                                  );
-                                },
-                                child: Text(
-                                  ' Login Sekarang',
-                                  style: TextStyle(color: Colors.blue[700]),
-                                ),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.1),
+                                blurRadius: 10,
+                                offset: const Offset(0, 5),
                               )
                             ],
                           ),
+                          child: Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 20, vertical: 25),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const SizedBox(height: 10),
+                                // Logo
+                                Container(
+                                  height: 80,
+                                  alignment: Alignment.center,
+                                  child: Image.asset('assets/images/tayo.png'),
+                                ),
+                                const SizedBox(height: 10),
+                                const Center(
+                                  child: Text(
+                                    'Register',
+                                    style: TextStyle(
+                                      fontSize: 25,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 20),
+
+                                // Nama Lengkap Field
+                                TextField(
+                                  controller: username,
+                                  focusNode: usernameFocus,
+                                  decoration: InputDecoration(
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    labelText: 'Nama Lengkap',
+                                    prefixIcon: const Icon(Icons.person),
+                                  ),
+                                ),
+                                const SizedBox(height: 15),
+
+                                // Masukkan Email Field
+                                TextField(
+                                  controller: email,
+                                  decoration: InputDecoration(
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    labelText: 'Masukkan Email',
+                                    prefixIcon: const Icon(Icons.email),
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+
+                                if (isErrorEmail) ...[
+                                  Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(left: 8, bottom: 8),
+                                      child: AnimatedOpacity(
+                                        opacity: isErrorEmail ? 1.0 : 0.0,
+                                        duration: const Duration(milliseconds: 200),
+                                        child: const Text(
+                                          "Email Sudah Ada",
+                                          style: TextStyle(color: Colors.red),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                                const SizedBox(height: 8),
+
+                                // Masukkan Password Field
+                                TextField(
+                                  controller: passwd,
+                                  obscureText: true,
+                                  decoration: InputDecoration(
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    labelText: 'Masukkan Password',
+                                    prefixIcon: const Icon(Icons.lock),
+                                  ),
+                                ),
+                                const SizedBox(height: 15),
+
+                                // Ulangi Password Field
+                                TextField(
+                                  controller: repeatPassWd,
+                                  obscureText: true,
+                                  decoration: InputDecoration(
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    labelText: 'Ulangi Password',
+                                    prefixIcon: const Icon(Icons.lock),
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+
+                                if (isErrorPass) ...[
+                                  Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(left: 8, bottom: 8),
+                                      child: AnimatedOpacity(
+                                        opacity: isErrorPass ? 1.0 : 0.0,
+                                        duration: const Duration(milliseconds: 200),
+                                        child: const Text(
+                                          "Password Tidak Cocok",
+                                          style: TextStyle(color: Colors.red),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                                const SizedBox(height: 15),
+
+                                // Daftar Button
+                                SizedBox(
+                                  width: double.infinity,
+                                  height: 48,
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.blue[600],
+                                      foregroundColor: Colors.white,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                    ),
+                                    onPressed: () {
+                                      if (username.text.isNotEmpty &&
+                                          email.text.isNotEmpty &&
+                                          passwd.text.isNotEmpty &&
+                                          repeatPassWd.text.isNotEmpty) {
+                                        buatRegis(context);
+                                      } else {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          const SnackBar(
+                                            content: Text(
+                                                "Harap Lengkapi Data sebelum Register!"),
+                                          ),
+                                        );
+                                      }
+                                    },
+                                    child: const Text(
+                                      "Daftar",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 20),
+
+                                // Sudah Punya Akun? Text
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const Text('Sudah punya Akun?'),
+                                    InkWell(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => MyApp()),
+                                        );
+                                      },
+                                      child: Text(
+                                        ' Login Sekarang',
+                                        style: TextStyle(
+                                          color: Colors.blue[700],
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                                const SizedBox(height: 10),
+                              ],
+                            ),
+                          ),
                         ),
                       ),
-                    ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              );
+            },
           ),
         ),
       ),

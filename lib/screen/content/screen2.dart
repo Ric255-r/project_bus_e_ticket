@@ -51,7 +51,8 @@ class SecondScreen extends StatelessWidget {
         //   fontSize: 16.0,
         // );
 
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(alertMessage!)));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(alertMessage!)));
       });
     }
 
@@ -82,9 +83,13 @@ class _Kontennya extends State<IsiBody> {
   double Tinggi = 150;
   bool changes = true;
 
+  final AutoSizeGroup _menuTextGroup = AutoSizeGroup();
 
-
-  final List<String> imgList = ['assets/images/carousel1.jpeg', 'assets/images/carousel2.png', 'assets/images/carousel3.jpeg'];
+  final List<String> imgList = [
+    'assets/images/carousel1.jpeg',
+    'assets/images/carousel2.png',
+    'assets/images/carousel3.jpeg'
+  ];
 
   // Future<bool> showPopUpExit() async {
   //   return await showDialog(
@@ -126,55 +131,71 @@ class _Kontennya extends State<IsiBody> {
     // );
 
     return SingleChildScrollView(
-        child: SizedBox(
-      height: (screenHeight <= 700) ? screenHeight + 200 : screenHeight - 180,
-      child: Stack(
-        children: [
-          // Bagian Carousel
-          Container(
-            color: Colors.blue[400],
-            height: 300,
-            child: Row(
-              children: [
-                Expanded(
+      child: SizedBox(
+        height: (screenHeight <= 700) ? screenHeight + 200 : screenHeight - 180,
+        child: Stack(
+          children: [
+            // Bagian Carousel
+            Container(
+              color: Colors.blue[400],
+              height: 300,
+              child: Row(
+                children: [
+                  Expanded(
                     child: Padding(
-                  padding: const EdgeInsets.only(top: 10, bottom: 50, left: 20, right: 20),
-                  child: Container(
-                    decoration: BoxDecoration(
-                        color: Colors.grey.shade100, borderRadius: BorderRadius.circular(10), border: Border.all(color: Colors.blueGrey.shade100)),
-                    height: 215,
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 10, top: 5, bottom: 5, right: 10),
-                      child: Column(
-                        children: [
-                          cs.CarouselSlider(
-                              items: imgList
-                                  .map((item) => Center(
-                                          child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(10),
-                                        child: Image.asset(
-                                          item,
-                                          fit: BoxFit.cover,
-                                          width: double.infinity, // Ensures the image width matches the container
-                                          height: 200, // Ensures the image height matches the container
+                      padding:
+                          const EdgeInsets.only(top: 10, bottom: 50, left: 20, right: 20),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade100,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: Colors.blueGrey.shade100),
+                        ),
+                        height: 215,
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                              left: 10, top: 5, bottom: 5, right: 10),
+                          child: Column(
+                            children: [
+                              cs.CarouselSlider(
+                                items: imgList
+                                    .map(
+                                      (item) => Center(
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.circular(10),
+                                          child: Image.asset(
+                                            item,
+                                            fit: BoxFit.cover,
+                                            width: double
+                                                .infinity, // Ensures the image width matches the container
+                                            height:
+                                                200, // Ensures the image height matches the container
+                                          ),
                                         ),
-                                      )))
-                                  .toList(),
-                              options: cs.CarouselOptions(height: 200, autoPlay: true, enlargeCenterPage: true, aspectRatio: 2.0
-                                  // onPageChanged: (index, reason){
-                                  //   // ini buat handle kalo page keubah
-                                  // }
-                                  ))
-                        ],
+                                      ),
+                                    )
+                                    .toList(),
+                                options: cs.CarouselOptions(
+                                    height: 200,
+                                    autoPlay: true,
+                                    enlargeCenterPage: true,
+                                    aspectRatio: 2.0
+                                    // onPageChanged: (index, reason){
+                                    //   // ini buat handle kalo page keubah
+                                    // }
+                                    ),
+                              )
+                            ],
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                ))
-              ],
+                  )
+                ],
+              ),
             ),
-          ),
-          // Atur Posisi Konten. Positioned sbg Parent
-          Positioned(
+            // Atur Posisi Konten. Positioned sbg Parent
+            Positioned(
               top: 270,
               left: 20,
               right: 20,
@@ -182,7 +203,13 @@ class _Kontennya extends State<IsiBody> {
                 decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(10),
-                    boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), spreadRadius: 5, blurRadius: 7, offset: Offset(0, 3))]),
+                    boxShadow: [
+                      BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          spreadRadius: 5,
+                          blurRadius: 7,
+                          offset: Offset(0, 3))
+                    ]),
                 child: Column(
                   children: [
                     Row(
@@ -194,7 +221,8 @@ class _Kontennya extends State<IsiBody> {
                               textAlign: TextAlign.left,
                               text: const TextSpan(
                                 text: 'Mau Ngapain Hari Ini? \n',
-                                style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600),
+                                style: TextStyle(
+                                    color: Colors.black, fontWeight: FontWeight.w600),
                               ),
                             ),
                           ),
@@ -206,164 +234,225 @@ class _Kontennya extends State<IsiBody> {
                       padding: const EdgeInsets.symmetric(vertical: 15),
                       child: Row(
                         children: [
-                              Expanded(
-                                  child: Padding(
-                                      padding: const EdgeInsets.only(left: 20, right: 10),
-                                      child: GestureDetector(
-                                          onTap: () {
-                                            // Fluttertoast.showToast(
-                                            //   msg: "Pesan Tiket",
-                                            //   toastLength: Toast.LENGTH_SHORT,
-                                            //   gravity: ToastGravity.BOTTOM,
-                                            //   timeInSecForIosWeb: 1,
-                                            //   textColor: Colors.white,
-                                            //   fontSize: 16.0
-                                            // );
-                                            Navigator.push(context, MaterialPageRoute(builder: (context) => Pesantiket()));
-                                          },
-                                          child: Column(
-                                            children: [
-                                              Container(
-                                                height: 50,
-                                                decoration: BoxDecoration(
-                                                  color: Colors.grey.shade50,
-                                                  borderRadius: const BorderRadius.only(topLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
-                                                  // border: Border.all(color: Colors.red),
-                                                ),
-                                                child: const Image(
-                                                  image: AssetImage('assets/images/tiket.png'),
-                                                  height: 50,
-                                                  width: 50,
-                                                ),
-                                              ),
-                                              const SizedBox(height: 5), // Add some spacing between image and text
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 20, right: 10),
+                              child: GestureDetector(
+                                onTap: () {
+                                  // Fluttertoast.showToast(
+                                  //   msg: "Pesan Tiket",
+                                  //   toastLength: Toast.LENGTH_SHORT,
+                                  //   gravity: ToastGravity.BOTTOM,
+                                  //   timeInSecForIosWeb: 1,
+                                  //   textColor: Colors.white,
+                                  //   fontSize: 16.0
+                                  // );
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => Pesantiket()));
+                                },
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      height: 50,
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey.shade50,
+                                        borderRadius: const BorderRadius.only(
+                                            topLeft: Radius.circular(10),
+                                            bottomRight: Radius.circular(10)),
+                                        // border: Border.all(color: Colors.red),
+                                      ),
+                                      child: const Image(
+                                        image: AssetImage('assets/images/tiket.png'),
+                                        height: 50,
+                                        width: 50,
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                        height:
+                                            5), // Add some spacing between image and text
 
-                                              const Center(
-                                                child: AutoSizeText(
-                                                  "Pesan Tiket",
-                                                  maxLines: 1,
-                                                  minFontSize: 8,
-                                                ),
-                                              ),
-                                            ],
-                                          )))),
-                              Expanded(
-                                  child: Padding(
-                                      padding: const EdgeInsets.only(left: 20, right: 10),
-                                      child: GestureDetector(
-                                          onTap: () {
-                                            // Fluttertoast.showToast(
-                                            //   msg: "Halte Terdekat",
-                                            //   toastLength: Toast.LENGTH_SHORT,
-                                            //   gravity: ToastGravity.BOTTOM,
-                                            //   timeInSecForIosWeb: 1,
-                                            //   textColor: Colors.white,
-                                            //   fontSize: 16.0
-                                            // );
-                                            Navigator.push(context, MaterialPageRoute(builder: (context) => Halteterdekat()));
-                                          },
-                                          child: Column(
-                                            children: [
-                                              Container(
-                                                height: 50,
-                                                decoration: BoxDecoration(
-                                                  color: Colors.grey.shade50,
-                                                  borderRadius: const BorderRadius.only(topLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
-                                                ),
-                                                child: const Image(
-                                                  image: AssetImage('assets/images/halte.png'),
-                                                  height: 50,
-                                                  width: 50,
-                                                ),
-                                              ),
-                                              const SizedBox(height: 5), // Add some spacing between image and text
+                                    Center(
+                                      child: AutoSizeText(
+                                        "Pesan Tiket",
+                                        group: _menuTextGroup,
+                                        maxLines: 2,
+                                        minFontSize: 8,
+                                        textAlign: TextAlign.center,
+                                        style: const TextStyle(
+                                            fontSize: 12, color: Colors.black),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 20, right: 10),
+                              child: GestureDetector(
+                                onTap: () {
+                                  // Fluttertoast.showToast(
+                                  //   msg: "Halte Terdekat",
+                                  //   toastLength: Toast.LENGTH_SHORT,
+                                  //   gravity: ToastGravity.BOTTOM,
+                                  //   timeInSecForIosWeb: 1,
+                                  //   textColor: Colors.white,
+                                  //   fontSize: 16.0
+                                  // );
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => Halteterdekat(),
+                                    ),
+                                  );
+                                },
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      height: 50,
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey.shade50,
+                                        borderRadius: const BorderRadius.only(
+                                            topLeft: Radius.circular(10),
+                                            bottomRight: Radius.circular(10)),
+                                      ),
+                                      child: const Image(
+                                        image: AssetImage('assets/images/halte.png'),
+                                        height: 50,
+                                        width: 50,
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                        height:
+                                            5), // Add some spacing between image and text
 
-                                              Text(
-                                                "Loket Terdekat",
-                                                style: TextStyle(
-                                                  fontSize: 12,
-                                                ),
-                                                textAlign: TextAlign.center,
-                                              )
-                                            ],
-                                          )))),
-                              Expanded(
-                                  child: Padding(
-                                      padding: const EdgeInsets.only(left: 20, right: 10),
-                                      child: GestureDetector(
-                                          onTap: () {
-                                            // Fluttertoast.showToast(
-                                            //   msg: "Paket Wisata",
-                                            //   toastLength: Toast.LENGTH_SHORT,
-                                            //   gravity: ToastGravity.BOTTOM,
-                                            //   timeInSecForIosWeb: 1,
-                                            //   textColor: Colors.white,
-                                            //   fontSize: 16.0
-                                            // );
-                                            Navigator.push(context, MaterialPageRoute(builder: (context) => paketwisata1(title: "lala")));
-                                          },
-                                          child: Column(
-                                            children: [
-                                              Container(
-                                                height: 50,
-                                                decoration: BoxDecoration(
-                                                  color: Colors.grey.shade50,
-                                                  borderRadius: const BorderRadius.only(topLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
-                                                ),
-                                                child: const Image(
-                                                  image: AssetImage('assets/images/wisata.png'),
-                                                  height: 50,
-                                                  width: 50,
-                                                ),
-                                              ),
-                                              const SizedBox(height: 5), // Add some spacing between image and text
+                                    Center(
+                                      child: AutoSizeText(
+                                        "Loket Terdekat",
+                                        group: _menuTextGroup,
+                                        maxLines: 2,
+                                        minFontSize: 8,
+                                        textAlign: TextAlign.center,
+                                        style: const TextStyle(
+                                            fontSize: 12, color: Colors.black),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 20, right: 10),
+                              child: GestureDetector(
+                                onTap: () {
+                                  // Fluttertoast.showToast(
+                                  //   msg: "Paket Wisata",
+                                  //   toastLength: Toast.LENGTH_SHORT,
+                                  //   gravity: ToastGravity.BOTTOM,
+                                  //   timeInSecForIosWeb: 1,
+                                  //   textColor: Colors.white,
+                                  //   fontSize: 16.0
+                                  // );
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              paketwisata1(title: "lala")));
+                                },
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      height: 50,
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey.shade50,
+                                        borderRadius: const BorderRadius.only(
+                                            topLeft: Radius.circular(10),
+                                            bottomRight: Radius.circular(10)),
+                                      ),
+                                      child: const Image(
+                                        image: AssetImage('assets/images/wisata.png'),
+                                        height: 50,
+                                        width: 50,
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                        height:
+                                            5), // Add some spacing between image and text
 
-                                              const Text(
-                                                'Paket Wisata',
-                                                style: TextStyle(fontSize: 12, color: Colors.black),
-                                                textAlign: TextAlign.center,
-                                              ),
-                                            ],
-                                          )))),
-                              Expanded(
-                                  child: Padding(
-                                      padding: const EdgeInsets.only(left: 20, right: 10),
-                                      child: GestureDetector(
-                                          onTap: () {
-                                            // Fluttertoast.showToast(
-                                            //   msg: "Panduan Berpergian",
-                                            //   toastLength: Toast.LENGTH_SHORT,
-                                            //   gravity: ToastGravity.BOTTOM,
-                                            //   timeInSecForIosWeb: 1,
-                                            //   textColor: Colors.white,
-                                            //   fontSize: 16.0
-                                            // );
-                                            Navigator.push(context, MaterialPageRoute(builder: (context) => panduan()));
-                                          },
-                                          child: Column(
-                                            children: [
-                                              Container(
-                                                height: 50,
-                                                decoration: BoxDecoration(
-                                                  color: Colors.grey.shade50,
-                                                  borderRadius: const BorderRadius.only(topLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
-                                                ),
-                                                child: const Image(
-                                                  image: AssetImage('assets/images/guidebook.png'),
-                                                  height: 50,
-                                                  width: 50,
-                                                ),
-                                              ),
-                                              const SizedBox(height: 5), // Add some spacing between image and text
+                                    Center(
+                                      child: AutoSizeText(
+                                        'Paket Wisata',
+                                        group: _menuTextGroup,
+                                        maxLines: 2,
+                                        minFontSize: 8,
+                                        textAlign: TextAlign.center,
+                                        style: const TextStyle(
+                                            fontSize: 12, color: Colors.black),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 20, right: 10),
+                              child: GestureDetector(
+                                onTap: () {
+                                  // Fluttertoast.showToast(
+                                  //   msg: "Panduan Berpergian",
+                                  //   toastLength: Toast.LENGTH_SHORT,
+                                  //   gravity: ToastGravity.BOTTOM,
+                                  //   timeInSecForIosWeb: 1,
+                                  //   textColor: Colors.white,
+                                  //   fontSize: 16.0
+                                  // );
+                                  Navigator.push(context,
+                                      MaterialPageRoute(builder: (context) => panduan()));
+                                },
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      height: 50,
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey.shade50,
+                                        borderRadius: const BorderRadius.only(
+                                            topLeft: Radius.circular(10),
+                                            bottomRight: Radius.circular(10)),
+                                      ),
+                                      child: const Image(
+                                        image: AssetImage('assets/images/guidebook.png'),
+                                        height: 50,
+                                        width: 50,
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                        height:
+                                            5), // Add some spacing between image and text
 
-                                              const Text(
-                                                'Panduan Bepergian',
-                                                style: TextStyle(fontSize: 12, color: Colors.black),
-                                                textAlign: TextAlign.center,
-                                              ),
-                                            ],
-                                          )))),
-                            ],
+                                    Center(
+                                      child: AutoSizeText(
+                                        'Panduan Bepergian',
+                                        group: _menuTextGroup,
+                                        maxLines: 2,
+                                        minFontSize: 8,
+                                        textAlign: TextAlign.center,
+                                        style: const TextStyle(
+                                            fontSize: 12, color: Colors.black),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
 
@@ -387,10 +476,11 @@ class _Kontennya extends State<IsiBody> {
                     // // End Tambah Spasi.
                   ],
                 ),
-              )),
+              ),
+            ),
 
-          Positioned(
-              top: 455,
+            Positioned(
+              top: 465,
               left: 20,
               right: 20,
               child: Column(
@@ -414,10 +504,12 @@ class _Kontennya extends State<IsiBody> {
                     style: TextStyle(fontWeight: FontWeight.w600),
                   ),
                 ],
-              ))
-        ],
+              ),
+            )
+          ],
+        ),
       ),
-    ));
+    );
   }
 }
 
@@ -537,7 +629,8 @@ class _KontenNavbar extends State<IsiNavbar> {
             channelDescription: 'Notification channel for basic tests',
             defaultColor: Color(0xFF9D50DD),
             ledColor: Colors.white,
-            importance: NotificationImportance.High, // Ensure high importance untuk event Tap
+            importance:
+                NotificationImportance.High, // Ensure high importance untuk event Tap
           )
         ],
         debug: true);
@@ -555,7 +648,8 @@ class _KontenNavbar extends State<IsiNavbar> {
       ));
 
       // Event ketika dipencet. initialize setelah websocket jalan
-      AwesomeNotifications().setListeners(onActionReceivedMethod: (ReceivedAction receivedAct) async {
+      AwesomeNotifications().setListeners(
+          onActionReceivedMethod: (ReceivedAction receivedAct) async {
         // Handle Notif di Tap
         if (receivedAct.id == 10) {
           // Notif dengan Id ke 10 dipencet
@@ -582,8 +676,10 @@ class _KontenNavbar extends State<IsiNavbar> {
 
       // Ini dari cherry_toast. bukan punya awesome_notification
       CherryToast.info(
-        title: Text('Transaksi ${id_trans} anda ${status}', style: TextStyle(color: Colors.black)),
-        action: Text("Klik Disini Untuk Melihat Transaksi", style: TextStyle(color: Colors.black)),
+        title: Text('Transaksi ${id_trans} anda ${status}',
+            style: TextStyle(color: Colors.black)),
+        action: Text("Klik Disini Untuk Melihat Transaksi",
+            style: TextStyle(color: Colors.black)),
         actionHandler: () {
           // Untuk pindah menu ke bagian riwayat
           // key disini untuk force rebuild menu2. incase notif muncul, lalu user tap & posisi user di menu riwayat/history
@@ -728,21 +824,26 @@ class _KontenNavbar extends State<IsiNavbar> {
                   currentAccountPicture: CircleAvatar(
                     backgroundColor: Colors.white,
                     backgroundImage: dataIsiNavbar['profile_picture'] != null
-                        ? NetworkImage('${myIpAddr()}/fotoprofile/${dataIsiNavbar['profile_picture']}') as ImageProvider
+                        ? NetworkImage(
+                                '${myIpAddr()}/fotoprofile/${dataIsiNavbar['profile_picture']}')
+                            as ImageProvider
                         : const AssetImage('assets/images/profile.jpg') as ImageProvider,
                   ),
                   accountName: Text(
                     dataIsiNavbar['username'] ?? 'User',
-                    style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 16),
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, color: Colors.white, fontSize: 16),
                   ),
                   accountEmail: Text(
                     dataIsiNavbar['email'] ?? '',
                     style: const TextStyle(color: Colors.white70),
                   ),
                 ),
-                 ListTile(
+                ListTile(
                   leading: const Icon(Icons.home, color: Colors.blue),
-                  title: const Text("Dashboard", style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w500)),
+                  title: const Text("Dashboard",
+                      style:
+                          TextStyle(color: Colors.black87, fontWeight: FontWeight.w500)),
                   onTap: () {
                     Navigator.pop(context);
                     onBarTapped(0);
@@ -750,52 +851,64 @@ class _KontenNavbar extends State<IsiNavbar> {
                 ),
                 ListTile(
                   leading: const Icon(Icons.confirmation_number, color: Colors.blue),
-                  title: const Text("Pesan Tiket", style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w500)),
+                  title: const Text("Pesan Tiket",
+                      style:
+                          TextStyle(color: Colors.black87, fontWeight: FontWeight.w500)),
                   onTap: () {
                     Navigator.pop(context);
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => Pesantiket()));
+                    Navigator.push(
+                        context, MaterialPageRoute(builder: (context) => Pesantiket()));
                   },
                 ),
                 ListTile(
                   leading: const Icon(Icons.location_on, color: Colors.blue),
-                  title: const Text("Halte Terdekat", style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w500)),
+                  title: const Text("Halte Terdekat",
+                      style:
+                          TextStyle(color: Colors.black87, fontWeight: FontWeight.w500)),
                   onTap: () {
                     Navigator.pop(context);
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => Halteterdekat()));
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => Halteterdekat()));
                   },
                 ),
                 ListTile(
                   leading: const Icon(Icons.card_travel, color: Colors.blue),
-                  title: const Text("Paket Wisata", style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w500)),
+                  title: const Text("Paket Wisata",
+                      style:
+                          TextStyle(color: Colors.black87, fontWeight: FontWeight.w500)),
                   onTap: () {
                     Navigator.pop(context);
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => paketwisata1(title: "lala")));
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => paketwisata1(title: "lala")));
                   },
                 ),
                 ListTile(
                   leading: const Icon(Icons.book, color: Colors.blue),
-                  title: const Text("Panduan Bepergian", style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w500)),
+                  title: const Text("Panduan Bepergian",
+                      style:
+                          TextStyle(color: Colors.black87, fontWeight: FontWeight.w500)),
                   onTap: () {
                     Navigator.pop(context);
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => const panduan()));
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => const panduan()));
                   },
                 ),
                 const Divider(color: Colors.grey),
                 ListTile(
                   leading: const Icon(Icons.logout, color: Colors.red),
-                  title: const Text("Logout", style: TextStyle(color: Colors.red, fontWeight: FontWeight.w500)),
+                  title: const Text("Logout",
+                      style: TextStyle(color: Colors.red, fontWeight: FontWeight.w500)),
                   onTap: () async {
                     Navigator.pop(context);
                     var storage = const FlutterSecureStorage();
                     await storage.delete(key: 'jwt');
                     if (context.mounted) {
                       Navigator.pushAndRemoveUntil(
-                        context, 
-                        MaterialPageRoute(
-                          builder: (context) => MyApp()
-                        ),
-                        (Route<dynamic> route) => false
-                      );
+                          context,
+                          MaterialPageRoute(builder: (context) => MyApp()),
+                          (Route<dynamic> route) => false);
                     }
                   },
                 )
@@ -808,11 +921,15 @@ class _KontenNavbar extends State<IsiNavbar> {
                 return true;
               },
               child: _children[_currentIndex]),
-          bottomNavigationBar: BottomNavigationBar(currentIndex: _currentIndex, onTap: onBarTapped, items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Dashboard'),
-            BottomNavigationBarItem(icon: Icon(Icons.history), label: 'History'),
-            BottomNavigationBarItem(icon: Icon(Icons.account_circle), label: 'Profile')
-          ])),
+          bottomNavigationBar: BottomNavigationBar(
+              currentIndex: _currentIndex,
+              onTap: onBarTapped,
+              items: const [
+                BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Dashboard'),
+                BottomNavigationBarItem(icon: Icon(Icons.history), label: 'History'),
+                BottomNavigationBarItem(
+                    icon: Icon(Icons.account_circle), label: 'Profile')
+              ])),
     );
   }
 }
