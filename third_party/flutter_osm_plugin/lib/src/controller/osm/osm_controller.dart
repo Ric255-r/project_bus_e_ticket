@@ -14,6 +14,7 @@ final class MobileOSMController extends IBaseOSMController {
       OSMPlatform.instance as MobileOSMPlatform;
   final duration = const Duration(milliseconds: 300);
   Timer? _timer;
+  bool _isDisposed = false;
 
   late double stepZoom = 1;
   late double minZoomLevel = 2;
@@ -42,6 +43,8 @@ final class MobileOSMController extends IBaseOSMController {
 
   /// dispose: close stream in osmPlatform,remove references
   void dispose() {
+    if (_isDisposed) return;
+    _isDisposed = true;
     if (_timer != null && _timer!.isActive) {
       _timer?.cancel();
     }
@@ -431,23 +434,23 @@ final class MobileOSMController extends IBaseOSMController {
     double? angle,
     IconAnchor? iconAnchor,
   }) async {
+    if (_isDisposed || !_osmFlutterState.mounted) return;
     if (markerIcon != null) {
       _osmFlutterState.widget.dynamicMarkerWidgetNotifier.value = markerIcon;
-      //int durationSecond = 500;
-      await Future.delayed(duration, () async {
-        await osmPlatform.addMarker(
-          _idMap,
-          angle != null && angle != 0
-              ? GeoPointWithOrientation(
-                  angle: angle,
-                  latitude: p.latitude,
-                  longitude: p.longitude,
-                )
-              : p,
-          globalKeyIcon: _osmFlutterState.dynamicMarkerKey,
-          iconAnchor: iconAnchor,
-        );
-      });
+      await Future<void>.delayed(duration);
+      if (_isDisposed || !_osmFlutterState.mounted) return;
+      await osmPlatform.addMarker(
+        _idMap,
+        angle != null && angle != 0
+            ? GeoPointWithOrientation(
+                angle: angle,
+                latitude: p.latitude,
+                longitude: p.longitude,
+              )
+            : p,
+        globalKeyIcon: _osmFlutterState.dynamicMarkerKey,
+        iconAnchor: iconAnchor,
+      );
     } else {
       await osmPlatform.addMarker(
         _idMap,
