@@ -3,7 +3,7 @@ import 'package:bus_hub/screen/function/ip_address.dart';
 import 'package:bus_hub/screen/menu/menu2.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
 import 'package:intl/intl.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -57,7 +57,7 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
   }
 
   var dio = Dio();
-  var storage = FlutterSecureStorage();
+
   var formatRp = NumberFormat.currency(
     locale: "id_ID",
     symbol: "Rp. ",
@@ -73,7 +73,7 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
 
   Future<void> getData() async{
     try {
-      var jwt = await storage.read(key: 'jwt');
+      var jwt = await getStoredJwt();
 
       var response = await dio.get('${myIpAddr()}/checkout/${widget.idTrans}',
         options: Options(
@@ -125,7 +125,7 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
         }
       );
 
-      var myJwt = await storage.read(key: 'jwt');
+      var myJwt = await getStoredJwt();
 
       // Tarik Datanya kek gini. supaya bs balik ke screen2.dart. terlanjur
       Map<String, dynamic> data = {

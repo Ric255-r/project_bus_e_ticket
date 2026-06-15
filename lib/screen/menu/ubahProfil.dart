@@ -9,7 +9,7 @@ import 'package:flutter/services.dart';
 // import 'package:fluttertoast/fluttertoast.dart';
 import 'package:bus_hub/main.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
@@ -40,7 +40,7 @@ class IsiMenuUbahProfil extends StatefulWidget {
 
 class _KontenUbahProfil extends State<IsiMenuUbahProfil> {
   var dio = Dio();
-  var storage = FlutterSecureStorage();
+
   File? _imgFile;
   Map<String, dynamic>? dataUser;
   Timer? _timer;
@@ -68,7 +68,7 @@ class _KontenUbahProfil extends State<IsiMenuUbahProfil> {
   }
 
   Future<void> getData() async {
-    var jwt = await storage.read(key: 'jwt');
+    var jwt = await getStoredJwt();
     
     if (jwt != null && jwt.isNotEmpty) {  // Check if jwt is not null
       var data = await getMyData(jwt);
@@ -121,7 +121,7 @@ class _KontenUbahProfil extends State<IsiMenuUbahProfil> {
   DateTime? selectedTgl;
 
   Future<void> updateProfile(BuildContext context) async {
-    var jwt = await storage.read(key: 'jwt');
+    var jwt = await getStoredJwt();
 
     try {
       FormData? formData;

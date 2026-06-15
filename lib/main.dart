@@ -8,9 +8,11 @@ import 'screen/content/screen2.dart';
 import 'package:dio/dio.dart';
 // import 'package:fluttertoast/fluttertoast.dart';
 import './screen/function/confirmExit.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
 import 'package:flutter/services.dart';
 import 'dart:developer';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:bus_hub/screen/function/me.dart';
 
 // referensi :
 // https://stackoverflow.com/questions/51765092/how-to-scroll-page-in-flutter
@@ -118,7 +120,7 @@ class _FirstScreen extends State<MyTextField> {
 
   Timer? _timerIsRegister;
 
-  final storage = new FlutterSecureStorage();
+
 
   // inisiasikan state. kaya react
   @override
@@ -129,11 +131,31 @@ class _FirstScreen extends State<MyTextField> {
   }
 
   Future<void> _loadJwt() async {
-    String? value = await storage.read(key: 'jwt');
+    String? value = await getStoredJwt();
 
     setState(() {
       jwt = value;
     });
+
+    if (value != null && value.isNotEmpty) {
+      final userData = await getMyData(value);
+      if (userData.isNotEmpty && !userData.containsKey("Error Bagian User")) {
+        if (mounted) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => SecondScreen(
+                data: {
+                  "usernya": userData,
+                },
+              ),
+            ),
+          );
+        }
+      } else {
+        await removeStoredJwt();
+      }
+    }
   }
   // end inisiasikan state
 
@@ -166,7 +188,9 @@ class _FirstScreen extends State<MyTextField> {
       final Map<String, dynamic> responseData = response.data;
 
       // write jwt
-      await storage.write(key: 'jwt', value: responseData['access_token']);
+      if (responseData['access_token'] != null) {
+        await saveStoredJwt(responseData['access_token']);
+      }
 
       // Navigator.push(
       //   context,

@@ -14,13 +14,17 @@ import '../function/confirmExit.dart';
 import './halteTerdekat.dart';
 import './pesanTiket.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:dio/dio.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:web_socket_channel/io.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:cherry_toast/cherry_toast.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
 
 // referensi carousel slider
 // https://stackoverflow.com/questions/78688921/error-carouselcontroller-is-imported-from-both-package-in-flutter
@@ -91,125 +95,273 @@ class _Kontennya extends State<IsiBody> {
     'assets/images/carousel3.jpeg'
   ];
 
-  // Future<bool> showPopUpExit() async {
-  //   return await showDialog(
-  //     context: context,
-  //     builder: (context) => AlertDialog(
-  //       title: const Text('Keluar Aplikasi?'),
-  //       content: const Text('Apakah Yakin Ingin Keluar?'),
-  //       actions: [
-  //         ElevatedButton(
-  //           onPressed: () => Navigator.of(context).pop(false),
-  //           child: Text('No')
-  //         ),
-  //         ElevatedButton(
-  //           onPressed: () => SystemNavigator.pop(),
-  //           child: Text('Yes')
-  //         )
-  //       ],
-  //     )
-  //   )??false; //if showDialouge had returned null, then return false
-  // }
+  // POI state variables
+  String _selectedCategory = 'kuliner';
+  bool _isLoadingPoi = false;
+  List<dynamic> _poiList = [];
+  String? _poiErrorMessage;
+  final Dio _dio = Dio();
 
-  // End Taruh Fungsi
+  @override
+  void initState() {
+    super.initState();
+    _fetchPOIs();
+  }
+
+  Future<void> _fetchPOIs() async {
+    if (!mounted) return;
+    setState(() {
+      _isLoadingPoi = true;
+      _poiErrorMessage = null;
+    });
+
+    try {
+      // 1. Get location with fallback
+      double lat = -0.0263; // Fallback Pontianak
+      double lon = 109.3425;
+
+      try {
+        bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+        if (serviceEnabled) {
+          LocationPermission permission = await Geolocator.checkPermission();
+          if (permission == LocationPermission.denied) {
+            permission = await Geolocator.requestPermission();
+          }
+          if (permission == LocationPermission.whileInUse || permission == LocationPermission.always) {
+            Position position = await Geolocator.getCurrentPosition(
+              desiredAccuracy: LocationAccuracy.low,
+              timeLimit: const Duration(seconds: 5),
+            );
+            lat = position.latitude;
+            lon = position.longitude;
+          }
+        }
+      } catch (e) {
+        print("Gagal mengambil lokasi live, menggunakan fallback Pontianak: $e");
+      }
+
+      // 2. Fetch from backend
+      final response = await _dio.get(
+        '${myIpAddr()}/poi-terdekat',
+        queryParameters: {
+          'latitude': lat,
+          'longitude': lon,
+          'category': _selectedCategory,
+          'radius': 3000,
+          'limit': 15,
+        },
+      );
+
+      if (!mounted) return;
+      setState(() {
+        _poiList = response.data['items'] as List<dynamic>? ?? [];
+        _isLoadingPoi = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _isLoadingPoi = false;
+        _poiErrorMessage = "Gagal mengambil data POI: $e";
+      });
+    }
+  }
+
+  void _onCategoryChanged(String category) {
+    setState(() {
+      _selectedCategory = category;
+    });
+    _fetchPOIs();
+  }
+
+  Future<void> _openMap(double lat, double lon, String name) async {
+    final url = Uri.parse("https://www.google.com/maps/search/?api=1&query=$lat,$lon");
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+    } else {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Tidak dapat membuka peta")),
+        );
+      }
+    }
+  }
+
+  Widget _buildCategoryChip(String categoryId, String label) {
+    final isSelected = _selectedCategory == categoryId;
+    return Padding(
+      padding: const EdgeInsets.only(right: 8.0),
+      child: ChoiceChip(
+        label: Text(label),
+        selected: isSelected,
+        onSelected: (selected) {
+          if (selected) {
+            _onCategoryChanged(categoryId);
+          }
+        },
+        selectedColor: Colors.blue.shade100,
+        backgroundColor: Colors.grey.shade100,
+        labelStyle: TextStyle(
+          color: isSelected ? Colors.blue.shade800 : Colors.black87,
+          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+          fontSize: 12,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPoiCard(dynamic poi) {
+    final name = poi['name'] ?? 'Tempat tanpa nama';
+    final distance = poi['distance_km'] ?? 0.0;
+    final lat = poi['latitude'];
+    final lon = poi['longitude'];
+    
+    // Determine category icon/label
+    String typeLabel = 'POI';
+    if (poi['amenity'] != null) typeLabel = poi['amenity'].toString().replaceAll('_', ' ');
+    if (poi['tourism'] != null) typeLabel = poi['tourism'].toString().replaceAll('_', ' ');
+    if (poi['leisure'] != null) typeLabel = poi['leisure'].toString().replaceAll('_', ' ');
+    
+    // Capitalize typeLabel
+    if (typeLabel.isNotEmpty) {
+      typeLabel = typeLabel.substring(0, 1).toUpperCase() + typeLabel.substring(1);
+    }
+
+    return Container(
+      width: 200,
+      margin: const EdgeInsets.only(right: 12, bottom: 4),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade50,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.grey.shade200),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  typeLabel,
+                  style: TextStyle(color: Colors.grey.shade600, fontSize: 11),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  "${distance} km terdekat",
+                  style: const TextStyle(color: Colors.blue, fontWeight: FontWeight.w600, fontSize: 11),
+                ),
+              ],
+            ),
+            SizedBox(
+              width: double.infinity,
+              height: 28,
+              child: ElevatedButton.icon(
+                onPressed: () => _openMap(lat, lon, name),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue.shade600,
+                  foregroundColor: Colors.white,
+                  padding: EdgeInsets.zero,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                ),
+                icon: const Icon(Icons.directions, size: 14),
+                label: const Text(
+                  "Rute",
+                  style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
-    print(screenHeight);
-
-    // return Center(
-    //   child: Text('Selamat Datang Di ${widget.dataPassing}'),
-    // );
-
-    // return Container(
-    //   child: Row(
-    //     children: [
-
-    //     ],
-    //   ),
-    // );
-
     return SingleChildScrollView(
-      child: SizedBox(
-        height: (screenHeight <= 700) ? screenHeight + 200 : screenHeight - 180,
-        child: Stack(
-          children: [
-            // Bagian Carousel
-            Container(
-              color: Colors.blue[400],
-              height: 300,
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Padding(
-                      padding:
-                          const EdgeInsets.only(top: 10, bottom: 50, left: 20, right: 20),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade100,
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: Colors.blueGrey.shade100),
-                        ),
-                        height: 215,
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                              left: 10, top: 5, bottom: 5, right: 10),
-                          child: Column(
-                            children: [
-                              cs.CarouselSlider(
-                                items: imgList
-                                    .map(
-                                      (item) => Center(
-                                        child: ClipRRect(
-                                          borderRadius: BorderRadius.circular(10),
-                                          child: Image.asset(
-                                            item,
-                                            fit: BoxFit.cover,
-                                            width: double
-                                                .infinity, // Ensures the image width matches the container
-                                            height:
-                                                200, // Ensures the image height matches the container
-                                          ),
+      child: Stack(
+        children: [
+          // 1. Bagian Carousel (Header Background)
+          Container(
+            color: Colors.blue[400],
+            height: 300,
+            child: Row(
+              children: [
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 10, bottom: 50, left: 20, right: 20),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade100,
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: Colors.blueGrey.shade100),
+                      ),
+                      height: 215,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 10, top: 5, bottom: 5, right: 10),
+                        child: Column(
+                          children: [
+                            cs.CarouselSlider(
+                              items: imgList
+                                  .map((item) => Center(
+                                          child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(10),
+                                        child: Image.asset(
+                                          item,
+                                          fit: BoxFit.cover,
+                                          width: double.infinity,
+                                          height: 200,
                                         ),
-                                      ),
-                                    )
-                                    .toList(),
-                                options: cs.CarouselOptions(
-                                    height: 200,
-                                    autoPlay: true,
-                                    enlargeCenterPage: true,
-                                    aspectRatio: 2.0
-                                    // onPageChanged: (index, reason){
-                                    //   // ini buat handle kalo page keubah
-                                    // }
-                                    ),
-                              )
-                            ],
-                          ),
+                                      )))
+                                  .toList(),
+                              options: cs.CarouselOptions(
+                                height: 200,
+                                autoPlay: true,
+                                enlargeCenterPage: true,
+                                aspectRatio: 2.0,
+                              ),
+                            )
+                          ],
                         ),
                       ),
                     ),
-                  )
-                ],
-              ),
+                  ),
+                )
+              ],
             ),
-            // Atur Posisi Konten. Positioned sbg Parent
-            Positioned(
-              top: 270,
-              left: 20,
-              right: 20,
-              child: Container(
+          ),
+          // 2. Scrollable Content
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SizedBox(height: 245), // Overlap offset
+              
+              // 3. Menu Card
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 20),
                 decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: [
-                      BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          spreadRadius: 5,
-                          blurRadius: 7,
-                          offset: Offset(0, 3))
-                    ]),
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      spreadRadius: 5,
+                      blurRadius: 7,
+                      offset: const Offset(0, 3),
+                    )
+                  ],
+                ),
                 child: Column(
                   children: [
                     Row(
@@ -222,35 +374,27 @@ class _Kontennya extends State<IsiBody> {
                               text: const TextSpan(
                                 text: 'Mau Ngapain Hari Ini? \n',
                                 style: TextStyle(
-                                    color: Colors.black, fontWeight: FontWeight.w600),
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 16,
+                                ),
                               ),
                             ),
                           ),
                         )
                       ],
                     ),
-                    // End Tambah Text.
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 15),
                       child: Row(
                         children: [
+                          // Pesan Tiket
                           Expanded(
                             child: Padding(
                               padding: const EdgeInsets.only(left: 20, right: 10),
                               child: GestureDetector(
                                 onTap: () {
-                                  // Fluttertoast.showToast(
-                                  //   msg: "Pesan Tiket",
-                                  //   toastLength: Toast.LENGTH_SHORT,
-                                  //   gravity: ToastGravity.BOTTOM,
-                                  //   timeInSecForIosWeb: 1,
-                                  //   textColor: Colors.white,
-                                  //   fontSize: 16.0
-                                  // );
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => Pesantiket()));
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) => Pesantiket()));
                                 },
                                 child: Column(
                                   children: [
@@ -259,9 +403,9 @@ class _Kontennya extends State<IsiBody> {
                                       decoration: BoxDecoration(
                                         color: Colors.grey.shade50,
                                         borderRadius: const BorderRadius.only(
-                                            topLeft: Radius.circular(10),
-                                            bottomRight: Radius.circular(10)),
-                                        // border: Border.all(color: Colors.red),
+                                          topLeft: Radius.circular(10),
+                                          bottomRight: Radius.circular(10),
+                                        ),
                                       ),
                                       child: const Image(
                                         image: AssetImage('assets/images/tiket.png'),
@@ -269,10 +413,7 @@ class _Kontennya extends State<IsiBody> {
                                         width: 50,
                                       ),
                                     ),
-                                    const SizedBox(
-                                        height:
-                                            5), // Add some spacing between image and text
-
+                                    const SizedBox(height: 5),
                                     Center(
                                       child: AutoSizeText(
                                         "Pesan Tiket",
@@ -280,8 +421,7 @@ class _Kontennya extends State<IsiBody> {
                                         maxLines: 2,
                                         minFontSize: 8,
                                         textAlign: TextAlign.center,
-                                        style: const TextStyle(
-                                            fontSize: 12, color: Colors.black),
+                                        style: const TextStyle(fontSize: 12, color: Colors.black),
                                       ),
                                     ),
                                   ],
@@ -289,25 +429,13 @@ class _Kontennya extends State<IsiBody> {
                               ),
                             ),
                           ),
+                          // Loket Terdekat
                           Expanded(
                             child: Padding(
                               padding: const EdgeInsets.only(left: 20, right: 10),
                               child: GestureDetector(
                                 onTap: () {
-                                  // Fluttertoast.showToast(
-                                  //   msg: "Halte Terdekat",
-                                  //   toastLength: Toast.LENGTH_SHORT,
-                                  //   gravity: ToastGravity.BOTTOM,
-                                  //   timeInSecForIosWeb: 1,
-                                  //   textColor: Colors.white,
-                                  //   fontSize: 16.0
-                                  // );
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => Halteterdekat(),
-                                    ),
-                                  );
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) => Halteterdekat()));
                                 },
                                 child: Column(
                                   children: [
@@ -316,8 +444,9 @@ class _Kontennya extends State<IsiBody> {
                                       decoration: BoxDecoration(
                                         color: Colors.grey.shade50,
                                         borderRadius: const BorderRadius.only(
-                                            topLeft: Radius.circular(10),
-                                            bottomRight: Radius.circular(10)),
+                                          topLeft: Radius.circular(10),
+                                          bottomRight: Radius.circular(10),
+                                        ),
                                       ),
                                       child: const Image(
                                         image: AssetImage('assets/images/halte.png'),
@@ -325,10 +454,7 @@ class _Kontennya extends State<IsiBody> {
                                         width: 50,
                                       ),
                                     ),
-                                    const SizedBox(
-                                        height:
-                                            5), // Add some spacing between image and text
-
+                                    const SizedBox(height: 5),
                                     Center(
                                       child: AutoSizeText(
                                         "Loket Terdekat",
@@ -336,8 +462,7 @@ class _Kontennya extends State<IsiBody> {
                                         maxLines: 2,
                                         minFontSize: 8,
                                         textAlign: TextAlign.center,
-                                        style: const TextStyle(
-                                            fontSize: 12, color: Colors.black),
+                                        style: const TextStyle(fontSize: 12, color: Colors.black),
                                       ),
                                     ),
                                   ],
@@ -345,24 +470,13 @@ class _Kontennya extends State<IsiBody> {
                               ),
                             ),
                           ),
+                          // Paket Wisata
                           Expanded(
                             child: Padding(
                               padding: const EdgeInsets.only(left: 20, right: 10),
                               child: GestureDetector(
                                 onTap: () {
-                                  // Fluttertoast.showToast(
-                                  //   msg: "Paket Wisata",
-                                  //   toastLength: Toast.LENGTH_SHORT,
-                                  //   gravity: ToastGravity.BOTTOM,
-                                  //   timeInSecForIosWeb: 1,
-                                  //   textColor: Colors.white,
-                                  //   fontSize: 16.0
-                                  // );
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              paketwisata1(title: "lala")));
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) => paketwisata1(title: "lala")));
                                 },
                                 child: Column(
                                   children: [
@@ -371,8 +485,9 @@ class _Kontennya extends State<IsiBody> {
                                       decoration: BoxDecoration(
                                         color: Colors.grey.shade50,
                                         borderRadius: const BorderRadius.only(
-                                            topLeft: Radius.circular(10),
-                                            bottomRight: Radius.circular(10)),
+                                          topLeft: Radius.circular(10),
+                                          bottomRight: Radius.circular(10),
+                                        ),
                                       ),
                                       child: const Image(
                                         image: AssetImage('assets/images/wisata.png'),
@@ -380,10 +495,7 @@ class _Kontennya extends State<IsiBody> {
                                         width: 50,
                                       ),
                                     ),
-                                    const SizedBox(
-                                        height:
-                                            5), // Add some spacing between image and text
-
+                                    const SizedBox(height: 5),
                                     Center(
                                       child: AutoSizeText(
                                         'Paket Wisata',
@@ -391,8 +503,7 @@ class _Kontennya extends State<IsiBody> {
                                         maxLines: 2,
                                         minFontSize: 8,
                                         textAlign: TextAlign.center,
-                                        style: const TextStyle(
-                                            fontSize: 12, color: Colors.black),
+                                        style: const TextStyle(fontSize: 12, color: Colors.black),
                                       ),
                                     ),
                                   ],
@@ -400,21 +511,13 @@ class _Kontennya extends State<IsiBody> {
                               ),
                             ),
                           ),
+                          // Panduan Bepergian
                           Expanded(
                             child: Padding(
                               padding: const EdgeInsets.only(left: 20, right: 10),
                               child: GestureDetector(
                                 onTap: () {
-                                  // Fluttertoast.showToast(
-                                  //   msg: "Panduan Berpergian",
-                                  //   toastLength: Toast.LENGTH_SHORT,
-                                  //   gravity: ToastGravity.BOTTOM,
-                                  //   timeInSecForIosWeb: 1,
-                                  //   textColor: Colors.white,
-                                  //   fontSize: 16.0
-                                  // );
-                                  Navigator.push(context,
-                                      MaterialPageRoute(builder: (context) => panduan()));
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) => panduan()));
                                 },
                                 child: Column(
                                   children: [
@@ -423,8 +526,9 @@ class _Kontennya extends State<IsiBody> {
                                       decoration: BoxDecoration(
                                         color: Colors.grey.shade50,
                                         borderRadius: const BorderRadius.only(
-                                            topLeft: Radius.circular(10),
-                                            bottomRight: Radius.circular(10)),
+                                          topLeft: Radius.circular(10),
+                                          bottomRight: Radius.circular(10),
+                                        ),
                                       ),
                                       child: const Image(
                                         image: AssetImage('assets/images/guidebook.png'),
@@ -432,10 +536,7 @@ class _Kontennya extends State<IsiBody> {
                                         width: 50,
                                       ),
                                     ),
-                                    const SizedBox(
-                                        height:
-                                            5), // Add some spacing between image and text
-
+                                    const SizedBox(height: 5),
                                     Center(
                                       child: AutoSizeText(
                                         'Panduan Bepergian',
@@ -443,8 +544,7 @@ class _Kontennya extends State<IsiBody> {
                                         maxLines: 2,
                                         minFontSize: 8,
                                         textAlign: TextAlign.center,
-                                        style: const TextStyle(
-                                            fontSize: 12, color: Colors.black),
+                                        style: const TextStyle(fontSize: 12, color: Colors.black),
                                       ),
                                     ),
                                   ],
@@ -455,59 +555,116 @@ class _Kontennya extends State<IsiBody> {
                         ],
                       ),
                     ),
-
-                    // Row(
-                    //   mainAxisAlignment: MainAxisAlignment.center,
-                    //   children: List.generate(
-                    //     1, //ubah panjang bullet
-                    //     (index) => Container(
-                    //       margin: const EdgeInsets.symmetric(horizontal: 4.0),
-                    //       width: (_currentPage == index) ? 12.0 : 8.0,
-                    //       height: (_currentPage == index) ? 12.0 : 8.0,
-                    //       decoration: BoxDecoration(
-                    //         shape: BoxShape.circle,
-                    //         color: _currentPage == index ? Colors.blue : Colors.grey
-                    //       ),
-                    //     )
-                    //   ),
-                    // ),
-                    // Tambah Spasi Manual
                     RichText(text: const TextSpan(text: '')),
-                    // // End Tambah Spasi.
                   ],
                 ),
               ),
-            ),
-
-            Positioned(
-              top: 465,
-              left: 20,
-              right: 20,
-              child: Column(
-                children: [
-                  Text(
-                    "Point Of Interests",
-                    style: TextStyle(fontWeight: FontWeight.w600),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Image.asset(
-                    'assets/images/WIP.png',
-                    height: 200,
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Text(
-                    "Work In Progress",
-                    style: TextStyle(fontWeight: FontWeight.w600),
-                  ),
-                ],
+              
+              const SizedBox(height: 20),
+              
+              // 4. Point of Interests Card
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 20),
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      spreadRadius: 5,
+                      blurRadius: 7,
+                      offset: const Offset(0, 3),
+                    )
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          "Tempat Menarik Terdekat",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                        if (_isLoadingPoi)
+                          const SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+                          _buildCategoryChip('kuliner', '🍽️ Kuliner'),
+                          _buildCategoryChip('ibadah', '🕌 Ibadah'),
+                          _buildCategoryChip('kesehatan', '🏥 Kesehatan'),
+                          _buildCategoryChip('wisata', '🏞️ Wisata'),
+                          _buildCategoryChip('penginapan', '🏨 Hotel'),
+                          _buildCategoryChip('atm', '🏧 ATM/Bank'),
+                        ],
+                      ),
+                    ),
+                    
+                    const SizedBox(height: 8),
+                    
+                    if (_isLoadingPoi && _poiList.isEmpty)
+                      const Center(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(vertical: 30),
+                          child: CircularProgressIndicator(),
+                        ),
+                      )
+                    else if (_poiErrorMessage != null && _poiList.isEmpty)
+                      Center(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 20),
+                          child: Text(
+                            _poiErrorMessage!,
+                            style: const TextStyle(color: Colors.red),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      )
+                    else if (_poiList.isEmpty)
+                      const Center(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(vertical: 30),
+                          child: Text(
+                            "Tidak ada tempat ditemukan di sekitar Anda.",
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                        ),
+                      )
+                    else
+                      Container(
+                        height: 145,
+                        margin: const EdgeInsets.only(top: 8),
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: _poiList.length,
+                          itemBuilder: (context, index) {
+                            final poi = _poiList[index];
+                            return _buildPoiCard(poi);
+                          },
+                        ),
+                      )
+                  ],
+                ),
               ),
-            )
-          ],
-        ),
+              const SizedBox(height: 25),
+            ],
+          )
+        ],
       ),
     );
   }
@@ -606,7 +763,7 @@ class _KontenNavbar extends State<IsiNavbar> {
   // end passing data
 
   // Fungsi WebSocket
-  var storage = FlutterSecureStorage();
+
 
   Future<void> _connectToWebSocket() async {
     // mesti replace dari http ke ws. krn myIpAddr ini ada http.
@@ -707,7 +864,7 @@ class _KontenNavbar extends State<IsiNavbar> {
       final data = jsonDecode(message);
       var status = "";
       // get datauser
-      var jwt = await storage.read(key: "jwt");
+      var jwt = await getStoredJwt();
       var thisUser = await getMyData(jwt);
 
       // Supaya dia hanya ketrigger dgn user yg login saja
@@ -902,8 +1059,7 @@ class _KontenNavbar extends State<IsiNavbar> {
                       style: TextStyle(color: Colors.red, fontWeight: FontWeight.w500)),
                   onTap: () async {
                     Navigator.pop(context);
-                    var storage = const FlutterSecureStorage();
-                    await storage.delete(key: 'jwt');
+                    await removeStoredJwt();
                     if (context.mounted) {
                       Navigator.pushAndRemoveUntil(
                           context,

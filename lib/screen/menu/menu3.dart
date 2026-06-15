@@ -8,8 +8,9 @@ import 'package:bus_hub/screen/menu/ubahProfil.dart';
 import 'package:flutter/material.dart';
 // import 'package:fluttertoast/fluttertoast.dart';
 import 'package:bus_hub/main.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
 import 'package:dio/dio.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../function/ip_address.dart';
 
 class Menu3 extends StatelessWidget{
@@ -29,7 +30,7 @@ class IsiMenu3 extends StatefulWidget {
 }
 
 class _KontenMenu3 extends State<IsiMenu3> {
-  var storage = FlutterSecureStorage();
+
   Map<String, dynamic> user = {};
 
   
@@ -41,7 +42,7 @@ class _KontenMenu3 extends State<IsiMenu3> {
   }
 
   Future<void> getData() async {
-    var jwt = await storage.read(key: 'jwt');
+    var jwt = await getStoredJwt();
 
     if (jwt != null && jwt.isNotEmpty) {  // Check if jwt is not null
       var fnUser= await getMyData(jwt);
@@ -488,7 +489,7 @@ class _KontenMenu3 extends State<IsiMenu3> {
                           ),
                           child: MaterialButton(
                             onPressed: () async {
-                              await storage.delete(key: 'jwt');
+                              await removeStoredJwt();
 
                               Navigator.pushAndRemoveUntil(
                                 context, 

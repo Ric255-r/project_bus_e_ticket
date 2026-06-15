@@ -10,7 +10,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
 import 'package:auto_size_text/auto_size_text.dart';
 // import 'package:fluttertoast/fluttertoast.dart';
 
@@ -92,12 +92,12 @@ class _StfulMenuCheckoutState extends State<StfulMenuCheckout> {
 
   // buat enable disable button buat ke successCheckout.dart
   var isSubmitted = false;
-  var storage = new FlutterSecureStorage();
+
   var dio = Dio();
 
   Future<void> _submitBukti(BuildContext context, {String? mode}) async {
 
-    var jwt = await storage.read(key: "jwt");
+    var jwt = await getStoredJwt();
 
     setState(() {
       isSubmitted = true;
@@ -264,7 +264,7 @@ class _StfulMenuCheckoutState extends State<StfulMenuCheckout> {
 
                 Navigator.of(context).pop();
 
-                var jwt = await storage.read(key: "jwt");
+                var jwt = await getStoredJwt();
                 Map<String, dynamic> data = {
                   "usernya": await getMyData(jwt)
                 };

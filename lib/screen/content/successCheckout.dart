@@ -4,7 +4,7 @@ import 'package:bus_hub/screen/function/ip_address.dart';
 import 'package:bus_hub/screen/function/me.dart';
 import 'package:bus_hub/screen/menu/menu2.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
 import 'package:dio/dio.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
@@ -43,7 +43,7 @@ class TampilanSukses extends StatefulWidget {
 }
 
 class _TampilanSuksesState extends State<TampilanSukses> {
-  var storage = new FlutterSecureStorage();
+
   var dio = Dio();
   Map<String, dynamic>? responseData;
   String? datePart;
@@ -51,7 +51,7 @@ class _TampilanSuksesState extends State<TampilanSukses> {
 
   Future<void> getTransaksi() async {
     try {
-      var jwt = await storage.read(key: "jwt");
+      var jwt = await getStoredJwt();
 
       var response = await dio.get("${myIpAddr()}/checkout",
         options: Options(
@@ -95,7 +95,7 @@ class _TampilanSuksesState extends State<TampilanSukses> {
 
     // ak letak fungsi dalam widget supaya nda butuh parameter context.
     Future<void> tarikJwt(String menu) async {
-      var myJwt = await storage.read(key: 'jwt');
+      var myJwt = await getStoredJwt();
 
       // Tarik Datanya kek gini
       Map<String, dynamic> data = {

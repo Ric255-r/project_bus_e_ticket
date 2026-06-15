@@ -8,7 +8,7 @@ import 'package:bus_hub/screen/function/me.dart';
 import 'package:flutter/material.dart';
 import 'package:bus_hub/main.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
 import 'package:intl/intl.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
@@ -98,14 +98,14 @@ class _KontenMenu2 extends State<IsiMenu2> {
 
   List<dynamic> listData = [];
   var dio = Dio();
-  var storage = FlutterSecureStorage();
+
   bool isLoading = true;
   var jwtUser = "";
 
   Future<void> getData(String mode) async {
-    var jwt = await storage.read(key: "jwt");
+    var jwt = await getStoredJwt();
     setState(() {
-      jwtUser = jwt!; // store jwt ke variabel global
+      jwtUser = jwt ?? ''; // store jwt ke variabel global
     });
 
     try {

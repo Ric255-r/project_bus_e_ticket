@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 // import 'package:fluttertoast/fluttertoast.dart';
 import 'package:bus_hub/main.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
 
 
 // class SecondUbahPass extends StatelessWidget {
@@ -47,7 +47,7 @@ class _KontenMenuUbahPass extends State<IsiMenuUbahPass> {
   TextEditingController newPass = TextEditingController();
   TextEditingController confirmNewPass = TextEditingController();
   var dio = Dio();
-  var storage = FlutterSecureStorage();
+
 
   Future<void> updatePass(BuildContext context) async {
     try {
@@ -83,7 +83,7 @@ class _KontenMenuUbahPass extends State<IsiMenuUbahPass> {
             )
           );
         }else{
-          var jwt = await storage.read(key: 'jwt');
+          var jwt = await getStoredJwt();
           var dataUser = await getMyData(jwt);
 
           var response = await dio.put('${myIpAddr()}/changePass', 
