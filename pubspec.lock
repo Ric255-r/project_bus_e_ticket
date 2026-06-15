@@ -193,10 +193,9 @@ packages:
   flutter_osm_plugin:
     dependency: "direct dev"
     description:
-      name: flutter_osm_plugin
-      sha256: "1a088a8b9440ccd7fee7b77e77c851368dc060149ac145682769a479a7784f1a"
-      url: "https://pub.dev"
-    source: hosted
+      path: "third_party/flutter_osm_plugin"
+      relative: true
+    source: path
     version: "1.3.3"
   flutter_osm_web:
     dependency: transitive
