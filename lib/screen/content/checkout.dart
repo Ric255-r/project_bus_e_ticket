@@ -298,17 +298,15 @@ class _StfulMenuCheckoutState extends State<StfulMenuCheckout> {
 
   @override
   Widget build(BuildContext context) {
-    var tinggi =  MediaQuery.of(context).size.height;
     var lebar = MediaQuery.of(context).size.width;
 
     String formattedTime = _formatTime(_countDown);
 
     return SingleChildScrollView(
       child: Container(
-        height: (tinggi <= 700) ? tinggi * 2 : tinggi + 300,
         width: lebar,
         color: Colors.blue[400],
-        child: Stack(
+        child: Column(
           children: [
             Container(
               height: 150,
@@ -403,14 +401,11 @@ class _StfulMenuCheckoutState extends State<StfulMenuCheckout> {
 
             ),
 
-            Positioned(
-              top: 150,
-              child: Container(
-                width: MediaQuery.of(context).size.width -40,
-                height: 220,
-                margin: EdgeInsets.only(
-                  left: 20, right: 20, top: 30
-                ),
+            Container(
+              width: MediaQuery.of(context).size.width - 40,
+              margin: const EdgeInsets.only(
+                left: 20, right: 20, top: 15
+              ),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10)
@@ -519,21 +514,16 @@ class _StfulMenuCheckoutState extends State<StfulMenuCheckout> {
                   ),
                 ),
               ),
-          
-            ),
 
-            Positioned(
-              top: 410,
-              child: Container(
-                margin: EdgeInsets.only(
-                  left: 20.0, right: 20.0
-                ),
-                width: MediaQuery.of(context).size.width - 40,
-                height: (_imgFile != null && paymentMethod == "transfer") ? 375 : 300,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10)
-                ),
+            Container(
+              margin: const EdgeInsets.only(
+                left: 20.0, right: 20.0, top: 15
+              ),
+              width: MediaQuery.of(context).size.width - 40,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10)
+              ),
 
                 child: Padding(
                   padding: EdgeInsets.only(
@@ -719,17 +709,14 @@ class _StfulMenuCheckoutState extends State<StfulMenuCheckout> {
                     ],
                   ),
                 )
-              )
-            ),
+              ),
 
             if(_imgFile != null && paymentMethod == "transfer")
-            Positioned(
-              top: 790,
-              child: Container(
-                width: MediaQuery.of(context).size.width,
-                margin: EdgeInsets.only(
-                  left: 20, right: 20
-                ),
+            Container(
+              width: MediaQuery.of(context).size.width,
+              margin: const EdgeInsets.only(
+                left: 20, right: 20, top: 15, bottom: 20
+              ),
                 //alignment: Alignment.centerRight,
                 // height: 1,
                 //width: 300,
@@ -785,12 +772,12 @@ class _StfulMenuCheckoutState extends State<StfulMenuCheckout> {
                     )
                   ],
                 ), 
-              )
-            )
-          ],
+              ),
+              const SizedBox(height: 20),
+            ],
+          ),
         ),
-      ),
-    );
+      );
   }
 
   Future<Object> showAlertUpload(BuildContext context) async {

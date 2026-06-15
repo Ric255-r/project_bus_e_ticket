@@ -244,13 +244,14 @@ class _KontenMenu3 extends State<IsiMenu3> {
                                 child: const Row(
                                   children: [
                                     Icon(Icons.person, size: 50,),
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                        left: 25
+                                    Expanded(
+                                      child: Padding(
+                                        padding: EdgeInsets.only(
+                                          left: 25
+                                        ),
+                                        child: Text("Ubah Profile", style: TextStyle(fontSize: 15),),
                                       ),
-                                      child: Text("Ubah Profile", style: TextStyle(fontSize: 15),),
                                     ),
-                                    Spacer(),
                                     Icon(Icons.arrow_right, size: 50, )
                                   ],
                                 )
@@ -288,13 +289,14 @@ class _KontenMenu3 extends State<IsiMenu3> {
                                 child: const Row(
                                   children: [
                                     Icon(Icons.lock, size: 40,),
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                        left: 30
+                                    Expanded(
+                                      child: Padding(
+                                        padding: EdgeInsets.only(
+                                          left: 30
+                                        ),
+                                        child: Text("Ubah Password", style: TextStyle(fontSize: 15),),
                                       ),
-                                      child: Text("Ubah Password", style: TextStyle(fontSize: 15),),
                                     ),
-                                    Spacer(),
                                     Icon(Icons.arrow_right, size: 50, )
                                   ],
                                 )
@@ -347,13 +349,14 @@ class _KontenMenu3 extends State<IsiMenu3> {
                                 child: const Row(
                                   children: [
                                     Icon(Icons.comment, size: 38,),
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                        left: 35
+                                    Expanded(
+                                      child: Padding(
+                                        padding: EdgeInsets.only(
+                                          left: 35
+                                        ),
+                                        child: Text("FAQ", style: TextStyle(fontSize: 15),),
                                       ),
-                                      child: Text("FAQ", style: TextStyle(fontSize: 15),),
                                     ),
-                                    Spacer(),
                                     Icon(Icons.arrow_right, size: 50, )
                                   ],
                                 )
@@ -391,13 +394,14 @@ class _KontenMenu3 extends State<IsiMenu3> {
                                 child: const Row(
                                   children: [
                                     Icon(Icons.theater_comedy_sharp, size: 45,),
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                        left: 28
+                                    Expanded(
+                                      child: Padding(
+                                        padding: EdgeInsets.only(
+                                          left: 28
+                                        ),
+                                        child: Text("Syarat Dan Ketentuan", style: TextStyle(fontSize: 15),),
                                       ),
-                                      child: Text("Syarat Dan Ketentuan", style: TextStyle(fontSize: 15),),
                                     ),
-                                    Spacer(),
                                     Icon(Icons.arrow_right, size: 50, )
                                   ],
                                 )
@@ -435,13 +439,14 @@ class _KontenMenu3 extends State<IsiMenu3> {
                                 child: const Row(
                                   children: [
                                     Icon(Icons.privacy_tip, size: 35,),
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                        left: 35
+                                    Expanded(
+                                      child: Padding(
+                                        padding: EdgeInsets.only(
+                                          left: 35
+                                        ),
+                                        child: Text("Kebijakan Privasi", style: TextStyle(fontSize: 15),),
                                       ),
-                                      child: Text("Kebijakan Privasi", style: TextStyle(fontSize: 15),),
                                     ),
-                                    Spacer(),
                                     Icon(Icons.arrow_right, size: 50, )
                                   ],
                                 )

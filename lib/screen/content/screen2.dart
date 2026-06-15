@@ -82,10 +82,7 @@ class _Kontennya extends State<IsiBody> {
   double Tinggi = 150;
   bool changes = true;
 
-  // Buat cek pageview dalam menu mau ngapain hari ini
-  PageController _pageController = PageController();
-  int _currentPage = 0;
-  // end buat ngecek pageview
+
 
   final List<String> imgList = ['assets/images/carousel1.jpeg', 'assets/images/carousel2.png', 'assets/images/carousel3.jpeg'];
 
@@ -205,21 +202,10 @@ class _Kontennya extends State<IsiBody> {
                       ],
                     ),
                     // End Tambah Text.
-                    SizedBox(
-                      height: 100,
-                      child: PageView(
-                        // untuk track page ke brp
-                        controller: _pageController,
-                        onPageChanged: (int indexny) {
-                          setState(() {
-                            _currentPage = indexny;
-                          });
-                        },
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 15),
+                      child: Row(
                         children: [
-                          // children ini buat tambah pageview lagi
-                          // misalkan klo mau nambah konten ke slide selanjutnya, tambah row lg
-                          Row(
-                            children: [
                               Expanded(
                                   child: Padding(
                                       padding: const EdgeInsets.only(left: 20, right: 10),
@@ -378,8 +364,6 @@ class _Kontennya extends State<IsiBody> {
                                             ],
                                           )))),
                             ],
-                          ),
-                        ],
                       ),
                     ),
 
