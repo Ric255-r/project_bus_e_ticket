@@ -10,6 +10,7 @@ import 'package:dio/dio.dart';
 import './screen/function/confirmExit.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter/services.dart';
+import 'dart:developer';
 
 // referensi :
 // https://stackoverflow.com/questions/51765092/how-to-scroll-page-in-flutter
@@ -28,7 +29,15 @@ void main() {
       FlutterError.dumpErrorToConsole(details);
     };
 
-    runApp(MyApp());
+    runZonedGuarded(
+      () async {
+        runApp(MyApp());
+      },
+      (error, stack) {
+        log('[ZONE_ERROR] $error');
+        log('[ZONE_STACK] $stack');
+      },
+    );
   });
 }
 
@@ -131,8 +140,7 @@ class _FirstScreen extends State<MyTextField> {
   // function buat show dia keregis atau nda
   void fnIsNewRegister() {
     setState(() {
-      isNewRegister =
-          (widget.isNewRegister != null) ? widget.isNewRegister : false;
+      isNewRegister = (widget.isNewRegister != null) ? widget.isNewRegister : false;
     });
 
     // timer buat setstate ke false lg
@@ -195,8 +203,7 @@ class _FirstScreen extends State<MyTextField> {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: (e.response?.statusCode == 401)
                   ? Text("Error Username / Password Salah")
-                  : Text(
-                      "Error ${e.response?.statusCode}: ${e.response?.data}")));
+                  : Text("Error ${e.response?.statusCode}: ${e.response?.data}")));
         } else {
           // Fluttertoast.showToast(
           //   msg: "Error ${e}",
@@ -207,8 +214,7 @@ class _FirstScreen extends State<MyTextField> {
           //   fontSize: 16.0
           // );
 
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text("Error $e")));
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error $e")));
         }
       }
     }
@@ -281,9 +287,7 @@ class _FirstScreen extends State<MyTextField> {
                       children: [
                         // Logo
                         Positioned(
-                          top: (isNewRegister != null && isNewRegister)
-                              ? 15
-                              : 45,
+                          top: (isNewRegister != null && isNewRegister) ? 15 : 45,
                           left: 0,
                           right: 0,
                           child: Column(
@@ -298,8 +302,7 @@ class _FirstScreen extends State<MyTextField> {
                                 child: Text(
                                   'Login',
                                   style: TextStyle(
-                                      fontSize: 25,
-                                      fontWeight: FontWeight.bold),
+                                      fontSize: 25, fontWeight: FontWeight.bold),
                                 ),
                               ),
                             ],
@@ -375,8 +378,7 @@ class _FirstScreen extends State<MyTextField> {
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) =>
-                                              const forgetpassword(
-                                                  title: 'title')));
+                                              const forgetpassword(title: 'title')));
                                 },
                                 child: const Text(
                                   "Forgot Password?",
@@ -421,8 +423,7 @@ class _FirstScreen extends State<MyTextField> {
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                            builder: (context) =>
-                                                IsiRegister()));
+                                            builder: (context) => IsiRegister()));
                                   },
                                   child: Text(
                                     ' Regis Sekarang',
