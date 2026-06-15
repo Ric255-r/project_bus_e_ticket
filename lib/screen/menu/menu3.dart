@@ -60,30 +60,29 @@ class _KontenMenu3 extends State<IsiMenu3> {
   
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.pushReplacement(
+          context, 
+          MaterialPageRoute(
+            builder: (context) => SecondProfile(
+              data: user
+            )
+          )
+        );
 
-    return SingleChildScrollView(
-      child: SizedBox(
-        height: (screenHeight <= 700) ? screenHeight + 400 : screenHeight ,
-        // ksh willpopscope biar nyegah die nd nyangkut akun lain
-        child: WillPopScope(
-          onWillPop: () async {
-            Navigator.pushReplacement(
-              context, 
-              MaterialPageRoute(
-                builder: (context) => SecondProfile(
-                  data: user
-                )
-              )
-            );
-
-            return false;
-          },
-          child: Stack(
-            children: [
-              Container(
+        return false;
+      },
+      child: SingleChildScrollView(
+        child: Stack(
+          children: [
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              height: 300,
+              child: Container(
                 color: Colors.blue[400],
-                height: 300,
                 child: InkWell(
                   onTap: () {
                     Navigator.pushReplacement(
@@ -152,8 +151,7 @@ class _KontenMenu3 extends State<IsiMenu3> {
                                         width: 200,
                                       )
                                   ),
-                                  SizedBox(
-                                    width: 250,
+                                  Expanded(
                                     child: Padding(
                                       padding: EdgeInsets.only(
                                         left: 30,
@@ -180,369 +178,333 @@ class _KontenMenu3 extends State<IsiMenu3> {
                   ),
                 ),
               ),
-              Positioned(
+            ),
+            Container(
+              margin: const EdgeInsets.only(
                 top: 255,
                 left: 20,
                 right: 20,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        spreadRadius: 5,
-                        blurRadius: 7,
-                        offset: Offset(0, 3)
-                      )
-                    ]
-                  ),
-                  height: screenHeight - 320,
-                  width: MediaQuery.of(context).size.width, 
-                  child: Column(
+                bottom: 20,
+              ),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    spreadRadius: 5,
+                    blurRadius: 7,
+                    offset: Offset(0, 3)
+                  )
+                ]
+              ),
+              child: Column(
+                children: [
+                  const Row(
                     children: [
-                      const Row(
-                        children: [
-                          Expanded(
-                            child: Padding(
-                              padding: EdgeInsets.only(left: 30, top: 20, bottom: 10),
-                              child: Text(
-                                'Pengaturan Akun',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            )
-                          )
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Padding(
-                              // padding ini buat container
-                              padding: EdgeInsets.only(left: 30, right: 30),
-                              child: Container(
-                                decoration: const BoxDecoration(
-                                  border: Border(
-                                    bottom: BorderSide(color: Colors.black)
-                                  )
-                                ),
-                                // padding ini buat isi teks
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                    left: 3,
-                                    top: 10,
-                                    bottom: 10
-                                  ),
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      // Fluttertoast.showToast(
-                                      //   msg: "Klik Profile",
-                                      //   toastLength: Toast.LENGTH_LONG,
-                                      //   gravity: ToastGravity.BOTTOM,
-                                      //   timeInSecForIosWeb: 10,
-                                      //   textColor: Colors.white,
-                                      //   fontSize: 16.0
-                                      // );
-                                      Navigator.push(
-                                        context, 
-                                        MaterialPageRoute(
-                                          builder: (context) => SecondUbahProfile()
-                                        )
-                                      );
-                                    },
-                                    child: const Row(
-                                      children: [
-                                        Icon(Icons.person, size: 50,),
-                                        Padding(
-                                          padding: EdgeInsets.only(
-                                            left: 25
-                                          ),
-                                          child: Text("Ubah Profile", style: TextStyle(fontSize: 15),),
-                                        ),
-                                        Spacer(),
-                                        Icon(Icons.arrow_right, size: 50, )
-                                      ],
-                                    )
-                                  )
-                                ),
-                              ),
-                            )
-                          )
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Padding(
-                              // padding ini buat container
-                              padding: EdgeInsets.only(left: 30, right: 30),
-                              child: Container(
-                                decoration: const BoxDecoration(
-                                  border: Border(
-                                    bottom: BorderSide(color: Colors.black)
-                                  )
-                                ),
-                                // padding ini buat isi teks
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                    left: 8,
-                                    top: 10,
-                                    bottom: 10
-                                  ),
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      Navigator.push(
-                                        context, 
-                                        MaterialPageRoute(builder: (context) => MenuUbahPassword())
-                                      );
-                                    },
-                                    child: const Row(
-                                      children: [
-                                        Icon(Icons.lock, size: 40,),
-                                        Padding(
-                                          padding: EdgeInsets.only(
-                                            left: 30
-                                          ),
-                                          child: Text("Ubah Password", style: TextStyle(fontSize: 15),),
-                                        ),
-                                        Spacer(),
-                                        Icon(Icons.arrow_right, size: 50, )
-                                      ],
-                                    )
-                                  )
-                                ),
-                              ),
-                            )
-                          )
-                        ],
-                      ),
-                      const Row(
-                        children: [
-                          Expanded(
-                            child: Padding(
-                              padding: EdgeInsets.only(left: 30, top: 20),
-                              child: Text(
-                                'Tentang',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600
-                                ),
-                              ),
-                            )
-                          )
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Padding(
-                              // padding ini buat container
-                              padding: EdgeInsets.only(left: 30, right: 30),
-                              child: Container(
-                                decoration: const BoxDecoration(
-                                  border: Border(
-                                    bottom: BorderSide(color: Colors.black)
-                                  )
-                                ),
-                                // padding ini buat isi teks
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                    left: 8,
-                                    top: 10,
-                                    bottom: 10
-                                  ),
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      Navigator.push(
-                                        context, 
-                                        MaterialPageRoute(builder: (context) => faq(title: "bla"))
-                                      );
-                                      // Fluttertoast.showToast(
-                                      //   msg: "Klik Profile 2",
-                                      //   toastLength: Toast.LENGTH_LONG,
-                                      //   gravity: ToastGravity.BOTTOM,
-                                      //   timeInSecForIosWeb: 10,
-                                      //   textColor: Colors.white,
-                                      //   fontSize: 16.0
-                                      // );
-                                    },
-                                    child: const Row(
-                                      children: [
-                                        Icon(Icons.comment, size: 38,),
-                                        Padding(
-                                          padding: EdgeInsets.only(
-                                            left: 35
-                                          ),
-                                          child: Text("FAQ", style: TextStyle(fontSize: 15),),
-                                        ),
-                                        Spacer(),
-                                        Icon(Icons.arrow_right, size: 50, )
-                                      ],
-                                    )
-                                  )
-                                ),
-                              ),
-                            )
-                          )
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Padding(
-                              // padding ini buat container
-                              padding: EdgeInsets.only(left: 30, right: 30),
-                              child: Container(
-                                decoration: const BoxDecoration(
-                                  border: Border(
-                                    bottom: BorderSide(color: Colors.black)
-                                  )
-                                ),
-                                // padding ini buat isi teks
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                    left: 8,
-                                    top: 10,
-                                    bottom: 10
-                                  ),
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      Navigator.push(
-                                        context, 
-                                        MaterialPageRoute(builder: (context) => SecondSK())
-                                      );
-                                    },
-                                    child: const Row(
-                                      children: [
-                                        Icon(Icons.theater_comedy_sharp, size: 45,),
-                                        Padding(
-                                          padding: EdgeInsets.only(
-                                            left: 28
-                                          ),
-                                          child: Text("Syarat Dan Ketentuan", style: TextStyle(fontSize: 15),),
-                                        ),
-                                        Spacer(),
-                                        Icon(Icons.arrow_right, size: 50, )
-                                      ],
-                                    )
-                                  )
-                                ),
-                              ),
-                            )
-                          )
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Padding(
-                              // padding ini buat container
-                              padding: EdgeInsets.only(left: 30, right: 30),
-                              child: Container(
-                                decoration: const BoxDecoration(
-                                  border: Border(
-                                    bottom: BorderSide(color: Colors.black)
-                                  )
-                                ),
-                                // padding ini buat isi teks
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                    left: 8,
-                                    top: 10,
-                                    bottom: 10
-                                  ),
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      Navigator.push(
-                                        context, 
-                                        MaterialPageRoute(builder: (context) => Kebijakan(title: "title"))
-                                      );
-                                      // Fluttertoast.showToast(
-                                      //   msg: "Klik Profile 2",
-                                      //   toastLength: Toast.LENGTH_LONG,
-                                      //   gravity: ToastGravity.BOTTOM,
-                                      //   timeInSecForIosWeb: 10,
-                                      //   textColor: Colors.white,
-                                      //   fontSize: 16.0
-                                      // );
-                                    },
-                                    child: const Row(
-                                      children: [
-                                        Icon(Icons.privacy_tip, size: 35,),
-                                        Padding(
-                                          padding: EdgeInsets.only(
-                                            left: 35
-                                          ),
-                                          child: Text("Kebijakan Privasi", style: TextStyle(fontSize: 15),),
-                                        ),
-                                        Spacer(),
-                                        Icon(Icons.arrow_right, size: 50, )
-                                      ],
-                                    )
-                                  )
-                                ),
-                              ),
-                            )
-                          )
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.only(
-                                top: 20,
-                                left: 30,
-                                right: 30
-                              ),
-                              child: MaterialButton(
-                                onPressed: () {
-
-                                },
-                                child: Text('Ganti Akun?'),
-                                color: Colors.lime,
-                              )
-                            )
-                          )
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.only(
-                                top: 5,
-                                left: 30,
-                                right: 30
-                              ),
-                              child: MaterialButton(
-                                onPressed: () async {
-                                  await storage.delete(key: 'jwt');
-
-                                  Navigator.pushAndRemoveUntil(
-                                    context, 
-                                    MaterialPageRoute(
-                                      builder: (context) =>  MyApp()
-                                    ),
-                                    (Route<dynamic> route) => false // This removes all previous routes
-                                  );
-                                },
-                                child: Text('Logout', style: TextStyle(color: Colors.white),),
-                                color: Colors.red.shade300,
-                              )
-                            )
-                          )
-                        ],
+                      Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.only(left: 30, top: 20, bottom: 10),
+                          child: Text(
+                            'Pengaturan Akun',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        )
                       )
                     ],
                   ),
-                )
-              )
-            ],
-          ),
-        ),
-        
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.only(left: 30, right: 30),
+                          child: Container(
+                            decoration: const BoxDecoration(
+                              border: Border(
+                                bottom: BorderSide(color: Colors.black)
+                              )
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                left: 3,
+                                top: 10,
+                                bottom: 10
+                              ),
+                              child: GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context, 
+                                    MaterialPageRoute(
+                                      builder: (context) => SecondUbahProfile()
+                                    )
+                                  );
+                                },
+                                child: const Row(
+                                  children: [
+                                    Icon(Icons.person, size: 50,),
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                        left: 25
+                                      ),
+                                      child: Text("Ubah Profile", style: TextStyle(fontSize: 15),),
+                                    ),
+                                    Spacer(),
+                                    Icon(Icons.arrow_right, size: 50, )
+                                  ],
+                                )
+                              )
+                            ),
+                          ),
+                        )
+                      )
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.only(left: 30, right: 30),
+                          child: Container(
+                            decoration: const BoxDecoration(
+                              border: Border(
+                                bottom: BorderSide(color: Colors.black)
+                              )
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                left: 8,
+                                top: 10,
+                                bottom: 10
+                              ),
+                              child: GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context, 
+                                    MaterialPageRoute(builder: (context) => MenuUbahPassword())
+                                  );
+                                },
+                                child: const Row(
+                                  children: [
+                                    Icon(Icons.lock, size: 40,),
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                        left: 30
+                                      ),
+                                      child: Text("Ubah Password", style: TextStyle(fontSize: 15),),
+                                    ),
+                                    Spacer(),
+                                    Icon(Icons.arrow_right, size: 50, )
+                                  ],
+                                )
+                              )
+                            ),
+                          ),
+                        )
+                      )
+                    ],
+                  ),
+                  const Row(
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.only(left: 30, top: 20),
+                          child: Text(
+                            'Tentang',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600
+                            ),
+                          ),
+                        )
+                      )
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.only(left: 30, right: 30),
+                          child: Container(
+                            decoration: const BoxDecoration(
+                              border: Border(
+                                bottom: BorderSide(color: Colors.black)
+                              )
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                left: 8,
+                                top: 10,
+                                bottom: 10
+                              ),
+                              child: GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context, 
+                                    MaterialPageRoute(builder: (context) => faq(title: "bla"))
+                                  );
+                                },
+                                child: const Row(
+                                  children: [
+                                    Icon(Icons.comment, size: 38,),
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                        left: 35
+                                      ),
+                                      child: Text("FAQ", style: TextStyle(fontSize: 15),),
+                                    ),
+                                    Spacer(),
+                                    Icon(Icons.arrow_right, size: 50, )
+                                  ],
+                                )
+                              )
+                            ),
+                          ),
+                        )
+                      )
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.only(left: 30, right: 30),
+                          child: Container(
+                            decoration: const BoxDecoration(
+                              border: Border(
+                                bottom: BorderSide(color: Colors.black)
+                              )
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                left: 8,
+                                top: 10,
+                                bottom: 10
+                              ),
+                              child: GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context, 
+                                    MaterialPageRoute(builder: (context) => SecondSK())
+                                  );
+                                },
+                                child: const Row(
+                                  children: [
+                                    Icon(Icons.theater_comedy_sharp, size: 45,),
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                        left: 28
+                                      ),
+                                      child: Text("Syarat Dan Ketentuan", style: TextStyle(fontSize: 15),),
+                                    ),
+                                    Spacer(),
+                                    Icon(Icons.arrow_right, size: 50, )
+                                  ],
+                                )
+                              )
+                            ),
+                          ),
+                        )
+                      )
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.only(left: 30, right: 30),
+                          child: Container(
+                            decoration: const BoxDecoration(
+                              border: Border(
+                                bottom: BorderSide(color: Colors.black)
+                              )
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                left: 8,
+                                top: 10,
+                                bottom: 10
+                              ),
+                              child: GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context, 
+                                    MaterialPageRoute(builder: (context) => Kebijakan(title: "title"))
+                                  );
+                                },
+                                child: const Row(
+                                  children: [
+                                    Icon(Icons.privacy_tip, size: 35,),
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                        left: 35
+                                      ),
+                                      child: Text("Kebijakan Privasi", style: TextStyle(fontSize: 15),),
+                                    ),
+                                    Spacer(),
+                                    Icon(Icons.arrow_right, size: 50, )
+                                  ],
+                                )
+                              )
+                            ),
+                          ),
+                        )
+                      )
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                            top: 20,
+                            left: 30,
+                            right: 30
+                          ),
+                          child: MaterialButton(
+                            onPressed: () {
+
+                            },
+                            child: Text('Ganti Akun?'),
+                            color: Colors.lime,
+                          )
+                        )
+                      )
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                            top: 5,
+                            left: 30,
+                            right: 30
+                          ),
+                          child: MaterialButton(
+                            onPressed: () async {
+                              await storage.delete(key: 'jwt');
+
+                              Navigator.pushAndRemoveUntil(
+                                context, 
+                                MaterialPageRoute(
+                                  builder: (context) => MyApp()
+                                ),
+                                (Route<dynamic> route) => false
+                              );
+                            },
+                            child: Text('Logout', style: TextStyle(color: Colors.white),),
+                            color: Colors.red.shade300,
+                          )
+                        )
+                      )
+                    ],
+                  )
+                ],
+              ),
+            )
+          ],
+        )
       )
     );
   }

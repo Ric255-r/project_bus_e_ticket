@@ -23,6 +23,7 @@ class _HalteterdekatState extends State<Halteterdekat> {
   bool _isLoadingLocation = true;
   bool _isDrawingRoute = false;
   bool _mapIsReady = false;
+  bool _isDisposed = false;
 
   @override
   void initState() {
@@ -32,7 +33,10 @@ class _HalteterdekatState extends State<Halteterdekat> {
 
   @override
   void dispose() {
+    _isDisposed = true;
+    _mapIsReady = false;
     _mapController?.dispose();
+    _mapController = null;
     super.dispose();
   }
 
@@ -135,30 +139,37 @@ class _HalteterdekatState extends State<Halteterdekat> {
   Future<void> _showMapPoints() async {
     final controller = _mapController;
     final userPoint = _userPoint;
-    if (controller == null || userPoint == null) return;
+    if (_isDisposed || controller == null || userPoint == null) return;
 
-    await controller.removeAllCircle();
-    await controller.drawCircle(
-      CircleOSM(
-        key: 'user-radius',
-        centerPoint: userPoint,
-        radius: 180,
-        color: Colors.blue.withValues(alpha: 0.12),
-        borderColor: Colors.blue,
-        strokeWidth: 1,
-      ),
-    );
-
-    for (final halte in _haltes) {
-      await controller.addMarker(
-        halte.point,
-        markerIcon: const MarkerIcon(
-          icon: Icon(Icons.directions_bus, color: Colors.red, size: 46),
+    try {
+      await controller.removeAllCircle();
+      if (_isDisposed) return;
+      await controller.drawCircle(
+        CircleOSM(
+          key: 'user-radius',
+          centerPoint: userPoint,
+          radius: 180,
+          color: Colors.blue.withValues(alpha: 0.12),
+          borderColor: Colors.blue,
+          strokeWidth: 1,
         ),
       );
+      for (final halte in _haltes) {
+        if (_isDisposed) return;
+        await controller.addMarker(
+          halte.point,
+          markerIcon: const MarkerIcon(
+            icon: Icon(Icons.directions_bus, color: Colors.red, size: 46),
+          ),
+        );
+      }
+      if (_isDisposed) return;
+      await controller.moveTo(userPoint, animate: true);
+      if (_isDisposed) return;
+      await controller.setZoom(zoomLevel: 15);
+    } catch (error) {
+      if (!_isDisposed) rethrow;
     }
-    await controller.moveTo(userPoint, animate: true);
-    await controller.setZoom(zoomLevel: 15);
   }
 
   Future<void> _centerOnUser() async {
@@ -233,7 +244,18 @@ class _HalteterdekatState extends State<Halteterdekat> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Halte Terdekat')),
+      appBar: AppBar(
+        title: const Text(
+          'Halte Terdekat',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: Colors.blue[400],
+        foregroundColor: Colors.white,
+        elevation: 0,
+      ),
       body: _buildBody(),
       floatingActionButton: _mapController == null
           ? null
@@ -303,7 +325,7 @@ class _HalteterdekatState extends State<Halteterdekat> {
               showContributorBadgeForOSM: true,
             ),
             onMapIsReady: (isReady) async {
-              if (!isReady) return;
+              if (!isReady || _isDisposed || !mounted) return;
               _mapIsReady = true;
               await _showMapPoints();
             },

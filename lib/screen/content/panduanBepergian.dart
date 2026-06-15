@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'faq.dart';
 
 class panduan extends StatelessWidget {
   const panduan({super.key});
 
-    @override
+  @override
   Widget build(BuildContext context) {
-    return Panduanbepergian(title: "title");
+    return const Panduanbepergian(title: "Panduan Bepergian");
   }
 }
 
@@ -19,287 +18,193 @@ class Panduanbepergian extends StatefulWidget {
 }
 
 class _Panduanbepergian extends State<Panduanbepergian> {
+  Widget _buildAppStep({required String imagePath, required String desc}) {
+    return SizedBox(
+      width: 140,
+      child: Column(
+        children: [
+          Container(
+            width: 100,
+            height: 100,
+            decoration: BoxDecoration(
+              color: const Color(0xFFAEC6CF).withOpacity(0.3),
+              borderRadius: BorderRadius.circular(10),
+              image: DecorationImage(
+                image: AssetImage(imagePath),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            desc,
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCustomerRule({required String imagePath, required String desc}) {
+    return SizedBox(
+      width: 90,
+      child: Column(
+        children: [
+          Container(
+            width: 50,
+            height: 50,
+            decoration: BoxDecoration(
+              color: const Color(0xFFAEC6CF),
+              shape: BoxShape.circle,
+              image: DecorationImage(
+                image: AssetImage(imagePath),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            desc,
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    var height = MediaQuery.of(context).size.height;
-    var width = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: Colors.blue[400],
+      appBar: AppBar(
+        title: Text(widget.title,
+            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        backgroundColor: Colors.blue[400],
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Container(
-                  margin: EdgeInsets.only(top: 65, left: 27, right: 10),
-                  width: width -50,
-                  height: (height <= 700)? height-330 : height-850 ,
-                   decoration: BoxDecoration(
-                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(8),
-            ),
-            child: Center(child: Text('Panduan Berpergian Bersama BusHub', style:TextStyle(fontWeight: FontWeight.bold, fontSize: 15))
-            ),
-                  
-                  
-                )
-              ]
-            ),
-            Row(
-              children: [
-                Container(
-                  width: MediaQuery.of(context).size.width -50,
-                  height: (height <= 700)? height-75 : height -500,
-                  margin: EdgeInsets.only(top:15, left: 27, right: 10),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10)
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          child: Column(
+            children: [
+              // Card 2: Panduan Penggunaan Aplikasi
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(15),
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        spreadRadius: 2,
+                        blurRadius: 5,
+                        offset: const Offset(0, 2),
+                      )
+                    ]),
+                child: Column(
+                  children: [
+                    const Text(
+                      'Panduan Penggunaan Aplikasi',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                        color: Colors.black87,
+                      ),
                     ),
-                    child: 
-                    Align( alignment: Alignment.center,
-                    child: 
-                    Stack(
+                    const SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Container(
-                          child:
-                          Padding(padding: EdgeInsets.only(top:7, left: 70),
-                          child:Text('Panduan Penggunaan Aplikasi', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)))
+                        _buildAppStep(
+                          imagePath: 'assets/images/tiketbis2.png',
+                          desc: 'Pesan Tiket Melalui Menu Pesan Tiket',
                         ),
-                        Container(
-                          child: 
-                          Padding(padding: EdgeInsets.only(top: 45, left: 40),
-                          child: Container(
-                            width: 100,
-                            height: 100,
-                            decoration: BoxDecoration(
-                              color: Color(0xFFAEC6CF).withOpacity(0.3),
-                              borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
-                              image: DecorationImage(image: AssetImage('assets/images/tiketbis2.png'),
-                               fit: BoxFit.cover,
-                               ),
-                            )
-                          )
-                          )
+                        _buildAppStep(
+                          imagePath: 'assets/images/bayar.png',
+                          desc: 'Lakukan Pembayaran',
                         ),
-                        Container(
-                          child: 
-                          Padding(padding: EdgeInsets.only(top: 45, left: 210),
-                          child: Container(
-                            width: 100,
-                            height: 100,
-                            decoration: BoxDecoration(
-                              color: Color(0xFFAEC6CF).withOpacity(0.3),
-                              borderRadius: BorderRadius.only(topRight: Radius.circular(10), bottomLeft: Radius.circular(10)),
-                              image: DecorationImage(image: AssetImage('assets/images/bayar.png'),
-                               fit: BoxFit.cover)
-                            )
-                          )
-                          )
-                              ),
-                        Container(
-                          child:
-                          Padding(padding: EdgeInsets.only(top: 150, left:20),
-                          child: Container(
-                            width: 140,
-                            height: 40,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                            borderRadius: BorderRadius.all(Radius.circular(10)
-                            )
-                            ),
-                            child: Text('Pesan Tiket Melalui Menu Pesan Tiket', textAlign: TextAlign.center, style: TextStyle( fontSize: 11))
-                          )
-                          )
-                        ),
-                        Container(
-                          child:
-                          Padding(padding: EdgeInsets.only(top: 150, left: 185),
-                          child: Container(
-                            width: 160,
-                            height: 40,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                            borderRadius: BorderRadius.all(Radius.circular(10)
-                            )
-                            ),
-                            child: Text('Lakukan Pembayaran', textAlign: TextAlign.center, style: TextStyle( fontSize: 11))
-                          )
-                          )
-                        ),
-                         Container(
-                          child: 
-                          Padding(padding: EdgeInsets.only(top: 190 , left: 40),
-                          child: Container(
-                            width: 100,
-                            height: 100,
-                            decoration: BoxDecoration(
-                              color: Color(0xFFAEC6CF).withOpacity(0.3),
-                              borderRadius: BorderRadius.only(topRight: Radius.circular(10), bottomLeft: Radius.circular(10)),
-                              image: DecorationImage(image: AssetImage('assets/images/haltebis.png'),
-                               fit: BoxFit.cover)
-                            )
-                          )
-                          )
-                        ),
-                        Container(
-                          child: 
-                          Padding(padding: EdgeInsets.only(top: 190, left: 210),
-                          child: Container(
-                            width: 100,
-                            height: 100,
-                            decoration: BoxDecoration(
-                              color: Color(0xFFAEC6CF).withOpacity(0.3),
-                              borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
-                              image: DecorationImage(image: AssetImage('assets/images/kunjungan.png'),
-                               fit: BoxFit.cover)
-                            )
-                          )
-                          )
-                              ),
-                            Container(
-                          child:
-                          Padding(padding: EdgeInsets.only(top: 295, left: 20),
-                          child: Container(
-                            width: 140,
-                            height: 40,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                            borderRadius: BorderRadius.all(Radius.circular(10)
-                            )
-                            ),
-                            child: Text('Cek Halte Terdekat Melalui Menu Halte Terdekat', textAlign: TextAlign.center, style: TextStyle(fontSize: 11))
-                          )
-                          )
-                        ),
-                        Container(
-                          child:
-                          Padding(padding: EdgeInsets.only(top: 295, left: 185),
-                          child: Container(
-                            width: 150,
-                            height: 40,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                            borderRadius: BorderRadius.all(Radius.circular(10)
-                            )
-                            ),
-                            child: Text('Kunjungi Halte Tepat Waktu dan Berangkat', textAlign: TextAlign.center, style: TextStyle(fontSize: 11))
-                          )
-                          )
-                        )
                       ],
                     ),
-                  ),
-                )
-             
-              ],
-            ),
-            Row(
-              children: [
-                Container(
-                    width: MediaQuery.of(context).size.width -50,
-                    height: (height <= 700)? height-250 : height -750,
-                   margin: EdgeInsets.only(top:15, left: 27, right: 10),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10)
-                    ),
-                    child: 
-                    Align(alignment: Alignment.center,
-                    child: 
-                    Stack(
+                    const SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Container(
-                          child:
-                          Padding(padding: EdgeInsets.only(top:7, left: 60),
-                          child:Text('Panduan Pelanggan BusHub', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)))
+                        _buildAppStep(
+                          imagePath: 'assets/images/haltebis.png',
+                          desc: 'Cek Halte Terdekat Melalui Menu Halte Terdekat',
                         ),
-                        Container(
-                          child: 
-                          Padding(padding: EdgeInsets.only(top: 45, left: 25),
-                          child: Container(
-                            width: 50,
-                            height: 50,
-                            decoration: BoxDecoration(
-                              color: Color(0xFFAEC6CF),
-                              borderRadius: BorderRadius.all(Radius.circular(100)),
-                              image: DecorationImage(image: AssetImage('assets/images/sabuk.png'),
-                               fit: BoxFit.cover)
-                            )
-                          )
-                          )
+                        _buildAppStep(
+                          imagePath: 'assets/images/kunjungan.png',
+                          desc: 'Kunjungi Halte Tepat Waktu dan Berangkat',
                         ),
-                        Container(
-                          child: 
-                          Padding(padding: EdgeInsets.only(top: 45, left: 140),
-                          child: Container(
-                            width: 50,
-                            height: 50,
-                            decoration: BoxDecoration(
-                              color: Color(0xFFAEC6CF),
-                              borderRadius: BorderRadius.all(Radius.circular(100)),
-                              image: DecorationImage(image: AssetImage('assets/images/rokok.png'),
-                               fit: BoxFit.cover)
-                            )
-                          )
-                          )
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 15),
+
+              // Card 3: Panduan Pelanggan
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(15),
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        spreadRadius: 2,
+                        blurRadius: 5,
+                        offset: const Offset(0, 2),
+                      )
+                    ]),
+                child: Column(
+                  children: [
+                    const Text(
+                      'Panduan Pelanggan BusHub',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildCustomerRule(
+                          imagePath: 'assets/images/sabuk.png',
+                          desc: 'Gunakan SeatBelt',
                         ),
-                        Container(
-                          child: 
-                          Padding(padding: EdgeInsets.only(top: 45, left: 245),
-                          child: Container(
-                            width: 50,
-                            height: 50,
-                            decoration: BoxDecoration(
-                              color: Color(0xFFAEC6CF),
-                              borderRadius: BorderRadius.all(Radius.circular(100)),
-                              image: DecorationImage(image: AssetImage('assets/images/lari.png'),
-                               fit: BoxFit.cover)
-                            )
-                            // child: 
-                            // InkWell(
-                            //   onTap :()
-                            //   {
-                            //   Navigator.push(context, MaterialPageRoute(builder: (context) => paketwisata1())
-                            //   );
-                            // },
-                            // child: Text(''),
-                            // )
-                          )
-                          )
+                        _buildCustomerRule(
+                          imagePath: 'assets/images/rokok.png',
+                          desc: 'Dilarang Merokok',
                         ),
-                        Container(
-                          child: Padding(padding: EdgeInsets.only(top:105, left:5),
-                          child: Text('Gunakan SeatBelt', style: TextStyle(fontSize: 11)),
-                          )
+                        _buildCustomerRule(
+                          imagePath: 'assets/images/lari.png',
+                          desc: 'Dilarang Berlari',
                         ),
-                        Container(
-                          child: Padding(padding: EdgeInsets.only(top:105, left:123),
-                          child: Text('Dilarang Merokok', style: TextStyle(fontSize: 11)),
-                          )
-                        ),
-                        Container(
-                          child: Padding(padding: EdgeInsets.only(top:105, left:233 ),
-                          child: Text('Dilarang Berlari', style: TextStyle(fontSize: 11)),
-                          )
-                        )
-                      ]
-                    )
-                    )
-                )
-              ],
-            ),
-            Container(
-              child: 
-              SizedBox(
-                height: 20
-              )
-            )
-          ],
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 20),
+            ],
+          ),
         ),
-      )
-        
-       )
-      ;
+      ),
+    );
   }
 }

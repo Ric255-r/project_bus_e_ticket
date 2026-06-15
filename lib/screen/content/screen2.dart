@@ -7,7 +7,7 @@ import 'package:flutter/services.dart';
 import '../function/ip_address.dart';
 import '../menu/menu3.dart';
 import 'package:flutter/material.dart' hide CarouselController;
-// import 'package:fluttertoast/fluttertoast.dart';
+import 'package:bus_hub/main.dart';
 import '../menu/menu2.dart';
 import 'package:carousel_slider/carousel_slider.dart' as cs;
 import '../function/confirmExit.dart';
@@ -735,25 +735,84 @@ class _KontenNavbar extends State<IsiNavbar> {
           ),
           drawer: Drawer(
             child: ListView(
-              // penting, wajib remove padding di listview
+              padding: EdgeInsets.zero,
               children: [
-                const DrawerHeader(decoration: BoxDecoration(color: Colors.blue), child: Text("Header Drawer")),
-                ListTile(
-                  title: const Text("Menu 1"),
+                UserAccountsDrawerHeader(
+                  decoration: BoxDecoration(
+                    color: Colors.blue[400],
+                  ),
+                  currentAccountPicture: CircleAvatar(
+                    backgroundColor: Colors.white,
+                    backgroundImage: dataIsiNavbar['profile_picture'] != null
+                        ? NetworkImage('${myIpAddr()}/fotoprofile/${dataIsiNavbar['profile_picture']}') as ImageProvider
+                        : const AssetImage('assets/images/profile.jpg') as ImageProvider,
+                  ),
+                  accountName: Text(
+                    dataIsiNavbar['username'] ?? 'User',
+                    style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 16),
+                  ),
+                  accountEmail: Text(
+                    dataIsiNavbar['email'] ?? '',
+                    style: const TextStyle(color: Colors.white70),
+                  ),
+                ),
+                 ListTile(
+                  leading: const Icon(Icons.home, color: Colors.blue),
+                  title: const Text("Dashboard", style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w500)),
                   onTap: () {
-                    // masukin fungsi apapun
-
-                    // tutup drawer
                     Navigator.pop(context);
+                    onBarTapped(0);
                   },
                 ),
                 ListTile(
-                  title: const Text("Menu 2"),
+                  leading: const Icon(Icons.confirmation_number, color: Colors.blue),
+                  title: const Text("Pesan Tiket", style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w500)),
                   onTap: () {
-                    // masukin fungsi
-
-                    //tutup drawer
                     Navigator.pop(context);
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => Pesantiket()));
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.location_on, color: Colors.blue),
+                  title: const Text("Halte Terdekat", style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w500)),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => Halteterdekat()));
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.card_travel, color: Colors.blue),
+                  title: const Text("Paket Wisata", style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w500)),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => paketwisata1(title: "lala")));
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.book, color: Colors.blue),
+                  title: const Text("Panduan Bepergian", style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w500)),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const panduan()));
+                  },
+                ),
+                const Divider(color: Colors.grey),
+                ListTile(
+                  leading: const Icon(Icons.logout, color: Colors.red),
+                  title: const Text("Logout", style: TextStyle(color: Colors.red, fontWeight: FontWeight.w500)),
+                  onTap: () async {
+                    Navigator.pop(context);
+                    var storage = const FlutterSecureStorage();
+                    await storage.delete(key: 'jwt');
+                    if (context.mounted) {
+                      Navigator.pushAndRemoveUntil(
+                        context, 
+                        MaterialPageRoute(
+                          builder: (context) => MyApp()
+                        ),
+                        (Route<dynamic> route) => false
+                      );
+                    }
                   },
                 )
               ],
