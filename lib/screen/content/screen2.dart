@@ -25,7 +25,6 @@ import 'dart:convert';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:cherry_toast/cherry_toast.dart';
 
-
 // referensi carousel slider
 // https://stackoverflow.com/questions/78688921/error-carouselcontroller-is-imported-from-both-package-in-flutter
 
@@ -127,7 +126,8 @@ class _Kontennya extends State<IsiBody> {
           if (permission == LocationPermission.denied) {
             permission = await Geolocator.requestPermission();
           }
-          if (permission == LocationPermission.whileInUse || permission == LocationPermission.always) {
+          if (permission == LocationPermission.whileInUse ||
+              permission == LocationPermission.always) {
             Position position = await Geolocator.getCurrentPosition(
               desiredAccuracy: LocationAccuracy.low,
               timeLimit: const Duration(seconds: 5),
@@ -221,13 +221,16 @@ class _Kontennya extends State<IsiBody> {
     final distance = poi['distance_km'] ?? 0.0;
     final lat = poi['latitude'];
     final lon = poi['longitude'];
-    
+
     // Determine category icon/label
     String typeLabel = 'POI';
-    if (poi['amenity'] != null) typeLabel = poi['amenity'].toString().replaceAll('_', ' ');
-    if (poi['tourism'] != null) typeLabel = poi['tourism'].toString().replaceAll('_', ' ');
-    if (poi['leisure'] != null) typeLabel = poi['leisure'].toString().replaceAll('_', ' ');
-    
+    if (poi['amenity'] != null)
+      typeLabel = poi['amenity'].toString().replaceAll('_', ' ');
+    if (poi['tourism'] != null)
+      typeLabel = poi['tourism'].toString().replaceAll('_', ' ');
+    if (poi['leisure'] != null)
+      typeLabel = poi['leisure'].toString().replaceAll('_', ' ');
+
     // Capitalize typeLabel
     if (typeLabel.isNotEmpty) {
       typeLabel = typeLabel.substring(0, 1).toUpperCase() + typeLabel.substring(1);
@@ -264,7 +267,8 @@ class _Kontennya extends State<IsiBody> {
                 const SizedBox(height: 2),
                 Text(
                   "${distance} km terdekat",
-                  style: const TextStyle(color: Colors.blue, fontWeight: FontWeight.w600, fontSize: 11),
+                  style: const TextStyle(
+                      color: Colors.blue, fontWeight: FontWeight.w600, fontSize: 11),
                 ),
               ],
             ),
@@ -307,7 +311,8 @@ class _Kontennya extends State<IsiBody> {
               children: [
                 Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.only(top: 10, bottom: 50, left: 20, right: 20),
+                    padding:
+                        const EdgeInsets.only(top: 10, bottom: 50, left: 20, right: 20),
                     child: Container(
                       decoration: BoxDecoration(
                         color: Colors.grey.shade100,
@@ -316,7 +321,8 @@ class _Kontennya extends State<IsiBody> {
                       ),
                       height: 215,
                       child: Padding(
-                        padding: const EdgeInsets.only(left: 10, top: 5, bottom: 5, right: 10),
+                        padding:
+                            const EdgeInsets.only(left: 10, top: 5, bottom: 5, right: 10),
                         child: Column(
                           children: [
                             cs.CarouselSlider(
@@ -353,10 +359,14 @@ class _Kontennya extends State<IsiBody> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const SizedBox(height: 245), // Overlap offset
-              
+
               // 3. Menu Card
               Container(
-                margin: const EdgeInsets.symmetric(horizontal: 20),
+                margin: const EdgeInsets.only(
+                  top: 15,
+                  left: 20,
+                  right: 20,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
@@ -401,7 +411,10 @@ class _Kontennya extends State<IsiBody> {
                               padding: const EdgeInsets.only(left: 20, right: 10),
                               child: GestureDetector(
                                 onTap: () {
-                                  Navigator.push(context, MaterialPageRoute(builder: (context) => Pesantiket()));
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => Pesantiket()));
                                 },
                                 child: Column(
                                   children: [
@@ -428,7 +441,8 @@ class _Kontennya extends State<IsiBody> {
                                         maxLines: 2,
                                         minFontSize: 8,
                                         textAlign: TextAlign.center,
-                                        style: const TextStyle(fontSize: 12, color: Colors.black),
+                                        style: const TextStyle(
+                                            fontSize: 12, color: Colors.black),
                                       ),
                                     ),
                                   ],
@@ -442,7 +456,10 @@ class _Kontennya extends State<IsiBody> {
                               padding: const EdgeInsets.only(left: 20, right: 10),
                               child: GestureDetector(
                                 onTap: () {
-                                  Navigator.push(context, MaterialPageRoute(builder: (context) => Halteterdekat()));
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => Halteterdekat()));
                                 },
                                 child: Column(
                                   children: [
@@ -469,7 +486,8 @@ class _Kontennya extends State<IsiBody> {
                                         maxLines: 2,
                                         minFontSize: 8,
                                         textAlign: TextAlign.center,
-                                        style: const TextStyle(fontSize: 12, color: Colors.black),
+                                        style: const TextStyle(
+                                            fontSize: 12, color: Colors.black),
                                       ),
                                     ),
                                   ],
@@ -483,7 +501,11 @@ class _Kontennya extends State<IsiBody> {
                               padding: const EdgeInsets.only(left: 20, right: 10),
                               child: GestureDetector(
                                 onTap: () {
-                                  Navigator.push(context, MaterialPageRoute(builder: (context) => paketwisata1(title: "lala")));
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              paketwisata1(title: "lala")));
                                 },
                                 child: Column(
                                   children: [
@@ -510,7 +532,8 @@ class _Kontennya extends State<IsiBody> {
                                         maxLines: 2,
                                         minFontSize: 8,
                                         textAlign: TextAlign.center,
-                                        style: const TextStyle(fontSize: 12, color: Colors.black),
+                                        style: const TextStyle(
+                                            fontSize: 12, color: Colors.black),
                                       ),
                                     ),
                                   ],
@@ -524,7 +547,8 @@ class _Kontennya extends State<IsiBody> {
                               padding: const EdgeInsets.only(left: 20, right: 10),
                               child: GestureDetector(
                                 onTap: () {
-                                  Navigator.push(context, MaterialPageRoute(builder: (context) => panduan()));
+                                  Navigator.push(context,
+                                      MaterialPageRoute(builder: (context) => panduan()));
                                 },
                                 child: Column(
                                   children: [
@@ -551,7 +575,8 @@ class _Kontennya extends State<IsiBody> {
                                         maxLines: 2,
                                         minFontSize: 8,
                                         textAlign: TextAlign.center,
-                                        style: const TextStyle(fontSize: 12, color: Colors.black),
+                                        style: const TextStyle(
+                                            fontSize: 12, color: Colors.black),
                                       ),
                                     ),
                                   ],
@@ -566,9 +591,9 @@ class _Kontennya extends State<IsiBody> {
                   ],
                 ),
               ),
-              
+
               const SizedBox(height: 20),
-              
+
               // 4. Point of Interests Card
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 20),
@@ -621,9 +646,7 @@ class _Kontennya extends State<IsiBody> {
                         ],
                       ),
                     ),
-                    
                     const SizedBox(height: 8),
-                    
                     if (_isLoadingPoi && _poiList.isEmpty)
                       const Center(
                         child: Padding(
@@ -770,7 +793,6 @@ class _KontenNavbar extends State<IsiNavbar> {
   // end passing data
 
   // Fungsi WebSocket
-
 
   Future<void> _connectToWebSocket() async {
     // mesti replace dari http ke ws. krn myIpAddr ini ada http.
