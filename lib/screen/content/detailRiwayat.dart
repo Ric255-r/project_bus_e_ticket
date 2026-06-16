@@ -754,7 +754,7 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                         SizedBox(height: 3,),
 
                         // Cek string length id_paket, cek apakah kosong atau nd
-                        if(responseData['id_paket'].length == 0)
+                        if(responseData['id_paket'] == null || responseData['id_paket'] == "")
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -783,7 +783,7 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                           ],
                         ),
                         
-                        if(responseData['id_paket'].length > 0)
+                        if(responseData['id_paket'] != null && responseData['id_paket'] != "")
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [

@@ -14,7 +14,6 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:web_socket_channel/io.dart';
 
-
 class Menu2 extends StatelessWidget {
   final String? status;
   final Key? key;
@@ -25,55 +24,48 @@ class Menu2 extends StatelessWidget {
   // final Map<String, dynamic> getDataNya;
   // Menu2({required this.getDataNya});
 
-
   @override
   Widget build(BuildContext context) {
-    // return data status ini isinya Sukses, Ditolak, dan Pending. 
+    // return data status ini isinya Sukses, Ditolak, dan Pending.
     // Hasil Translate dari triggerNotif Websocket Screen2.dart
-    if(status != null ){
+    if (status != null) {
       switch (status) {
         case "Sukses":
           return SafeArea(
-            child: Scaffold(
-              body:  IsiMenu2(
-                key: key == null ? ValueKey("Tanpa_Key") : key,
-                status: "completed",
-              ),
-            )
-          );
+              child: Scaffold(
+            body: IsiMenu2(
+              key: key == null ? ValueKey("Tanpa_Key") : key,
+              status: "completed",
+            ),
+          ));
         case "Ditolak":
           return SafeArea(
-            child: Scaffold(
-              body:  IsiMenu2(
-                key: key == null ? ValueKey("Tanpa_Key") : key,
-                status: "cancelled",
-              ),
-            )
-          );
+              child: Scaffold(
+            body: IsiMenu2(
+              key: key == null ? ValueKey("Tanpa_Key") : key,
+              status: "cancelled",
+            ),
+          ));
         default:
           return SafeArea(
-            child: Scaffold(
-              body:  IsiMenu2(
-                key: key == null ? ValueKey("Tanpa_Key") : key,
-                status: "pending",
-              ),
-            )
-          );
+              child: Scaffold(
+            body: IsiMenu2(
+              key: key == null ? ValueKey("Tanpa_Key") : key,
+              status: "pending",
+            ),
+          ));
       }
-    }else{
+    } else {
       return SafeArea(
-        child: Scaffold(
-          body: IsiMenu2(
-            key: key == null ? ValueKey("Tanpa_Key") : key,
-            status: "pending",
-          ),
-        )
-      );
+          child: Scaffold(
+        body: IsiMenu2(
+          key: key == null ? ValueKey("Tanpa_Key") : key,
+          status: "pending",
+        ),
+      ));
     }
-
   }
 }
-
 
 class IsiMenu2 extends StatefulWidget {
   final String status;
@@ -90,11 +82,7 @@ class _KontenMenu2 extends State<IsiMenu2> {
   bool isCompleted = false;
   bool isCancelled = false;
 
-  var formatRp = NumberFormat.currency(
-    locale: "id_ID",
-    symbol: "Rp. ",
-    decimalDigits: 0
-  );
+  var formatRp = NumberFormat.currency(locale: "id_ID", symbol: "Rp. ", decimalDigits: 0);
 
   List<dynamic> listData = [];
   var dio = Dio();
@@ -109,13 +97,8 @@ class _KontenMenu2 extends State<IsiMenu2> {
     });
 
     try {
-      var response = await dio.get('${myIpAddr()}/checkout?status=$mode', 
-        options: Options(
-          headers: {
-            "authorization": "bearer $jwt"
-          }
-        )
-      );
+      var response = await dio.get('${myIpAddr()}/checkout?status=$mode',
+          options: Options(headers: {"authorization": "bearer $jwt"}));
 
       print(response);
 
@@ -132,10 +115,9 @@ class _KontenMenu2 extends State<IsiMenu2> {
       }
 
       // print(listData);
-
     } catch (e) {
       print("Ada Error $e");
-    } 
+    }
   }
 
   // // Websocket channel
@@ -256,10 +238,7 @@ class _KontenMenu2 extends State<IsiMenu2> {
     // _channel.sink.close();
     // _timerStatus?.cancel();
     super.dispose();
-
   }
-
-
 
   Widget _buildTransactionCard(Map<String, dynamic> items, String statusType) {
     IconData icon;
@@ -278,56 +257,53 @@ class _KontenMenu2 extends State<IsiMenu2> {
     return InkWell(
       onTap: () {
         Navigator.push(
-          context, 
-          MaterialPageRoute(
-            builder: (context) => DetailRiwayatStless(
-              idTrans: items['id_trans'],
-            )
-          )
-        );
+            context,
+            MaterialPageRoute(
+                builder: (context) => DetailRiwayatStless(
+                      idTrans: items['id_trans'],
+                    )));
       },
-      child: Stack(
-        children: [
-          Padding(
+      child: Stack(children: [
+        Padding(
             padding: const EdgeInsets.only(top: 20, left: 10, right: 10),
             child: Container(
               height: 120,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15),
-                color: Colors.grey.withOpacity(0.2)
-              ),
-            )
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 45, left: 40),
-            child: Container(
-              width: 80,
-              height: 80,
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.black),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: items['gbrpaket'] == null || items['id_paket'] == ""
+                  borderRadius: BorderRadius.circular(15),
+                  color: Colors.grey.withOpacity(0.2)),
+            )),
+        Padding(
+          padding: const EdgeInsets.only(top: 45, left: 40),
+          child: Container(
+            width: 80,
+            height: 80,
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.black),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: items['gbrpaket'] == null || items['id_paket'] == ""
                   ? Image.asset('assets/images/tayo.png', fit: BoxFit.contain)
                   : Image.network(
-                    '${myIpAddr()}/fotoPaket/${items['gbrpaket']}',
-                    fit: BoxFit.contain,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Image.asset('assets/images/loading.gif'); // Fallback image on error
-                    },
-                    loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-                      if (loadingProgress == null) return child;
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    },
-                  ),
-              ),
+                      '${myIpAddr()}/fotoPaket/${items['gbrpaket']}',
+                      fit: BoxFit.contain,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Image.asset(
+                            'assets/images/loading.gif'); // Fallback image on error
+                      },
+                      loadingBuilder: (BuildContext context, Widget child,
+                          ImageChunkEvent? loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      },
+                    ),
             ),
           ),
-          Padding(
+        ),
+        Padding(
             padding: const EdgeInsets.only(left: 125, top: 45),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -340,57 +316,50 @@ class _KontenMenu2 extends State<IsiMenu2> {
                     maxFontSize: 12,
                   ),
                 AutoSizeText(
-                  "${items['id_rute'].substring(0,3)} -> ${items['id_rute'].substring(3, 6)}",
+                  "${items['id_rute'].substring(0, 3)} -> ${items['id_rute'].substring(3, 6)}",
                   maxLines: 1,
                   minFontSize: 8,
                   maxFontSize: 12,
                 ),
                 Text(
-                  (items['tgl_balik'] == items['tgl_pergi']) 
-                  ? "${items['tgl_pergi']}"
-                  : "${items['tgl_pergi']} -> ${items['tgl_balik']}",
-                  style: const TextStyle(
-                    fontSize: 11
-                  ),
+                  (items['tgl_balik'] == items['tgl_pergi'])
+                      ? "${items['tgl_pergi']}"
+                      : "${items['tgl_pergi']} -> ${items['tgl_balik']}",
+                  style: const TextStyle(fontSize: 11),
                 ),
-                const SizedBox(height: 3,),
+                const SizedBox(
+                  height: 3,
+                ),
                 Row(
                   children: [
-                    Flexible(
-                      child: Icon(icon, size: 20)
-                    ),
+                    Flexible(child: Icon(icon, size: 20)),
                     Expanded(
                       child: Text(statusLabel, style: const TextStyle(fontSize: 12)),
                     )
                   ],
                 )
               ],
-            )
-          ),
-          Padding(
+            )),
+        Padding(
             padding: const EdgeInsets.only(top: 25, left: 45),
-            child: Text(
-              "${items['tgl_trans'].substring(0, 10)}",
-              style: const TextStyle(fontSize: 12)
-            )
+            child: Text("${items['tgl_trans'].substring(0, 10)}",
+                style: const TextStyle(fontSize: 12))),
+        Positioned(
+          right: 25,
+          top: 45,
+          child: Text(
+            formatRp.format(items['total_harga']),
+            style: const TextStyle(fontSize: 12),
           ),
-          Positioned(
-            right: 25,
-            top: 45,
-            child: Text(
-              formatRp.format(items['total_harga']), 
-              style: const TextStyle(fontSize: 12),
-            ),
-          )
-        ]
-      ),
+        )
+      ]),
     );
   }
 
   Widget _buildList(String statusType) {
     if (isLoading) {
-      return const Padding(
-        padding: EdgeInsets.all(20.0),
+      return const SizedBox(
+        height: 350.0,
         child: Center(
           child: CircularProgressIndicator(),
         ),
@@ -398,8 +367,8 @@ class _KontenMenu2 extends State<IsiMenu2> {
     }
 
     if (listData.isEmpty) {
-      return const Padding(
-        padding: EdgeInsets.all(20.0),
+      return const SizedBox(
+        height: 350.0,
         child: Center(
           child: Text("No Data"),
         ),
@@ -408,7 +377,8 @@ class _KontenMenu2 extends State<IsiMenu2> {
 
     return Column(
       mainAxisSize: MainAxisSize.min,
-      children: listData.map((items) => _buildTransactionCard(items, statusType)).toList(),
+      children:
+          listData.map((items) => _buildTransactionCard(items, statusType)).toList(),
     );
   }
 
@@ -439,14 +409,14 @@ class _KontenMenu2 extends State<IsiMenu2> {
                     border: Border(
                       bottom: BorderSide(
                         width: (isPending) ? 3 : 0,
-                        color: const Color.fromARGB(255, 150, 251, 153)
-                      )
-                    )
+                        color: const Color.fromARGB(255, 150, 251, 153),
+                      ),
+                    ),
                   ),
                   child: InkWell(
                     onTap: () async {
                       await getData('pending');
-                      if(mounted){
+                      if (mounted) {
                         setState(() {
                           isPending = true;
                           isCancelled = false;
@@ -454,8 +424,11 @@ class _KontenMenu2 extends State<IsiMenu2> {
                         });
                       }
                     },
-                    child: const Text('Pending', style: TextStyle(color: Colors.white))
-                  )
+                    child: const Text(
+                      'Pending',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
                 ),
                 Container(
                   height: 30,
@@ -463,14 +436,14 @@ class _KontenMenu2 extends State<IsiMenu2> {
                     border: Border(
                       bottom: BorderSide(
                         width: (isCompleted) ? 3 : 0,
-                        color: const Color.fromARGB(255, 150, 251, 153)
-                      )
-                    )
+                        color: const Color.fromARGB(255, 150, 251, 153),
+                      ),
+                    ),
                   ),
                   child: InkWell(
                     onTap: () async {
                       await getData('completed');
-                      if(mounted){
+                      if (mounted) {
                         setState(() {
                           isPending = false;
                           isCancelled = false;
@@ -478,8 +451,11 @@ class _KontenMenu2 extends State<IsiMenu2> {
                         });
                       }
                     },
-                    child: const Text('Completed', style: TextStyle(color: Colors.white))
-                  )
+                    child: const Text(
+                      'Completed',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
                 ),
                 Container(
                   height: 30,
@@ -487,14 +463,14 @@ class _KontenMenu2 extends State<IsiMenu2> {
                     border: Border(
                       bottom: BorderSide(
                         width: (isCancelled) ? 3 : 0,
-                        color: const Color.fromARGB(255, 150, 251, 153)
-                      )
-                    )
+                        color: const Color.fromARGB(255, 150, 251, 153),
+                      ),
+                    ),
                   ),
                   child: InkWell(
                     onTap: () async {
                       await getData('cancelled');
-                      if(mounted){
+                      if (mounted) {
                         setState(() {
                           isPending = false;
                           isCancelled = true;
@@ -502,31 +478,39 @@ class _KontenMenu2 extends State<IsiMenu2> {
                         });
                       }
                     },
-                    child: const Text('Cancelled', style: TextStyle(color: Colors.white))
-                  )
+                    child: const Text(
+                      'Cancelled',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
                 ),
               ],
             ),
           ),
           Container(
             margin: const EdgeInsets.only(top: 60, left: 20, right: 20, bottom: 20),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  spreadRadius: 5,
-                  blurRadius: 7,
-                  offset: const Offset(0, 3)
-                )
-              ]
+            alignment: Alignment.topCenter,
+            constraints: const BoxConstraints(
+              minHeight: 450.0, // The minimum height of the container
             ),
-            child: isPending 
-                ? _buildList('pending')
-                : isCompleted
-                    ? _buildList('completed')
-                    : _buildList('cancelled'),
+            decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      spreadRadius: 5,
+                      blurRadius: 7,
+                      offset: const Offset(0, 3))
+                ]),
+            child: SizedBox(
+              width: double.infinity,
+              child: isPending
+                  ? _buildList('pending')
+                  : isCompleted
+                      ? _buildList('completed')
+                      : _buildList('cancelled'),
+            ),
           ),
         ],
       ),
