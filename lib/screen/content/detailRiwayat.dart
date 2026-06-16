@@ -162,11 +162,15 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
               "Mohon%20diproses.%20Terimakasih!";
 
     var url = 'whatsapp://send?phone=$number&text=$text';
+    final uri = Uri.parse(url);
 
-    if(await canLaunch(url)){
-      await launch(url);
-    }else{
-      print("Whatsapp Ga Keinstall");
+    try {
+      final success = await launchUrl(uri);
+      if (!success) {
+        print("Whatsapp Ga Keinstall atau gagal membuka");
+      }
+    } catch (e) {
+      print("Error membuka Whatsapp: $e");
     }
   }
 

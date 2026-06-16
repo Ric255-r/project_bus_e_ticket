@@ -175,12 +175,19 @@ class _Kontennya extends State<IsiBody> {
 
   Future<void> _openMap(double lat, double lon, String name) async {
     final url = Uri.parse("https://www.google.com/maps/search/?api=1&query=$lat,$lon");
-    if (await canLaunchUrl(url)) {
-      await launchUrl(url, mode: LaunchMode.externalApplication);
-    } else {
+    try {
+      final success = await launchUrl(url, mode: LaunchMode.externalApplication);
+      if (!success) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Tidak dapat membuka peta")),
+          );
+        }
+      }
+    } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Tidak dapat membuka peta")),
+          SnackBar(content: Text("Terjadi kesalahan: $e")),
         );
       }
     }
